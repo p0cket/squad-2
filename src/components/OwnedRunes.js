@@ -1,7 +1,7 @@
 // OwnedRunes.js
-import React from "react"
-import { useDispatchContext, useStateContext } from "../GameContext"
-
+import React from "react";
+import { useDispatchContext, useStateContext } from "../GameContext";
+import RuneCard from "./RuneCard";
 
 function OwnedRunes() {
   const state = useStateContext();
@@ -15,17 +15,13 @@ function OwnedRunes() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {state.runes.map((rune, index) => (
-            <div key={index} className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-xl font-bold">{rune.name}</h3>
-              <p className="text-sm mb-2">{rune.type}</p>
-              <p className="mb-2">{rune.effect}</p>
-              <button
-                onClick={() => dispatch({ type: 'SELL_RUNE', rune, index })}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-              >
-                Sell
-              </button>
-            </div>
+            <RuneCard
+              key={index}
+              rune={rune}
+              onAction={() => dispatch({ type: 'SELL_RUNE', rune, index })}
+              actionLabel="Sell"
+              isShop={false}
+            />
           ))}
         </div>
       )}
