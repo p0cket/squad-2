@@ -1,91 +1,57 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  useReducer,
-  useRef,
-  useMemo,
-} from "react"
-import { motion, useAnimationControls } from "framer-motion"
+import React, { useCallback, useEffect, useRef, useMemo } from "react"
+import { motion } from "framer-motion"
 import { useDispatchContext, useStateContext } from "../GameContext"
 import RuneShop from "./RuneShop"
 import OwnedRunes from "./OwnedRunes"
 import CreatureStats from "./CreatureStats"
-
-const MAX_HP = 100
-
-// Creature.js
-const Creature = ({
-  name,
-  health,
-  position,
-  isPlayer,
-  setCreatureControls,
-}) => {
-  const controls = useAnimationControls()
-
-  // Register controls when the component mounts
-  useEffect(() => {
-    if (setCreatureControls) {
-      setCreatureControls(name, controls)
-    }
-  }, [name, controls, setCreatureControls])
-
-  return (
-    <motion.div
-      className={`flex flex-col items-center ${
-        health <= 0 ? "opacity-50" : ""
-      }`}
-      animate={controls}
-      initial={position}
-    >
-      <motion.div
-        className={`text-6xl mb-2 ${health <= 0 ? "hidden" : ""}`}
-        animate={{ y: [0, -10, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-      >
-        {name}
-      </motion.div>
-      {health <= 0 && <div className="text-6xl mb-2">❌</div>}
-      <div className="bg-gray-700 w-24 h-4 rounded-full overflow-hidden">
-        <motion.div
-          className="bg-green-500 h-full"
-          initial={{ width: "100%" }}
-          animate={{ width: `${(health / MAX_HP) * 100}%` }}
-        />
-      </div>
-      <div className="mt-1">
-        {health} / {MAX_HP}
-      </div>
-    </motion.div>
-  )
-}
-
-const ActionButton = ({ onClick, children, disabled }) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    {children}
-  </button>
-)
+import Creature from "./Creature"
+import ActionButton from "./ActionButton"
+import { checkGameOver, handleEndOfTurnEffects } from "../utils.js/turnUtils"
+import ShopModal from "./Modal"
+import Hud from "./Hud"
 
 const CreatureBattleGame = () => {
   const state = useStateContext()
   const dispatch = useDispatchContext()
 
-  // Create a ref to store creature controls
   const creatureControlsRef = useRef({})
 
-  // Function to set controls for a creature
   const setCreatureControls = useCallback((name, controls) => {
     creatureControlsRef.current[name] = controls
   }, [])
 
-  // Calculate the current stats based on base stats and active runes
+  // Apply end-of-turn effects using the utility function
+  useEffect(() => {
+    const updatedPlayerCreatures = handleEndOfTurnEffects(state.playerCreatures)
+    const updatedComputerCreatures = handleEndOfTurnEffects(
+      state.computerCreatures
+    )
+    console.log(updatedPlayerCreatures, updatedComputerCreatures)
+
+    dispatch({
+      type: "UPDATE_CREATURES",
+      side: "playerCreatures",
+      creatures: updatedPlayerCreatures,
+    })
+
+    dispatch({
+      type: "UPDATE_CREATURES",
+      side: "computerCreatures",
+      creatures: updatedComputerCreatures,
+    })
+
+    const playerLost = checkGameOver(state.playerCreatures)
+    const computerLost = checkGameOver(state.computerCreatures)
+    if (computerLost) {
+      dispatch({ type: `WIN_GAME` })
+      setTimeout(() => dispatch({ type: "RESET_BATTLE" }), 100)
+    }
+    if (playerLost) {
+      dispatch({ type: `LOSE_GAME` })
+      setTimeout(() => dispatch({ type: "RESET_BATTLE" }), 100)
+    }
+  }, [state.turn, dispatch, state.playerCreatures, state.computerCreatures])
+
   const currentStats = useMemo(() => {
     return Object.keys(state.baseStats).reduce((acc, stat) => {
       acc[stat] =
@@ -112,10 +78,11 @@ const CreatureBattleGame = () => {
       const targetControls = creatureControlsRef.current[targetName]
 
       const direction = isPlayerAttack ? 1 : -1
-      const distance = 300
+      const distance = 600
 
       await attackerControls.start({
         x: direction * distance,
+        // y:
         transition: { duration: 0.5 },
       })
       await attackerControls.start({
@@ -176,7 +143,6 @@ const CreatureBattleGame = () => {
       })
     }
 
-    // Computer's turn to attack
     if (alivePlayerCreatures.length > 0 && aliveComputerCreatures.length > 0) {
       const computerAttacker =
         aliveComputerCreatures[
@@ -217,7 +183,10 @@ const CreatureBattleGame = () => {
           side: "playerCreatures",
           creature: {
             ...creature,
-            health: Math.min(creature.health + 20, MAX_HP),
+            health: Math.min(
+              creature.health + 20,
+              creature.maxHealth // Use maxHealth from the creature's state
+            ),
           },
         })
       })
@@ -237,7 +206,7 @@ const CreatureBattleGame = () => {
         side: "playerCreatures",
         creature: {
           ...target,
-          health: Math.min(target.health + 30, MAX_HP),
+          health: Math.min(target.health + 30, target.maxHealth),
         },
       })
     }
@@ -266,31 +235,19 @@ const CreatureBattleGame = () => {
   }, [state.mp, state.maxMp, dispatch])
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white p-4">
-      <RuneShop />
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white p-1">
+      <Hud />
       <OwnedRunes />
       <CreatureStats />
-      <h1 className="text-4xl font-bold mb-8 text-yellow-400">
-        Creature Battle
-      </h1>
-      <div className="bg-gray-700 w-64 h-6 rounded-full overflow-hidden mb-4">
-        <motion.div
-          className="bg-blue-500 h-full"
-          initial={{ width: "0%" }}
-          animate={{ width: `${(state.mp / state.maxMp) * 100}%` }}
-        />
-      </div>
-      <div className="mb-4">
-        MP: {state.mp} / {state.maxMp} (Gain {state.mpPerTurn} per turn)
-      </div>
-      <div className="flex justify-between w-full max-w-3xl mb-8">
+      <div className="flex justify-between w-full max-w-3xl mb-2">
         <div className="flex flex-col items-center">
-          <h2 className="text-2xl font-bold mb-4 text-green-400">Player</h2>
+          <h2 className="text-2xl font-bold mb-2 text-green-400">Player</h2>
           {state.playerCreatures.map((creature) => (
             <Creature
               key={creature.name}
               name={creature.name}
               health={creature.health}
+              maxHealth={creature.maxHealth} // Pass the correct maxHealth
               position={{ x: 0 }}
               isPlayer={true}
               setCreatureControls={setCreatureControls}
@@ -304,6 +261,7 @@ const CreatureBattleGame = () => {
               key={creature.name}
               name={creature.name}
               health={creature.health}
+              maxHealth={creature.maxHealth} // Pass the correct maxHealth
               position={{ x: 0 }}
               isPlayer={false}
               setCreatureControls={setCreatureControls}
@@ -311,26 +269,28 @@ const CreatureBattleGame = () => {
           ))}
         </div>
       </div>
+      <ShopModal />
       <div className="flex space-x-4 mb-4">
         <ActionButton onClick={handleAttack}>Attack</ActionButton>
         <ActionButton onClick={handleHeal} disabled={state.mp < 10}>
           Heal All (10 MP)
         </ActionButton>
+        <div className="flex space-x-4">
+          <ActionButton onClick={handleIncreaseHealth} disabled={state.mp < 10}>
+            Boost Health (10 MP)
+          </ActionButton>
+          <ActionButton
+            onClick={handleIncreaseMpPerTurn}
+            disabled={state.mp < 10}
+          >
+            Increase MP Gain (10 MP)
+          </ActionButton>
+          <ActionButton onClick={handleIncreaseMaxMp} disabled={state.mp < 10}>
+            Increase Max MP (10 MP)
+          </ActionButton>
+        </div>
       </div>
-      <div className="flex space-x-4">
-        <ActionButton onClick={handleIncreaseHealth} disabled={state.mp < 10}>
-          Boost Health (10 MP)
-        </ActionButton>
-        <ActionButton
-          onClick={handleIncreaseMpPerTurn}
-          disabled={state.mp < 10}
-        >
-          Increase MP Gain (10 MP)
-        </ActionButton>
-        <ActionButton onClick={handleIncreaseMaxMp} disabled={state.mp < 10}>
-          Increase Max MP (10 MP)
-        </ActionButton>
-      </div>
+      {/* Additional controls here */}
       <div className="mt-4">Turn: {state.turn}</div>
     </div>
   )
