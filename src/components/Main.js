@@ -1,5 +1,5 @@
 import React from "react"
-import CreatureBattleGame from "./CreatureBattleGame"
+import Battle from "./Battle"
 import { useStateContext } from "../GameContext"
 import Results from "./screens/Results"
 import Death from "./screens/GameOver"
@@ -10,12 +10,12 @@ function Main() {
   return (
     <>
      {/* <Results /> */}
-      {screen === "battle" && <CreatureBattleGame />}
+      {screen === "battle" && <Battle />}
       {screen === "results" && <Results />}
       {screen === "game_over" && <Death />}
 
-      {screen === "intro" && <CreatureBattleGame />}
-      {screen === "shop" && <CreatureBattleGame />}
+      {screen === "intro" && <Battle />}
+      {screen === "shop" && <Battle />}
     </>
   )
 }

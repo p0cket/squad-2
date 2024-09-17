@@ -22,7 +22,7 @@ const STATUS_EFFECTS = {
   };
   
   export const handleEndOfTurnEffects = (creatures) => {
-    return creatures.map((creature) => {
+    const creaturesApplied =  creatures.map((creature) => {
       // Apply each effect to the creature
       creature.statusEffects.forEach((effect) => {
         STATUS_EFFECTS[effect.name].applyEffect(creature);
@@ -35,8 +35,10 @@ const STATUS_EFFECTS = {
           duration: effect.duration - 1,
         }))
         .filter((effect) => effect.duration > 0);
-      return creature;
+      return {...creature};
     });
+  
+    return creaturesApplied;
   };
   
   export const checkGameOver = (creatures) => {

@@ -53,30 +53,56 @@
 //       return modifiedCreature;
 //     }, creature);
 //   };
+
+
+
+
+
+
+
 export const applyRuneEffects = (creature, runes) => {
-    return runes.reduce((modifiedCreature, rune) => {
+    // Clone the creature to avoid mutating the original
+    let modifiedCreature = structuredClone(creature)
+  
+    runes.forEach((rune) => {
       if (rune.statEffect) {
-        const { stat, value } = rune.statEffect;
+        const { stat, value } = rune.statEffect
   
         if (stat === "health") {
-          const newMaxHealth = modifiedCreature.maxHealth + value;
-          const newHealth = modifiedCreature.health + value;
-  
-          return {
-            ...modifiedCreature,
-            maxHealth: newMaxHealth,
-            health: newHealth,
-          };
+          modifiedCreature.maxHealth = (modifiedCreature.maxHealth || 0) + value
+          modifiedCreature.health = (modifiedCreature.health || 0) + value
+        } else {
+          modifiedCreature[stat] = (modifiedCreature[stat] || 0) + value
         }
-  
-        // For other stats
-        const newStatValue = (modifiedCreature[stat] || 0) + value;
-  
-        return {
-          ...modifiedCreature,
-          [stat]: newStatValue,
-        };
       }
-      return modifiedCreature;
-    }, creature);
-  };
+    })
+  
+    return modifiedCreature
+  }
+// export const applyRuneEffects = (creature, runes) => {
+//     return runes.reduce((modifiedCreature, rune) => {
+//       if (rune.statEffect) {
+//         const { stat, value } = rune.statEffect;
+  
+//         if (stat === "health") {
+//           const newMaxHealth = modifiedCreature.maxHealth + value;
+//           const newHealth = modifiedCreature.health + value;
+  
+//           return {
+//             ...modifiedCreature,
+//             maxHealth: newMaxHealth,
+//             health: newHealth,
+//           };
+//         }
+  
+//         // For other stats
+//         const newStatValue = (modifiedCreature[stat] || 0) + value;
+  
+//         return {
+//           ...modifiedCreature,
+//           [stat]: newStatValue,
+//         };
+//       }
+//       return modifiedCreature;
+//     }, creature);
+//   };

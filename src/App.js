@@ -10,7 +10,7 @@ function App() {
     <GameProvider>
       <>
         {/* <div className="container mx-auto px-4 py-8"> */}
-        {/* <CreatureBattleGame /> */}
+        {/* <Battle /> */}
         <Main />
         {/* <RuneShop />
         <OwnedRunes />

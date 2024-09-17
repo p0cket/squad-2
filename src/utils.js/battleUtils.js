@@ -1,9 +1,9 @@
 // utils/gameUtils.js
 export const resetCreatures = (creatures) => {
-    return creatures.map((creature) => ({
-      ...creature,
-      health: creature.maxHealth, // Restore health to maxHealth
-      statusEffects: [], // Clear temporary status effects
-    }));
-  };
-  
+  return creatures.map((creature) => {
+    const clonedCreature = structuredClone(creature)
+    clonedCreature.health = clonedCreature.maxHealth
+    clonedCreature.statusEffects = []
+    return clonedCreature
+  })
+}

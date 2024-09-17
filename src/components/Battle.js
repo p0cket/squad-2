@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useRef, useMemo } from "react"
-import { motion } from "framer-motion"
 import { useDispatchContext, useStateContext } from "../GameContext"
-import RuneShop from "./RuneShop"
 import OwnedRunes from "./OwnedRunes"
 import CreatureStats from "./CreatureStats"
 import Creature from "./Creature"
@@ -9,15 +7,17 @@ import ActionButton from "./ActionButton"
 import { checkGameOver, handleEndOfTurnEffects } from "../utils.js/turnUtils"
 import ShopModal from "./Modal"
 import Hud from "./Hud"
+import { calcDamage, performAttack } from "../utils.js/attackUtils"
 
-const CreatureBattleGame = () => {
+const Battle = () => {
   const state = useStateContext()
   const dispatch = useDispatchContext()
 
+ 
   const creatureControlsRef = useRef({})
 
-  const setCreatureControls = useCallback((name, controls) => {
-    creatureControlsRef.current[name] = controls
+  const setCreatureControls = useCallback((name, data) => {
+    creatureControlsRef.current[name] = data
   }, [])
 
   // Apply end-of-turn effects using the utility function
@@ -27,13 +27,11 @@ const CreatureBattleGame = () => {
       state.computerCreatures
     )
     console.log(updatedPlayerCreatures, updatedComputerCreatures)
-
     dispatch({
       type: "UPDATE_CREATURES",
       side: "playerCreatures",
       creatures: updatedPlayerCreatures,
     })
-
     dispatch({
       type: "UPDATE_CREATURES",
       side: "computerCreatures",
@@ -43,11 +41,11 @@ const CreatureBattleGame = () => {
     const playerLost = checkGameOver(state.playerCreatures)
     const computerLost = checkGameOver(state.computerCreatures)
     if (computerLost) {
-      dispatch({ type: `WIN_GAME` })
+      dispatch({ type: 'WIN_GAME' })
       setTimeout(() => dispatch({ type: "RESET_BATTLE" }), 100)
     }
     if (playerLost) {
-      dispatch({ type: `LOSE_GAME` })
+      dispatch({ type: 'LOSE_GAME' })
       setTimeout(() => dispatch({ type: "RESET_BATTLE" }), 100)
     }
   }, [state.turn, dispatch, state.playerCreatures, state.computerCreatures])
@@ -73,52 +71,112 @@ const CreatureBattleGame = () => {
   }, [state.turn, dispatch, state.mp, state.mpPerTurn, state.maxMp])
 
   const attackAnimation = useCallback(
-    async (attackerName, targetName, isPlayerAttack) => {
+    async (attacker, target, isPlayerAttack) => {
+      const attackerName = attacker.name
+      const targetName = target.name
       const attackerControls = creatureControlsRef.current[attackerName]
       const targetControls = creatureControlsRef.current[targetName]
 
-      const direction = isPlayerAttack ? 1 : -1
-      const distance = 600
+      const direction = isPlayerAttack ? -1 : 1 // Player attacks move up (-1), enemies move down (1)
+      const distance = 150 // Adjusted distance for vertical movement
 
+      // Move attacker towards target
       await attackerControls.start({
-        x: direction * distance,
-        // y:
-        transition: { duration: 0.5 },
-      })
-      await attackerControls.start({
-        x: direction * (distance + 10),
-        y: [0, -5, 5, -5, 5, 0],
+        y: direction * distance,
         transition: { duration: 0.3 },
       })
-
+      // Simulate attack impact with a shake
       if (targetControls) {
         await targetControls.start({
-          x: [0, -5, 5, -5, 5, 0],
+          x: [0, -10, 10, -10, 10, 0],
           transition: { duration: 0.3 },
         })
       }
-
+      // Return attacker to original position
       await attackerControls.start({
-        x: 0,
-        transition: { duration: 0.5 },
+        y: 0,
+        transition: { duration: 0.3 },
       })
-
-      const damage = Math.floor(Math.random() * 20) + 10
+      // Calculate damage using attacker and target stats
+      const damage = calcDamage(attacker, target)
       return damage
     },
     []
   )
 
+  // const handleAttack = useCallback(async () => {
+  //   dispatch({ type: "INCREMENT_TURN" })
+
+  //   const alivePlayerCreatures = state.playerCreatures.filter(
+  //     (c) => c.health > 0
+  //   )
+  //   const aliveComputerCreatures = state.computerCreatures.filter(
+  //     (c) => c.health > 0
+  //   )
+
+  //   if (alivePlayerCreatures.length > 0 && aliveComputerCreatures.length > 0) {
+  //     const playerAttacker =
+  //       alivePlayerCreatures[
+  //         Math.floor(Math.random() * alivePlayerCreatures.length)
+  //       ]
+  //     const computerTarget =
+  //       aliveComputerCreatures[
+  //         Math.floor(Math.random() * aliveComputerCreatures.length)
+  //       ]
+  //     const damage = await attackAnimation(
+  //       playerAttacker.name,
+  //       computerTarget.name,
+  //       true
+  //     )
+  //     dispatch({
+  //       type: "UPDATE_CREATURE",
+  //       side: "computerCreatures",
+  //       creature: {
+  //         ...computerTarget,
+  //         health: Math.max(0, computerTarget.health - damage),
+  //       },
+  //     })
+  //   }
+
+  //   if (alivePlayerCreatures.length > 0 && aliveComputerCreatures.length > 0) {
+  //     const computerAttacker =
+  //       aliveComputerCreatures[
+  //         Math.floor(Math.random() * aliveComputerCreatures.length)
+  //       ]
+  //     const playerTarget =
+  //       alivePlayerCreatures[
+  //         Math.floor(Math.random() * alivePlayerCreatures.length)
+  //       ]
+  //     const damage = await attackAnimation(
+  //       computerAttacker.name,
+  //       playerTarget.name,
+  //       false
+  //     )
+  //     dispatch({
+  //       type: "UPDATE_CREATURE",
+  //       side: "playerCreatures",
+  //       creature: {
+  //         ...playerTarget,
+  //         health: Math.max(0, playerTarget.health - damage),
+  //       },
+  //     })
+  //   }
+  // }, [
+  //   state.playerCreatures,
+  //   state.computerCreatures,
+  //   attackAnimation,
+  //   dispatch,
+  // ])
   const handleAttack = useCallback(async () => {
     dispatch({ type: "INCREMENT_TURN" })
-
+  
     const alivePlayerCreatures = state.playerCreatures.filter(
       (c) => c.health > 0
     )
     const aliveComputerCreatures = state.computerCreatures.filter(
       (c) => c.health > 0
     )
-
+  
     if (alivePlayerCreatures.length > 0 && aliveComputerCreatures.length > 0) {
       const playerAttacker =
         alivePlayerCreatures[
@@ -128,10 +186,11 @@ const CreatureBattleGame = () => {
         aliveComputerCreatures[
           Math.floor(Math.random() * aliveComputerCreatures.length)
         ]
-      const damage = await attackAnimation(
-        playerAttacker.name,
-        computerTarget.name,
-        true
+      const damage = await performAttack(
+        playerAttacker,
+        computerTarget,
+        true,
+        creatureControlsRef
       )
       dispatch({
         type: "UPDATE_CREATURE",
@@ -142,7 +201,7 @@ const CreatureBattleGame = () => {
         },
       })
     }
-
+  
     if (alivePlayerCreatures.length > 0 && aliveComputerCreatures.length > 0) {
       const computerAttacker =
         aliveComputerCreatures[
@@ -152,10 +211,11 @@ const CreatureBattleGame = () => {
         alivePlayerCreatures[
           Math.floor(Math.random() * alivePlayerCreatures.length)
         ]
-      const damage = await attackAnimation(
-        computerAttacker.name,
-        playerTarget.name,
-        false
+      const damage = await performAttack(
+        computerAttacker,
+        playerTarget,
+        false,
+        creatureControlsRef
       )
       dispatch({
         type: "UPDATE_CREATURE",
@@ -169,9 +229,9 @@ const CreatureBattleGame = () => {
   }, [
     state.playerCreatures,
     state.computerCreatures,
-    attackAnimation,
     dispatch,
   ])
+  
 
   const handleHeal = useCallback(() => {
     if (state.mp >= 10) {
@@ -238,8 +298,7 @@ const CreatureBattleGame = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white p-1">
       <Hud />
       <OwnedRunes />
-      <CreatureStats />
-      <div className="flex justify-between w-full max-w-3xl mb-2">
+      {/* <div className="flex justify-between w-full max-w-3xl mb-2">
         <div className="flex flex-col items-center">
           <h2 className="text-2xl font-bold mb-2 text-green-400">Player</h2>
           {state.playerCreatures.map((creature) => (
@@ -268,7 +327,46 @@ const CreatureBattleGame = () => {
             />
           ))}
         </div>
+      </div> */}
+      <div className="flex flex-col items-center w-full max-w-3xl mb-2">
+        {/* Enemy Creatures at the Top */}
+        <div className="flex flex-row items-center justify-center mb-8">
+          {/* <h2 className="text-2xl font-bold mb-2 text-red-400">Enemies</h2> */}
+          <div className="flex flex-row space-x-4">
+            {state.computerCreatures.map((creature) => (
+              <Creature
+                key={creature.name}
+                name={creature.name}
+                health={creature.health}
+                maxHealth={creature.maxHealth}
+                position={{ x: 0 }}
+                isPlayer={false}
+                setCreatureControls={setCreatureControls}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Player Creatures at the Bottom */}
+        <div className="flex flex-row items-center justify-center">
+          {/* <h2 className="text-2xl font-bold mb-2 text-green-400">Player</h2> */}
+          <div className="flex flex-row space-x-4">
+            {state.playerCreatures.map((creature) => (
+              <Creature
+                key={creature.name}
+                name={creature.name}
+                health={creature.health}
+                maxHealth={creature.maxHealth}
+                position={{ x: 0 }}
+                isPlayer={true}
+                setCreatureControls={setCreatureControls}
+              />
+            ))}
+          </div>
+        </div>
       </div>
+      <CreatureStats />
+
       <ShopModal />
       <div className="flex space-x-4 mb-4">
         <ActionButton onClick={handleAttack}>Attack</ActionButton>
@@ -296,4 +394,4 @@ const CreatureBattleGame = () => {
   )
 }
 
-export default CreatureBattleGame
+export default Battle
