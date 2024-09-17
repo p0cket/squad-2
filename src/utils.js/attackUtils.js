@@ -17,35 +17,53 @@ export const calcDamage = (attacker, target) => {
   return Math.floor(damage)
 }
 // utils.js/attackUtils.js
-export const performAttack = async (attacker, target, isPlayerAttack, creatureControlsRef) => {
-  const damage = await attackAnimation(attacker, target, isPlayerAttack, creatureControlsRef);
-  return damage;
-};
 
-const attackAnimation = async (attacker, target, isPlayerAttack, creatureControlsRef) => {
-  const attackerControls = creatureControlsRef.current[attacker.name];
-  const targetControls = creatureControlsRef.current[target.name];
+export const performAttack = async (
+  attacker,
+  target,
+  isPlayerAttack,
+  creatureControlsRef
+) => {
+  const attackerName = attacker.name
+  const targetName = target.name
+  const attackerData = creatureControlsRef.current[attackerName]
+  const targetData = creatureControlsRef.current[targetName]
 
-  const direction = isPlayerAttack ? -1 : 1;
-  const distance = 150;
+  const attackerControls = attackerData.controls
+  const targetControls = targetData.controls
+  const targetShowDamage = targetData.showDamage
 
+  const direction = isPlayerAttack ? -1 : 1
+  const distance = 150
+
+  // Move attacker towards target
   await attackerControls.start({
     y: direction * distance,
     transition: { duration: 0.3 },
-  });
+  })
 
+  // Simulate attack impact with a shake
   if (targetControls) {
     await targetControls.start({
       x: [0, -10, 10, -10, 10, 0],
       transition: { duration: 0.3 },
-    });
+    })
   }
 
+  // Return attacker to original position
   await attackerControls.start({
     y: 0,
     transition: { duration: 0.3 },
-  });
+  })
 
-  const damage = calcDamage(attacker, target);
-  return damage;
-};
+  // Calculate damage
+  const damage = calcDamage(attacker, target)
+
+  // Show damage on target creature
+  if (targetShowDamage) {
+    targetShowDamage(damage)
+  }
+
+  return damage
+}
+
