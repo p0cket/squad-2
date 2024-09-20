@@ -4,6 +4,7 @@ import { applyRuneEffects } from "./utils.js/runeUtils"
 import { resetCreatures } from "./utils.js/battleUtils"
 import {
   applyEnhancement,
+  applyMod,
   applyTurnEnhancementEffects,
 } from "./utils.js/modUtils"
 
@@ -22,17 +23,17 @@ export const creatures = {
     attack: 20,
     trueDamage: 30,
     defence: 5,
-    statusEffects: [],
+    mods: [], // Unified mods array with type field
   },
   unicorn: {
     name: "🦄",
     template: "unicorn",
     health: MAX_HP,
     maxHealth: MAX_HP,
-    attack: 20,
+    attack: 110,
     trueDamage: 10,
     defence: 5,
-    statusEffects: [],
+    mods: [], // Unified mods array with type field
   },
   alien: {
     name: "👾",
@@ -42,7 +43,7 @@ export const creatures = {
     attack: 20,
     trueDamage: 10,
     defence: 5,
-    statusEffects: [],
+    mods: [], // Unified mods array with type field
   },
   fish: {
     name: "🐙",
@@ -52,9 +53,10 @@ export const creatures = {
     attack: 20,
     trueDamage: 10,
     defence: 5,
-    statusEffects: [],
+    mods: [], // Unified mods array with type field
   },
 }
+
 // Define enhancements for creatures
 export const BASE_ENHANCEMENTS = [
   {
@@ -201,16 +203,50 @@ const gameReducer = (state, action) => {
       return { ...state, mpPerTurn: action.mpPerTurn }
     case "INCREMENT_TURN":
       return { ...state, turn: state.turn + 1 }
-    case "APPLY_ENHANCEMENT":
+    case "APPLY_MOD":
       return {
         ...state,
         playerCreatures: state.playerCreatures.map((creature) => {
-          if (creature.name === action.creature.name) {
-            return applyEnhancement(creature, action.enhancement)
+          if (creature.name === action.payload.creature.name) {
+            return applyMod(creature, action.payload.mod) // Use applyMod for all mods
           }
           return creature
         }),
       }
+    // case "APPLY_AURA":
+    //   return {
+    //     ...state,
+    //     playerCreatures: state.playerCreatures.map((creature) => {
+    //       if (creature.name === action.payload.creature.name) {
+    //         return {
+    //           ...creature,
+    //           aura: action.payload.aura, // Attach the aura to the creature
+    //         }
+    //       }
+    //       return creature
+    //     }),
+    //   }
+    // case "APPLY_ENHANCEMENT":
+    //     return {
+    //       ...state,
+    //       playerCreatures: state.playerCreatures.map((creature) => {
+    //         if (creature.name === action.creature.name) {
+    //           return applyEnhancement(creature, action.enhancement)
+    //         }
+    //         return creature
+    //       }),
+    //     }
+    case "ATTACK_CREATURE":
+      // Handle creature attack, applying aura effect if it exists
+      const attacker = state.playerCreatures.find(
+        (creature) => creature.name === action.attacker.name
+      )
+      if (attacker.aura && Math.random() < 0.75) {
+        // 75% chance to apply the aura's effect
+        //   applyAuraEffect(attacker.aura);
+      }
+      return state
+
     case "APPLY_TURN_EFFECTS":
       return {
         ...state,

@@ -81,15 +81,15 @@ const Creature = ({
           </motion.div>
         )}
       </motion.div>
-      {creatureObj?.statusEffects.length > 0 && (
+      {/* {creatureObj?.statusEffects?.length > 0 && (
         <div className="status-effects">
-          {creatureObj?.statusEffects.map((effect, index) => (
+          {creatureObj?.statusEffects?.map((effect, index) => (
             <span key={index} title={effect.name}>
               {effect.icon}
             </span>
           ))}
         </div>
-      )}
+      )} */}
       {/* Render the CreatureModal */}
       <CreatureModal
         open={openModal}

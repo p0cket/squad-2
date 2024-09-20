@@ -10,6 +10,7 @@ import CreatureGroup from "./battle/CreatureGroup"
 import { useCreatureControls } from "../hooks/useCreatureControls"
 import { useBattleActions } from "../hooks/useBattleActions"
 import { useEndOfTurnEffects } from "../hooks/useEndOfTurnEffects"
+import Levels from "./screens/Levels"
 
 const Battle = () => {
   const state = useStateContext()
@@ -36,6 +37,7 @@ const Battle = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white p-1">
       <Hud />
+      <Levels numLevels={10} />
       <OwnedRunes />
       <div className="flex flex-col items-center w-full max-w-3xl mb-2">
         {/* Enemy Creatures at the Top */}
