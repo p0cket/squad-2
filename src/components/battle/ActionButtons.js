@@ -1,5 +1,6 @@
 import React from "react";
-import ActionButton from "./ActionButton";
+import ActionButton from "../ActionButton";
+// import ActionButton from "./ActionButton";
 
 const ActionButtons = ({ handleAttack, handleHeal, handleIncreaseHealth, handleIncreaseMpPerTurn, handleIncreaseMaxMp, mp }) => {
   return (

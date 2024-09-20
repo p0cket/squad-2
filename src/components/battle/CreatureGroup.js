@@ -1,7 +1,7 @@
 import React from "react";
-import Creature from "./Creature";
+import Creature from "../Creature";
 
-const CreatureGroup = ({ creatures, isPlayer, setCreatureControls }) => {
+const CreatureGroup = ({ creatures, isPlayer, setCreatureControls,  }) => {
   return (
     <div className="flex flex-row space-x-4">
       {creatures.map((creature) => (
@@ -13,6 +13,7 @@ const CreatureGroup = ({ creatures, isPlayer, setCreatureControls }) => {
           position={{ x: 0 }}
           isPlayer={isPlayer}
           setCreatureControls={setCreatureControls}
+          creatureObj={creature}
         />
       ))}
     </div>
