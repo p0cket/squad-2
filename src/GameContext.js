@@ -2,165 +2,26 @@
 import React, { createContext, useContext, useReducer } from "react"
 import { applyRuneEffects } from "./utils.js/runeUtils"
 import { resetCreatures } from "./utils.js/battleUtils"
-import {
-  applyEnhancement,
-  applyMod,
-  applyTurnEnhancementEffects,
-} from "./utils.js/modUtils"
+import { applyMod, applyTurnEnhancementEffects } from "./utils.js/modUtils"
+import { CREATURES } from "./consts/creatures"
+import { BASE_RUNES } from "./consts/items"
+import { generateLevels, loadLevelData } from "./utils.js/levelGeneratorUtils"
 
 // Constants
-export const MAX_HP = 100
 export const INITIAL_MAX_MP = 50
 export const INITIAL_MP_PER_TURN = 5
-export const BASE_ATK = 20
-export const BASE_DEFENSE = 5
-export const creatures = {
-  dragon: {
-    name: "🐉",
-    template: "dragon",
-    health: MAX_HP,
-    maxHealth: MAX_HP,
-    attack: 20,
-    trueDamage: 30,
-    defence: 5,
-    mods: [], // Unified mods array with type field
-  },
-  unicorn: {
-    name: "🦄",
-    template: "unicorn",
-    health: MAX_HP,
-    maxHealth: MAX_HP,
-    attack: 110,
-    trueDamage: 10,
-    defence: 5,
-    mods: [], // Unified mods array with type field
-  },
-  alien: {
-    name: "👾",
-    template: "alien",
-    health: MAX_HP,
-    maxHealth: MAX_HP,
-    attack: 20,
-    trueDamage: 10,
-    defence: 5,
-    mods: [], // Unified mods array with type field
-  },
-  fish: {
-    name: "🐙",
-    template: "fish",
-    health: MAX_HP,
-    maxHealth: MAX_HP,
-    attack: 20,
-    trueDamage: 10,
-    defence: 5,
-    mods: [], // Unified mods array with type field
-  },
-}
-
 // Define enhancements for creatures
-export const BASE_ENHANCEMENTS = [
-  {
-    id: 1,
-    name: "Burn",
-    type: "Temporary",
-    effect: "Deals 5 damage each turn for 3 turns.",
-    duration: 3,
-    damagePerTurn: 5,
-    icon: "🔥",
-  },
-  {
-    id: 2,
-    name: "Stun",
-    type: "Temporary",
-    effect: "Prevents the creature from attacking for 2 turns.",
-    duration: 2,
-    preventsAttack: true,
-    icon: "⚡",
-  },
-  {
-    id: 3,
-    name: "Regeneration",
-    type: "Temporary",
-    effect: "Heals the creature by 5 health per turn for 3 turns.",
-    duration: 3,
-    healPerTurn: 5,
-    icon: "🌿",
-  },
-]
-
-const { dragon, fish, alien, unicorn } = creatures
+const { dragon, fish, alien, unicorn } = CREATURES
 export const basePlayerCreatures = [dragon, unicorn]
 export const baseComputerCreatures = [alien, fish]
-export const BASE_RUNES = [
-  {
-    id: 1,
-    name: "Rune of Strength",
-    type: "Common",
-    effect: "Increases the Attack stat of all creatures by 10.",
-    cost: 100,
-    count: 0,
-    statEffect: { stat: "attack", value: 10 },
-    icon: "💪",
-  },
-  {
-    id: 2,
-    name: "Rune of Vitality",
-    type: "Common",
-    effect: "Increases the Health stat of all creatures by 20.",
-    cost: 100,
-    count: 0,
-    statEffect: { stat: "health", value: 20 },
-    icon: "❤️",
-  },
-  {
-    id: 3,
-    name: "Rune of Speed",
-    type: "Common",
-    effect: "Increases the Speed stat of all creatures by 5.",
-    cost: 100,
-    count: 0,
-    statEffect: { stat: "speed", value: 5 },
-    icon: "⚡",
-  },
-  {
-    id: 4,
-    name: "Rune of Wealth",
-    type: "Common",
-    effect: "Gain 50% more gold after each battle.",
-    cost: 150,
-    count: 0,
-    statEffect: { stat: "goldMultiplier", value: 0.5 },
-    icon: "💰",
-  },
-  {
-    id: 5,
-    name: "Rune of the Assassin",
-    type: "Uncommon",
-    effect:
-      "Increases damage dealt to creatures with higher health than the user by 20%.",
-    cost: 250,
-    count: 0,
-    statEffect: { stat: "assassinDamage", value: 0.2 },
-    icon: "🗡️",
-  },
-  {
-    id: 6,
-    name: "Rune of the Dragon",
-    type: "Rare",
-    effect:
-      "Grants the ability to breathe fire, dealing 30 damage to all enemies.",
-    cost: 500,
-    count: 0,
-    statEffect: { stat: "dragonBreath", value: 30 },
-    icon: "🐉",
-  },
-]
 
 // Initial State
+const generatedLevels = generateLevels(10) // Generate levels once here
+
 const initialState = {
   // Existing Game State
   playerCreatures: structuredClone(basePlayerCreatures),
-  computerCreatures: structuredClone(baseComputerCreatures),
+  computerCreatures: structuredClone(generatedLevels[0].opponentCreatures), // Load level 1's creatures
   mp: 0,
   maxMp: INITIAL_MAX_MP,
   mpPerTurn: INITIAL_MP_PER_TURN,
@@ -179,8 +40,11 @@ const initialState = {
   },
   battleStatus: null,
   screen: "intro",
+  level: 1, // Start at level 1
+  levels: generatedLevels, // Store the generated levels here
+  levelEffects: generatedLevels[0].levelEffects, // Load level 1's effects
+  modals: null,
 }
-
 // Game Reducer
 const gameReducer = (state, action) => {
   console.log("Action dispatched:", action)
@@ -213,29 +77,7 @@ const gameReducer = (state, action) => {
           return creature
         }),
       }
-    // case "APPLY_AURA":
-    //   return {
-    //     ...state,
-    //     playerCreatures: state.playerCreatures.map((creature) => {
-    //       if (creature.name === action.payload.creature.name) {
-    //         return {
-    //           ...creature,
-    //           aura: action.payload.aura, // Attach the aura to the creature
-    //         }
-    //       }
-    //       return creature
-    //     }),
-    //   }
-    // case "APPLY_ENHANCEMENT":
-    //     return {
-    //       ...state,
-    //       playerCreatures: state.playerCreatures.map((creature) => {
-    //         if (creature.name === action.creature.name) {
-    //           return applyEnhancement(creature, action.enhancement)
-    //         }
-    //         return creature
-    //       }),
-    //     }
+
     case "ATTACK_CREATURE":
       // Handle creature attack, applying aura effect if it exists
       const attacker = state.playerCreatures.find(
@@ -268,6 +110,34 @@ const gameReducer = (state, action) => {
         ...state,
         // battleStatus: "LOST", // Set game status to lost
         screen: "game_over",
+      }
+    case "NEXT_LEVEL":
+      const nextLevel = state.currentLevel + 1
+
+      // Use the loadLevelData function to get the next level's configuration
+      const nextLevelData = loadLevelData(nextLevel)
+
+      // Reset player creatures and apply rune effects
+      const newPlayerTeam = resetCreatures(
+        structuredClone(basePlayerCreatures).map((creature) =>
+          applyRuneEffects(creature, state.runes)
+        )
+      )
+
+      // Set up the new enemy team based on the next level's creatures
+      const newComputerTeam = resetCreatures(
+        structuredClone(nextLevelData.opponentCreatures)
+      )
+
+      return {
+        ...state,
+        playerCreatures: newPlayerTeam, // Reset player creatures with runes applied
+        computerCreatures: newComputerTeam, // Load new level enemies
+        currentLevel: nextLevel, // Advance to the next level
+        levelEffects: nextLevelData.levelEffects, // Apply level-specific effects
+        mp: 0, // Reset MP
+        turn: 0, // Reset turn
+        battleStatus: null, // Clear battle status
       }
     case "RESET_BATTLE":
       // Deep clone base player creatures and apply rune effects
@@ -360,3 +230,28 @@ export const GameProvider = ({ children }) => {
     </StateContext.Provider>
   )
 }
+
+// Auras and Enhancements are under MODS
+// case "APPLY_AURA":
+//   return {
+//     ...state,
+//     playerCreatures: state.playerCreatures.map((creature) => {
+//       if (creature.name === action.payload.creature.name) {
+//         return {
+//           ...creature,
+//           aura: action.payload.aura, // Attach the aura to the creature
+//         }
+//       }
+//       return creature
+//     }),
+//   }
+// case "APPLY_ENHANCEMENT":
+//     return {
+//       ...state,
+//       playerCreatures: state.playerCreatures.map((creature) => {
+//         if (creature.name === action.creature.name) {
+//           return applyEnhancement(creature, action.enhancement)
+//         }
+//         return creature
+//       }),
+//     }

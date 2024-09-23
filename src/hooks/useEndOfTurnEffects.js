@@ -1,37 +1,55 @@
-import { useEffect } from "react";
-import { checkGameOver, handleEndOfTurnEffects } from "../utils.js/turnUtils";
-// import { checkGameOver, handleEndOfTurnEffects } from "../utils.js/turnUtils";
+import { useEffect } from "react"
+import { checkGameOver, handleEndOfTurnEffects } from "../utils.js/turnUtils"
+// Imports the utility functions for applying end-of-turn effects and checking if the game is over.
 
+// Custom hook to handle end-of-turn effects and victory/defeat checks
 export const useEndOfTurnEffects = (state, dispatch) => {
   useEffect(() => {
-    const updatedPlayerCreatures = handleEndOfTurnEffects(state.playerCreatures);
-    const updatedComputerCreatures = handleEndOfTurnEffects(state.computerCreatures);
+    // Apply end-of-turn effects to the player's creatures (e.g., poison damage, buffs, etc.)
+    const updatedPlayerCreatures = handleEndOfTurnEffects(state.playerCreatures)
+    const updatedComputerCreatures = handleEndOfTurnEffects(
+      state.computerCreatures
+    )
 
-    console.log(updatedPlayerCreatures, updatedComputerCreatures);
+    // Log the updated state of creatures for debugging purposes
+    console.log("Updated Player Creatures: ", updatedPlayerCreatures)
+    console.log("Updated Computer Creatures: ", updatedComputerCreatures)
 
+    // Dispatch the updated player creatures into the global state
     dispatch({
-      type: "UPDATE_CREATURES",
-      side: "playerCreatures",
-      creatures: updatedPlayerCreatures,
-    });
+      type: "UPDATE_CREATURES", // Action to update the state
+      side: "playerCreatures", // Indicates that it's the player's creatures being updated
+      creatures: updatedPlayerCreatures, // The new state of the player's creatures
+    })
 
+    // Dispatch the updated computer creatures into the global state
     dispatch({
-      type: "UPDATE_CREATURES",
-      side: "computerCreatures",
-      creatures: updatedComputerCreatures,
-    });
+      type: "UPDATE_CREATURES", // Action to update the state
+      side: "computerCreatures", // Indicates that it's the computer's creatures being updated
+      creatures: updatedComputerCreatures, // The new state of the computer's creatures
+    })
 
-    const playerLost = checkGameOver(updatedPlayerCreatures);
-    const computerLost = checkGameOver(updatedComputerCreatures);
+    // Check for game over conditions immediately after updating the creatures
+    const playerLost = checkGameOver(updatedPlayerCreatures)
+    const computerLost = checkGameOver(updatedComputerCreatures)
 
+    // Trigger the appropriate game over action based on the outcome
     if (computerLost) {
-      dispatch({ type: "WIN_GAME" });
-      setTimeout(() => dispatch({ type: "RESET_BATTLE" }), 100);
-    }
+      // If all computer creatures are dead, the player wins
+      dispatch({ type: "WIN_GAME" }) // Set the game state to win
+      console.log("Computer lost, game won!")
 
-    if (playerLost) {
-      dispatch({ type: "LOSE_GAME" });
-      setTimeout(() => dispatch({ type: "RESET_BATTLE" }), 100);
+      // Optional: Delay resetting the battle slightly for animation purposes
+      setTimeout(() => dispatch({ type: "RESET_BATTLE" }), 100)
+    } else if (playerLost) {
+      // If all player creatures are dead, the player loses
+      dispatch({ type: "LOSE_GAME" }) // Set the game state to lose
+      console.log("Player lost, game over!")
+
+      // Optional: Delay resetting the battle slightly for animation purposes
+      setTimeout(() => dispatch({ type: "RESET_BATTLE" }), 100)
     }
-  }, [state.turn, dispatch]);
-};
+    // We check both conditions immediately after effects are applied, no need to wait for a new turn
+  }, [state.playerCreatures, state.computerCreatures, dispatch])
+  // Now, the effect depends on any change in player or computer creatures, triggering the effect as soon as creatures are updated.
+}

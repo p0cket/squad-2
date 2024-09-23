@@ -1,4 +1,4 @@
-import React, {  useEffect } from "react"
+import React, { useEffect } from "react"
 import { useDispatchContext, useStateContext } from "../GameContext"
 import OwnedRunes from "./OwnedRunes"
 import CreatureStats from "./CreatureStats"
@@ -15,18 +15,19 @@ import Levels from "./screens/Levels"
 const Battle = () => {
   const state = useStateContext()
   const dispatch = useDispatchContext()
-  const { creatureControlsRef, setCreatureControls } = useCreatureControls()
-  // Use battle actions hook
   const {
-    handleAttack,
-    handleHeal,
-    handleIncreaseHealth,
-    handleIncreaseMpPerTurn,
-    handleIncreaseMaxMp,
-  } = useBattleActions(creatureControlsRef);
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef,
+    setCreatureControls,
+  } = useCreatureControls()
+
+  const { handleAttack } = useBattleActions(
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef
+  )
 
   // Apply end-of-turn effects using the custom hook
-  useEndOfTurnEffects(state, dispatch);
+  useEndOfTurnEffects(state, dispatch)
 
   useEffect(() => {
     dispatch({
@@ -34,6 +35,7 @@ const Battle = () => {
       mp: Math.min(state.mp + state.mpPerTurn, state.maxMp),
     })
   }, [state.turn, dispatch, state.mp, state.mpPerTurn, state.maxMp])
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white p-1">
       <Hud />
@@ -59,14 +61,7 @@ const Battle = () => {
       </div>
       <CreatureStats />
       <ShopModal />
-      <ActionButtons
-        handleAttack={handleAttack}
-        handleHeal={handleHeal}
-        handleIncreaseHealth={handleIncreaseHealth}
-        handleIncreaseMpPerTurn={handleIncreaseMpPerTurn}
-        handleIncreaseMaxMp={handleIncreaseMaxMp}
-        mp={state.mp}
-      />
+      <ActionButtons handleAttack={handleAttack} />
     </div>
   )
 }

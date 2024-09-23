@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useDispatchContext, useStateContext } from "../GameContext";
 import { performAttack } from "../utils.js/attackUtils";
 import { calculateHealedHealth, selectRandomCreature } from "../utils.js/battleUtils";
-export const useBattleActions = (creatureControlsRef) => {
+export const useBattleActions = (playerCreatureControlsRef, enemyCreatureControlsRef) => {
   const state = useStateContext();
   const dispatch = useDispatchContext();
 
@@ -17,7 +17,13 @@ export const useBattleActions = (creatureControlsRef) => {
       const playerAttacker = alivePlayerCreatures[Math.floor(Math.random() * alivePlayerCreatures.length)];
       const computerTarget = aliveComputerCreatures[Math.floor(Math.random() * aliveComputerCreatures.length)];
 
-      const damage = await performAttack(playerAttacker, computerTarget, true, creatureControlsRef);
+      const damage = await performAttack(
+        playerAttacker,
+        computerTarget,
+        true,
+        playerCreatureControlsRef,
+        enemyCreatureControlsRef
+      );
 
       dispatch({
         type: "UPDATE_CREATURE",
@@ -33,7 +39,13 @@ export const useBattleActions = (creatureControlsRef) => {
       const computerAttacker = aliveComputerCreatures[Math.floor(Math.random() * aliveComputerCreatures.length)];
       const playerTarget = alivePlayerCreatures[Math.floor(Math.random() * alivePlayerCreatures.length)];
 
-      const damage = await performAttack(computerAttacker, playerTarget, false, creatureControlsRef);
+      const damage = await performAttack(
+        computerAttacker,
+        playerTarget,
+        false,
+        playerCreatureControlsRef,
+        enemyCreatureControlsRef
+      );
 
       dispatch({
         type: "UPDATE_CREATURE",
@@ -44,77 +56,7 @@ export const useBattleActions = (creatureControlsRef) => {
         },
       });
     }
-  }, [state.playerCreatures, state.computerCreatures, dispatch, creatureControlsRef]);
+  }, [state.playerCreatures, state.computerCreatures, dispatch, playerCreatureControlsRef, enemyCreatureControlsRef]);
 
-  const handleHeal = useCallback(() => {
-    if (state.mp >= 10) {
-      dispatch({ type: "UPDATE_MP", mp: state.mp - 10 });
-      dispatch({ type: "INCREMENT_TURN" });
-
-      const healedCreatures = state.playerCreatures.map((creature) => ({
-        ...creature,
-        health: Math.min(creature.health + 20, creature.maxHealth),
-      }));
-
-      dispatch({
-        type: "UPDATE_CREATURES",
-        side: "playerCreatures",
-        creatures: healedCreatures,
-      });
-    }
-  }, [state.mp, state.playerCreatures, dispatch]);
-
-  const handleIncreaseHealth = useCallback(() => {
-    if (state.mp >= 10) {
-      dispatch({ type: "UPDATE_MP", mp: state.mp - 10 });
-      dispatch({ type: "INCREMENT_TURN" });
-  
-      const target = selectRandomCreature(state.playerCreatures);
-  
-      const updatedCreature = {
-        ...target,
-        health: calculateHealedHealth(target, 30),
-      };
-  
-      const updatedCreatures = state.playerCreatures.map((creature) =>
-        creature.name === target.name ? updatedCreature : creature
-      );
-  
-      dispatch({
-        type: "UPDATE_CREATURES",
-        side: "playerCreatures",
-        creatures: updatedCreatures,
-      });
-    }
-  }, [state.mp, state.playerCreatures, dispatch]);
-
-  const handleIncreaseMpPerTurn = useCallback(() => {
-    if (state.mp >= 10) {
-      dispatch({ type: "UPDATE_MP", mp: state.mp - 10 });
-      dispatch({ type: "INCREMENT_TURN" });
-      dispatch({
-        type: "UPDATE_MP_PER_TURN",
-        mpPerTurn: state.mpPerTurn + 2,
-      });
-    }
-  }, [state.mp, state.mpPerTurn, dispatch]);
-
-  const handleIncreaseMaxMp = useCallback(() => {
-    if (state.mp >= 10) {
-      dispatch({ type: "UPDATE_MP", mp: state.mp - 10 });
-      dispatch({ type: "INCREMENT_TURN" });
-      dispatch({
-        type: "UPDATE_MAX_MP",
-        maxMp: state.maxMp + 10,
-      });
-    }
-  }, [state.mp, state.maxMp, dispatch]);
-
-  return {
-    handleAttack,
-    handleHeal,
-    handleIncreaseHealth,
-    handleIncreaseMpPerTurn,
-    handleIncreaseMaxMp,
-  };
+  return { handleAttack };
 };

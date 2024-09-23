@@ -1,123 +1,101 @@
 // Level Generator Configurations
-const availableCreatures = [
-  {
-    name: "🐉",
-    template: "dragon",
-    baseHealth: 150,
-    baseAttack: 25,
-    baseDefence: 10,
-    mods: [],
-  },
-  {
-    name: "🦄",
-    template: "unicorn",
-    baseHealth: 120,
-    baseAttack: 20,
-    baseDefence: 15,
-    mods: [],
-  },
-  {
-    name: "👾",
-    template: "alien",
-    baseHealth: 100,
-    baseAttack: 30,
-    baseDefence: 5,
-    mods: [],
-  },
-  {
-    name: "🐙",
-    template: "fish",
-    baseHealth: 90,
-    baseAttack: 15,
-    baseDefence: 12,
-    mods: [],
-  },
+
+import { CREATURES } from "../consts/creatures"
+import { BASE_RUNES } from "../consts/items"
+import { auras, buffs, debuffs } from "../consts/mods"
+
+// const availableMods = [
+//   { name: "Burn", type: "statusEffect", duration: 3, damagePerTurn: 5 },
+//   { name: "Regeneration", type: "statusEffect", duration: 3, healPerTurn: 5 },
+//   { name: "Stun", type: "statusEffect", duration: 2, preventsAttack: true },
+// ]
+
+// Combine auras, buffs, and debuffs into availableMods
+export const availableMods = [
+  ...Object.values(auras),
+  ...Object.values(buffs),
+  ...Object.values(debuffs),
 ]
 
-const availableMods = [
-  { name: "Burn", type: "statusEffect", duration: 3, damagePerTurn: 5 },
-  { name: "Regeneration", type: "statusEffect", duration: 3, healPerTurn: 5 },
-  { name: "Stun", type: "statusEffect", duration: 2, preventsAttack: true },
-]
+// const scaleStat = (baseValue, level, scaleFactor = 1.05) => {
+//   return Math.floor(baseValue * Math.pow(scaleFactor, level))
+// }
 
-const availableRunes = [
-  {
-    name: "Rune of Strength",
-    effect: "Increases attack by 10",
-    statEffect: { stat: "attack", value: 10 },
-  },
-  {
-    name: "Rune of Vitality",
-    effect: "Increases health by 20",
-    statEffect: { stat: "health", value: 20 },
-  },
-]
-
+// Make sure to export the generateLevels function
+// Level Generator Function with Thematic Mods
 const levelEffects = [
   { name: "Double Damage", effect: "All damage is doubled" },
   { name: "No Healing", effect: "Healing is disabled" },
 ]
-
 const scaleStat = (baseValue, level, scaleFactor = 1.05) => {
   return Math.floor(baseValue * Math.pow(scaleFactor, level))
 }
 
-// Make sure to export the generateLevels function
+// Level Generator Function using the central `creatures` object
 export const generateLevels = (numLevels) => {
   const levels = []
 
   for (let i = 1; i <= numLevels; i++) {
-    const numberOfCreatures = Math.floor(Math.random() * 3) + 1 // 1 to 3 creatures
-    const creatures = []
+    const numberOfCreatures = Math.floor(Math.random() * 3) + 1 // 1 to 3 creatures per level
+    const opponentCreatures = []
 
     for (let j = 0; j < numberOfCreatures; j++) {
-      const randomCreature = {
-        ...availableCreatures[
-          Math.floor(Math.random() * availableCreatures.length)
-        ],
-      }
+      // Randomly select a creature from the `creatures` object
+      const creatureKeys = Object.keys(CREATURES) // ["dragon", "unicorn", "alien", "fish"]
+      const randomCreatureKey =
+        creatureKeys[Math.floor(Math.random() * creatureKeys.length)]
+      const randomCreature = { ...CREATURES[randomCreatureKey] } // Deep copy the selected creature
 
-      // Scale creature stats based on level (slow exponential scaling)
-      randomCreature.health = scaleStat(randomCreature.baseHealth, i)
-      randomCreature.attack = scaleStat(randomCreature.baseAttack, i)
-      randomCreature.defence = scaleStat(randomCreature.baseDefence, i)
+      // Scale creature stats based on level (exponential scaling)
+      randomCreature.health = scaleStat(randomCreature.health, i)
+      randomCreature.attack = scaleStat(randomCreature.attack, i)
+      randomCreature.defence = scaleStat(randomCreature.defence, i)
 
-      // Apply random mods to creatures
-      const randomMods = availableMods.slice(
-        0,
-        Math.floor(Math.random() * availableMods.length) + 1
-      )
-      randomCreature.mods = randomMods
+      // Apply thematic mods to creatures (auras, buffs, debuffs)
+      const randomAura =
+        Object.values(auras)[
+          Math.floor(Math.random() * Object.values(auras).length)
+        ]
+      const randomBuff =
+        Object.values(buffs)[
+          Math.floor(Math.random() * Object.values(buffs).length)
+        ]
+      const randomDebuff =
+        Object.values(debuffs)[
+          Math.floor(Math.random() * Object.values(debuffs).length)
+        ]
 
-      creatures.push(randomCreature)
+      randomCreature.mods = [randomAura, randomBuff, randomDebuff] // Assign random mods
+
+      opponentCreatures.push(randomCreature) // Add the configured creature to the opponent list
     }
 
     // Scale the number of runes and mods based on level difficulty
-    const randomRunes = availableRunes.slice(
+    const randomRunes = BASE_RUNES.slice(
       0,
-      Math.floor(Math.random() * availableRunes.length) + 1
+      Math.floor(Math.random() * BASE_RUNES.length) + 1
     )
     const randomLevelEffects = levelEffects.slice(
       0,
       Math.floor(Math.random() * levelEffects.length) + 1
     )
 
+    // Push level details to the `levels` array
     levels.push({
       levelNumber: i,
-      opponentCreatures: creatures,
+      opponentCreatures,
       opponentRunes: randomRunes,
       levelEffects: randomLevelEffects,
     })
   }
-
   return levels
 }
 
-//   // Ensure other helper functions are exported if necessary
-//   export const scaleStat = (baseValue, level, scaleFactor = 1.05) => {
-//     return Math.floor(baseValue * Math.pow(scaleFactor, level));
-//   };
-
 // Generate 10 Levels with Scaling
-const levels = generateLevels(10)
-console.log(levels)
+// const levels = generateLevels(10)
+// console.log(levels)
+
+export const loadLevelData = (levelNumber) => {
+  const allLevels = generateLevels(10) // Generates 10 levels; adjust if needed
+  return allLevels.find((level) => level.levelNumber === levelNumber)
+}

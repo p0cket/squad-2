@@ -20,18 +20,21 @@ const Levels = ({ numLevels }) => {
         <div key={index} className="level-card p-4 mb-6 border border-gray-200 rounded-lg shadow">
           <h2 className="text-2xl font-semibold mb-4">Level {level.levelNumber}</h2>
 
+          {/* Opponent Creatures */}
           <div className="opponent-creatures mb-4 flex flex-row">
             {level.opponentCreatures.map((creature, idx) => (
-              <div key={idx} className="creature mb-2 mr-4 flex flex-col">
+              <div key={idx} className="creature mb-2 mr-4 flex flex-col border p-4 rounded-lg bg-gray-700">
                 <p><strong>Name:</strong> {creature.name}</p>
                 <p><strong>Health:</strong> {creature.health}</p>
                 <p><strong>Attack:</strong> {creature.attack}</p>
                 <p><strong>Defence:</strong> {creature.defence}</p>
+
+                {/* Display creature's mods */}
                 <p><strong>Mods:</strong></p>
                 <ul className="ml-4">
                   {creature.mods.map((mod, modIdx) => (
                     <li key={modIdx}>
-                      {mod.name} (Type: {mod.type}, Duration: {mod.duration})
+                      {mod.name} ({mod.type}: {mod.effect || mod.description}, Duration: {mod.duration || 'Permanent'})
                     </li>
                   ))}
                 </ul>
@@ -39,6 +42,7 @@ const Levels = ({ numLevels }) => {
             ))}
           </div>
 
+          {/* Opponent Runes */}
           <div className="opponent-runes mb-4">
             <h3 className="text-xl font-bold mb-2">Opponent Runes:</h3>
             <ul>
@@ -50,6 +54,7 @@ const Levels = ({ numLevels }) => {
             </ul>
           </div>
 
+          {/* Level Effects */}
           <div className="level-effects mb-4">
             <h3 className="text-xl font-bold mb-2">Level Effects:</h3>
             <ul>
@@ -67,4 +72,3 @@ const Levels = ({ numLevels }) => {
 };
 
 export default Levels;
-

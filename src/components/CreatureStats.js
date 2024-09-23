@@ -1,8 +1,8 @@
 // CreatureStats.js
 import React from "react"
-import { creatures, useStateContext } from "../GameContext"
+import { useStateContext } from "../GameContext"
 import { applyRuneEffects } from "../utils.js/runeUtils"
-// import { creatures } from "../GameContext" // Import the base creatures
+import { CREATURES } from "../consts/creatures"
 
 function CreatureStats() {
   const state = useStateContext()
@@ -13,14 +13,14 @@ function CreatureStats() {
       <div className="grid grid-cols-2 gap-4">
         {state.playerCreatures.map((creature, index) => {
           // Get the base creature data using the template
-          const baseCreature = creatures[creature.template]
+          const baseCreature = CREATURES[creature.template]
 
           // Apply rune effects to the base creature to get current stats
           const enhancedStats = applyRuneEffects(baseCreature, state.runes)
 
           return (
             <div key={index}>
-              <h3 className="text-xl font-bold">{creature.name}</h3>
+              <h3 className="text-xl font-bold">{`${creature.name} ${creature.icon}`}</h3>
               {Object.entries(enhancedStats).map(([stat, value]) => {
                 const baseValue = baseCreature[stat] || 0 // Use the base creature stat
                 const runeContribution = value - baseValue
@@ -40,7 +40,7 @@ function CreatureStats() {
                       )}
                     </span>
                   </p>
-                );
+                )
               })}
             </div>
           )
