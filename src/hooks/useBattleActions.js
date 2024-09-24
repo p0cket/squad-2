@@ -8,15 +8,20 @@ export const useBattleActions = (playerCreatureControlsRef, enemyCreatureControl
   const dispatch = useDispatchContext();
 
   const handleAttack = useCallback(async () => {
+    console.log("Handling Attack...");
     dispatch({ type: "INCREMENT_TURN" });
 
     const alivePlayerCreatures = state.playerCreatures.filter((c) => c.health > 0);
     const aliveComputerCreatures = state.computerCreatures.filter((c) => c.health > 0);
 
+    console.log("Alive player creatures:", alivePlayerCreatures);
+    console.log("Alive computer creatures:", aliveComputerCreatures);
+
     if (alivePlayerCreatures.length > 0 && aliveComputerCreatures.length > 0) {
       const playerAttacker = alivePlayerCreatures[Math.floor(Math.random() * alivePlayerCreatures.length)];
       const computerTarget = aliveComputerCreatures[Math.floor(Math.random() * aliveComputerCreatures.length)];
 
+      console.log("Player attacking computer...");
       const damage = await performAttack(
         playerAttacker,
         computerTarget,
@@ -39,6 +44,7 @@ export const useBattleActions = (playerCreatureControlsRef, enemyCreatureControl
       const computerAttacker = aliveComputerCreatures[Math.floor(Math.random() * aliveComputerCreatures.length)];
       const playerTarget = alivePlayerCreatures[Math.floor(Math.random() * alivePlayerCreatures.length)];
 
+      console.log("Computer attacking player...");
       const damage = await performAttack(
         computerAttacker,
         playerTarget,
@@ -56,7 +62,12 @@ export const useBattleActions = (playerCreatureControlsRef, enemyCreatureControl
         },
       });
     }
-  }, [state.playerCreatures, state.computerCreatures, dispatch, playerCreatureControlsRef, enemyCreatureControlsRef]);
+
+    if (aliveComputerCreatures.length === 0) {
+      console.log("Player has won the battle. Dispatching WIN_GAME...");
+      dispatch({ type: "WIN_GAME" });
+    }
+  }, [state, dispatch, playerCreatureControlsRef, enemyCreatureControlsRef]);
 
   return { handleAttack };
 };

@@ -1,9 +1,13 @@
 import { useEffect } from "react"
 import { checkGameOver, handleEndOfTurnEffects } from "../utils.js/turnUtils"
+import { useDispatchContext, useStateContext } from "../GameContext"
 // Imports the utility functions for applying end-of-turn effects and checking if the game is over.
 
 // Custom hook to handle end-of-turn effects and victory/defeat checks
-export const useEndOfTurnEffects = (state, dispatch) => {
+export const useEndOfTurnEffects = () => {
+    //state, dispatch
+    const state = useStateContext()
+    const dispatch = useDispatchContext()
   useEffect(() => {
     // Apply end-of-turn effects to the player's creatures (e.g., poison damage, buffs, etc.)
     const updatedPlayerCreatures = handleEndOfTurnEffects(state.playerCreatures)
