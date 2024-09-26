@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useStateContext } from '../GameContext';
+import Levels from './screens/Levels';
 
 function Hud() {
   const state = useStateContext();
@@ -28,6 +29,7 @@ function Hud() {
       <div className="flex items-center space-x-2">
         <div className="text-yellow-400 font-bold">Gold: {gold}</div>
       </div>
+      <Levels numLevels={10} />
 
       {/* Turn Display */}
       <div className="flex items-center space-x-2">

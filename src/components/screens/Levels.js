@@ -1,72 +1,176 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { Modal, Box, Button, Typography, Grid } from '@mui/material'; // Import MUI components
+import { useStateContext } from '../../GameContext';
 
-// Import your level generator function
-import { generateLevels } from '../../utils.js/levelGeneratorUtils';
+// Define styles for the modal in a dark theme
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '80%',
+  height: '80vh',
+  bgcolor: '#1e1e1e',  // Dark background
+  border: '2px solid #333',
+  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.9)',
+  color: '#f1f1f1',  // Light text color
+  p: 3,
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+  borderRadius: '12px',
+};
 
-// Define the Levels component
-const Levels = ({ numLevels }) => {
-  const [levels, setLevels] = useState([]);
+const contentStyle = {
+  flex: '1',
+  overflowY: 'auto',
+};
 
-  // Generate levels on component mount
-  useEffect(() => {
-    const generatedLevels = generateLevels(numLevels);
-    setLevels(generatedLevels);
-  }, [numLevels]);
+const buttonStyle = {
+  color: '#f1f1f1',
+  borderColor: '#f1f1f1',
+  '&:hover': {
+    backgroundColor: '#333',
+  },
+};
+
+const Levels = () => {
+  const { levels } = useStateContext(); // Access levels from global context
+  const [currentLevelIndex, setCurrentLevelIndex] = useState(0); // Track current level
+  const [open, setOpen] = useState(false); // Control modal state
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleNextLevel = () => {
+    if (currentLevelIndex < levels.length - 1) {
+      setCurrentLevelIndex(currentLevelIndex + 1);
+    }
+  };
+
+  const handlePreviousLevel = () => {
+    if (currentLevelIndex > 0) {
+      setCurrentLevelIndex(currentLevelIndex - 1);
+    }
+  };
 
   return (
     <div className="levels-container">
-      <h1 className="text-3xl font-bold mb-8">Generated Levels</h1>
-      {levels.map((level, index) => (
-        <div key={index} className="level-card p-4 mb-6 border border-gray-200 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4">Level {level.levelNumber}</h2>
+      <Button variant="contained" onClick={handleOpen} sx={{ backgroundColor: '#333', color: '#f1f1f1' }}>
+        Open Levels Modal
+      </Button>
+      
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="levels-modal-title"
+        aria-describedby="levels-modal-description"
+      >
+        <Box sx={modalStyle}>
+          {levels.length > 0 ? (
+            <>
+              <Typography id="levels-modal-title" variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold', textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
+                Level {levels[currentLevelIndex].levelNumber}
+              </Typography>
 
-          {/* Opponent Creatures */}
-          <div className="opponent-creatures mb-4 flex flex-row">
-            {level.opponentCreatures.map((creature, idx) => (
-              <div key={idx} className="creature mb-2 mr-4 flex flex-col border p-4 rounded-lg bg-gray-700">
-                <p><strong>Name:</strong> {creature.name}</p>
-                <p><strong>Health:</strong> {creature.health}</p>
-                <p><strong>Attack:</strong> {creature.attack}</p>
-                <p><strong>Defence:</strong> {creature.defence}</p>
+              {/* Compact content container */}
+              <Box sx={contentStyle}>
+                {/* Opponent Creatures */}
+                <Grid container spacing={2} className="opponent-creatures mb-2">
+                  <Grid item xs={12}>
+                    <Typography variant="h6" sx={{ color: '#ffd700', fontWeight: 'bold', textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}>
+                      Opponent Creatures: {levels[currentLevelIndex].opponentCreatures.length}
+                    </Typography>
+                  </Grid>
+                  {levels[currentLevelIndex].opponentCreatures.map((creature, idx) => (
+                    <Grid item xs={6} key={idx}>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Name:</strong> {creature.name}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Health:</strong> {creature.health}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Attack:</strong> {creature.attack}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Defence:</strong> {creature.defence}
+                      </Typography>
 
-                {/* Display creature's mods */}
-                <p><strong>Mods:</strong></p>
-                <ul className="ml-4">
-                  {creature.mods.map((mod, modIdx) => (
-                    <li key={modIdx}>
-                      {mod.name} ({mod.type}: {mod.effect || mod.description}, Duration: {mod.duration || 'Permanent'})
-                    </li>
+                      {/* Display creature's mods */}
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        <strong>Mods:</strong>
+                      </Typography>
+                      <ul className="ml-4">
+                        {creature.mods.map((mod, modIdx) => (
+                          <li key={modIdx} style={{ marginBottom: '4px' }}>
+                            {mod.name} ({mod.type}: {mod.effect || mod.description}, Duration: {mod.duration || 'Permanent'})
+                          </li>
+                        ))}
+                      </ul>
+                    </Grid>
                   ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+                </Grid>
 
-          {/* Opponent Runes */}
-          <div className="opponent-runes mb-4">
-            <h3 className="text-xl font-bold mb-2">Opponent Runes:</h3>
-            <ul>
-              {level.opponentRunes.map((rune, runeIdx) => (
-                <li key={runeIdx}>
-                  <p><strong>{rune.name}</strong> - {rune.effect}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
+                {/* Opponent Runes */}
+                <Grid container spacing={2} className="opponent-runes mb-2">
+                  <Grid item xs={12}>
+                    <Typography variant="h6" sx={{ color: '#ffd700', fontWeight: 'bold', textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}>
+                      Opponent Runes:
+                    </Typography>
+                  </Grid>
+                  {levels[currentLevelIndex].opponentRunes.map((rune, runeIdx) => (
+                    <Grid item xs={6} key={runeIdx}>
+                      <Typography variant="body2">
+                        <strong>{rune.name}</strong> - {rune.effect}
+                      </Typography>
+                    </Grid>
+                  ))}
+                </Grid>
 
-          {/* Level Effects */}
-          <div className="level-effects mb-4">
-            <h3 className="text-xl font-bold mb-2">Level Effects:</h3>
-            <ul>
-              {level.levelEffects.map((effect, effectIdx) => (
-                <li key={effectIdx}>
-                  <p><strong>{effect.name}</strong> - {effect.effect}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ))}
+                {/* Level Effects */}
+                <Grid container spacing={2} className="level-effects mb-2">
+                  <Grid item xs={12}>
+                    <Typography variant="h6" sx={{ color: '#ffd700', fontWeight: 'bold', textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}>
+                      Level Effects:
+                    </Typography>
+                  </Grid>
+                  {levels[currentLevelIndex].levelEffects.map((effect, effectIdx) => (
+                    <Grid item xs={6} key={effectIdx}>
+                      <Typography variant="body2">
+                        <strong>{effect.name}</strong> - {effect.effect}
+                      </Typography>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+
+              {/* Navigation Buttons */}
+              <Grid container justifyContent="space-between" mt={2}>
+                <Button
+                  variant="outlined"
+                  onClick={handlePreviousLevel}
+                  disabled={currentLevelIndex === 0}
+                  sx={buttonStyle}
+                >
+                  Previous
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  onClick={handleNextLevel}
+                  disabled={currentLevelIndex === levels.length - 1}
+                  sx={buttonStyle}
+                >
+                  Next
+                </Button>
+              </Grid>
+            </>
+          ) : (
+            <Typography variant="body1" sx={{ color: '#f1f1f1', textAlign: 'center' }}>No levels generated.</Typography>
+          )}
+        </Box>
+      </Modal>
     </div>
   );
 };
