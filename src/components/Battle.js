@@ -2,15 +2,12 @@ import React, { useEffect } from "react"
 import { useDispatchContext, useStateContext } from "../GameContext"
 import OwnedRunes from "./OwnedRunes"
 import CreatureStats from "./CreatureStats"
-import { checkGameOver, handleEndOfTurnEffects } from "../utils.js/turnUtils"
-import ShopModal from "./Modal"
 import Hud from "./Hud"
 import ActionButtons from "./battle/ActionButtons"
 import CreatureGroup from "./battle/CreatureGroup"
 import { useCreatureControls } from "../hooks/useCreatureControls"
 import { useBattleActions } from "../hooks/useBattleActions"
 import { useEndOfTurnEffects } from "../hooks/useEndOfTurnEffects"
-import Levels from "./screens/Levels"
 
 const Battle = () => {
   const state = useStateContext()
@@ -39,15 +36,15 @@ const Battle = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white p-1">
       <Hud />
-      <Levels numLevels={10} />
       <OwnedRunes />
-      <div className="flex flex-col items-center w-full max-w-3xl mb-2">
+      <div className="flex flex-col items-center w-full max-w-3xl mb-1">
         {/* Enemy Creatures at the Top */}
-        <div className="flex flex-row items-center justify-center mb-8">
+        <div className="flex flex-row items-center justify-center mb-4">
           <CreatureGroup
             creatures={state.computerCreatures}
             isPlayer={false}
             setCreatureControls={setCreatureControls}
+            isFlipped
           />
         </div>
         {/* Player Creatures at the Bottom */}
@@ -59,9 +56,8 @@ const Battle = () => {
           />
         </div>
       </div>
-      <CreatureStats />
-      <ShopModal />
       <ActionButtons handleAttack={handleAttack} />
+      <CreatureStats />
     </div>
   )
 }

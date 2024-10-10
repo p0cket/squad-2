@@ -8,8 +8,8 @@ function CreatureStats() {
   const state = useStateContext()
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg mt-8">
-      <h2 className="text-2xl font-bold mb-4">Creature Stats</h2>
+    <div className="bg-gray-800 p-4 rounded-lg mt-1">
+      <h2 className="text-2xl font-bold mb-2">Creature Stats</h2>
       <div className="grid grid-cols-2 gap-4">
         {state.playerCreatures.map((creature, index) => {
           // Get the base creature data using the template
