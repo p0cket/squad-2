@@ -7,13 +7,14 @@ export const useCreatureControls = () => {
   const enemyCreatureControlsRef = useRef({});
 
   // Function to set creature controls, distinguishing between player and enemy
-  const setCreatureControls = useCallback((name, data, isPlayer) => {
+  const setCreatureControls = useCallback((ID, data, isPlayer) => {
     if (isPlayer) {
-      playerCreatureControlsRef.current[name] = data;
+      playerCreatureControlsRef.current[ID] = data;
     } else {
-      enemyCreatureControlsRef.current[name] = data;
+      enemyCreatureControlsRef.current[ID] = data;
     }
   }, []);
 
+  console.log(`useCreatureControls`, playerCreatureControlsRef.current, enemyCreatureControlsRef.current);
   return { playerCreatureControlsRef, enemyCreatureControlsRef, setCreatureControls };
 };

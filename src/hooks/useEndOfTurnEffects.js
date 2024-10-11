@@ -18,7 +18,24 @@ export const useEndOfTurnEffects = () => {
     // Log the updated state of creatures for debugging purposes
     console.log("Updated Player Creatures: ", updatedPlayerCreatures)
     console.log("Updated Computer Creatures: ", updatedComputerCreatures)
-
+    
+    updatedPlayerCreatures.forEach((creature) => {
+      if (creature.health <= 0) {
+        dispatch({
+          type: "MOVE_CREATURE_TO_BACK",
+          payload: { side: "playerCreatures", creatureId: creature.ID },
+        });
+      }
+    });
+  
+    updatedComputerCreatures.forEach((creature) => {
+      if (creature.health <= 0) {
+        dispatch({
+          type: "MOVE_CREATURE_TO_BACK",
+          payload: { side: "computerCreatures", creatureId: creature.ID },
+        });
+      }
+    });
     // Dispatch the updated player creatures into the global state
     dispatch({
       type: "UPDATE_CREATURES", // Action to update the state

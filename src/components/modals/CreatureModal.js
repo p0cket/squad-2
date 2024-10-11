@@ -1,4 +1,4 @@
-// CreatureModal.js
+// replaceCreatureModal.js
 import React from "react"
 import { Modal, Box, Typography, Card, CardContent } from "@mui/material"
 
@@ -16,7 +16,7 @@ const style = {
   borderRadius: "10px",
 }
 
-const CreatureModal = ({ open, handleClose, creature, creatureData }) => {
+const replaceCreatureModal = ({ open, handleClose, creature, creatureData }) => {
   if (!creature) return null
 
   // Define properties to exclude or handle specially
@@ -85,4 +85,4 @@ const CreatureModal = ({ open, handleClose, creature, creatureData }) => {
   )
 }
 
-export default CreatureModal
+export default replaceCreatureModal

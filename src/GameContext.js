@@ -6,6 +6,7 @@ import { applyMod, applyTurnEnhancementEffects } from "./utils.js/modUtils"
 import { CREATURES } from "./consts/creatures"
 import { BASE_RUNES } from "./consts/items"
 import { generateLevels, loadLevelData } from "./utils.js/levelGeneratorUtils"
+import { createUniqueParty } from "./utils.js/creatureUtils"
 
 // Constants
 export const INITIAL_MAX_MP = 50
@@ -20,8 +21,8 @@ const generatedLevels = generateLevels(10) // Generate levels once here
 
 const initialState = {
   // Existing Game State
-  playerCreatures: structuredClone(basePlayerCreatures),
-  computerCreatures: structuredClone(generatedLevels[0].opponentCreatures), // Load level 1's creatures
+  playerCreatures: structuredClone(createUniqueParty(basePlayerCreatures)),
+  computerCreatures: structuredClone(createUniqueParty(generatedLevels[0].opponentCreatures)), // Load level 1's creatures
   mp: 0,
   maxMp: INITIAL_MAX_MP,
   mpPerTurn: INITIAL_MP_PER_TURN,
@@ -43,8 +44,9 @@ const initialState = {
   level: 1, // Start at level 1
   levels: generatedLevels, // Store the generated levels here
   levelEffects: generatedLevels[0].levelEffects, // Load level 1's effects
-  modals: null,
+  modals: {replaceCreatureModal: null},
 }
+console.log("Initial State:", initialState)
 // Game Reducer
 const gameReducer = (state, action) => {
   console.log("Action dispatched:", action)
@@ -54,7 +56,7 @@ const gameReducer = (state, action) => {
       return {
         ...state,
         [action.side]: state[action.side].map((creature) =>
-          creature.name === action.creature.name
+          creature.ID === action.creature.ID
             ? { ...creature, ...action.creature }
             : creature
         ),
@@ -71,17 +73,67 @@ const gameReducer = (state, action) => {
       return {
         ...state,
         playerCreatures: state.playerCreatures.map((creature) => {
-          if (creature.name === action.payload.creature.name) {
+          if (creature.ID === action.payload.creature.ID) {
             return applyMod(creature, action.payload.mod) // Use applyMod for all mods
           }
           return creature
         }),
       }
-
+      case "MOVE_CREATURE_TO_BACK": {
+        const { side, creatureId } = action.payload;
+      
+        // Get the creatures array (either player or computer)
+        const creatures = [...state[side]];
+      
+        // Find the index of the dead creature
+        const creatureIndex = creatures.findIndex(
+          (creature) => creature.ID === creatureId
+        );
+      
+        if (creatureIndex !== -1) {
+          // Remove the creature from its current position
+          const [deadCreature] = creatures.splice(creatureIndex, 1);
+          // Add it to the end of the array
+          creatures.push(deadCreature);
+        }
+      
+        return {
+          ...state,
+          [side]: creatures,
+        };
+      }
+      case "TOGGLE_SELECT_REPLACEMENT_CREATURE": {
+        return {
+          ...state,
+          modals: {
+            ...state.modals,
+            replaceCreatureModal: !state.modals.replaceCreatureModal,
+          },
+        }
+      }
+      case "SWAP_CREATURE_POSITION": {
+        const { side, newActiveCreatureId } = action.payload;
+      
+        const creatures = [...state[side]];
+        const activeIndex = creatures.findIndex(
+          (creature) => creature.ID === newActiveCreatureId
+        );
+      
+        if (activeIndex !== -1) {
+          const [newActive] = creatures.splice(activeIndex, 1);
+          creatures.unshift(newActive); // Place selected creature in active slot
+        }
+      
+        return {
+          ...state,
+          [side]: creatures,
+        };
+      }
+      
     case "ATTACK_CREATURE":
       // Handle creature attack, applying aura effect if it exists
       const attacker = state.playerCreatures.find(
-        (creature) => creature.name === action.attacker.name
+        (creature) => creature.ID === action.attacker.ID
       )
       if (attacker.aura && Math.random() < 0.75) {
         // 75% chance to apply the aura's effect
@@ -236,7 +288,7 @@ export const GameProvider = ({ children }) => {
 //   return {
 //     ...state,
 //     playerCreatures: state.playerCreatures.map((creature) => {
-//       if (creature.name === action.payload.creature.name) {
+//       if (creature.ID === action.payload.creature.ID) {
 //         return {
 //           ...creature,
 //           aura: action.payload.aura, // Attach the aura to the creature
@@ -249,7 +301,7 @@ export const GameProvider = ({ children }) => {
 //     return {
 //       ...state,
 //       playerCreatures: state.playerCreatures.map((creature) => {
-//         if (creature.name === action.creature.name) {
+//         if (creature.ID === action.creature.ID) {
 //           return applyEnhancement(creature, action.enhancement)
 //         }
 //         return creature

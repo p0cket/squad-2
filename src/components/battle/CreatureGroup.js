@@ -1,7 +1,12 @@
 import React from "react";
 import Creature from "../Creature";
 
-const CreatureGroup = ({ creatures, isPlayer, isFlipped, setCreatureControls }) => {
+const CreatureGroup = ({
+  creatures,
+  isPlayer,
+  isFlipped,
+  setCreatureControls,
+}) => {
   // Splitting the creatures array into first and the rest
   const firstCreature = creatures[0];
   const restOfCreatures = creatures.slice(1);
@@ -16,13 +21,10 @@ const CreatureGroup = ({ creatures, isPlayer, isFlipped, setCreatureControls }) 
       {firstCreature && (
         <div className={firstRowCreatureSize}>
           <Creature
-            key={firstCreature.name}
-            name={firstCreature.name}
-            icon={firstCreature.icon}
-            health={firstCreature.health}
-            maxHealth={firstCreature.maxHealth}
             isPlayer={isPlayer}
-            setCreatureControls={(name, data) => setCreatureControls(name, data, isPlayer)}
+            setCreatureControls={(name, data) =>
+              setCreatureControls(name, data, isPlayer)
+            }
             creatureObj={firstCreature}
           />
         </div>
@@ -32,15 +34,13 @@ const CreatureGroup = ({ creatures, isPlayer, isFlipped, setCreatureControls }) 
 
   const renderSecondRow = () => (
     <div className={secondRowClass}>
-      {restOfCreatures.map((creature) => (
-        <div key={creature.name} className={secondRowCreatureSize}>
+      {restOfCreatures.map((creature, index) => (
+        <div key={index} className={secondRowCreatureSize}>
           <Creature
-            name={creature.name}
-            icon={creature.icon}
-            health={creature.health}
-            maxHealth={creature.maxHealth}
             isPlayer={isPlayer}
-            setCreatureControls={(name, data) => setCreatureControls(name, data, isPlayer)}
+            setCreatureControls={(name, data) =>
+              setCreatureControls(name, data, isPlayer)
+            }
             creatureObj={creature}
           />
         </div>
