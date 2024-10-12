@@ -49,8 +49,7 @@ const initialState = {
 console.log("Initial State:", initialState)
 // Game Reducer
 const gameReducer = (state, action) => {
-  console.log("Action dispatched:", action)
-  console.log("State before action:", state)
+  console.log(`Action dispatched ${action.type}. Action and State:`, action, state)
   switch (action.type) {
     case "UPDATE_CREATURE":
       return {

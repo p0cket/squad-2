@@ -13,7 +13,6 @@ export const calcDamage = (attacker, target) => {
   const defense = target.defense || 0;
   const trueDamage = attacker.trueDamage || 0;
 
-  console.log("Attack:", attack, "Defense:", defense, "True Damage:", trueDamage);
 
   // Calculate base damage
   let baseDamage = attack - defense;
@@ -23,14 +22,12 @@ export const calcDamage = (attacker, target) => {
 
   // Add true damage
   const totalDamage = baseDamage + trueDamage;
-
-  console.log("Total Damage before Random Factor:", totalDamage);
-
+  console.log(`(Attack ${attack} - Defense ${defense}) + TrueDamage: ${trueDamage} = ${totalDamage}`);
   // Add some randomness
-  const randomFactor = 1; // Random factor between 0.9 and 1.1
+  // const randomFactor = 1; // Random factor between 0.9 and 1.1
   // const randomFactor = Math.random() * 0.2 + 0.9; // Random factor between 0.9 and 1.1
-  const damage = totalDamage * randomFactor;
-
+  // const damage = totalDamage * randomFactor;
+  const damage = totalDamage
   console.log("Total Damage after Random Factor:", damage);
   console.groupEnd();
 
@@ -143,18 +140,20 @@ export const performAttack = async (
 
   // Apply damage to target health
   console.group("Damage Calculation and Application");
-  console.log("Damage dealt:", damage);
+  console.log(`target.health -=  calcDamage(attacker, target) ${target.health} -= ${damage}. Attacker, target:`, attacker, target);
+  // console.log("Damage dealt:", damage);
   console.log("Target's health before damage:", target.health);
-  target.health -= damage;
+  // target.health -= damage;
+  const damagedHP = target.health - damage
 
-  if (typeof target.health !== "number" || isNaN(target.health)) {
+  if (typeof damagedHP !== "number" || isNaN(damagedHP)) {
     console.error(
       "Target's health became invalid after applying damage. Setting health to 0:",
-      target.health
+      damagedHP
     );
-    target.health = 0;
+    console.error("damagedHP not a number or NaN:", damagedHP);
   } else {
-    console.log("Target's health after damage:", target.health);
+    console.log("Target's health after damage:", damagedHP);
   }
   console.groupEnd();
 

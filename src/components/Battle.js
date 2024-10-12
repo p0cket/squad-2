@@ -7,7 +7,7 @@ import ActionButtons from "./battle/ActionButtons"
 import CreatureGroup from "./battle/CreatureGroup"
 import { useCreatureControls } from "../hooks/useCreatureControls"
 import { useBattleActions } from "../hooks/useBattleActions"
-import { useEndOfTurnEffects } from "../hooks/useEndOfTurnEffects"
+// import { useEndOfTurnEffects } from "../hooks/useEndOfTurnEffects"
 
 const Battle = () => {
   const state = useStateContext()
@@ -24,7 +24,7 @@ const Battle = () => {
   )
 
   // Apply end-of-turn effects using the custom hook
-  useEndOfTurnEffects(state, dispatch)
+  // useEndOfTurnEffects(state, dispatch)
 
   useEffect(() => {
     dispatch({

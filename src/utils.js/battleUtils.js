@@ -1,7 +1,4 @@
-// import { checkGameOver, handleEndOfTurnEffects } from "./turnUtils"
-
 import { checkGameOver, handleEndOfTurnEffects } from "./turnUtils"
-
 
 export const resetCreatures = (creatures) => {
   return creatures.map((creature) => {
@@ -13,21 +10,25 @@ export const resetCreatures = (creatures) => {
 }
 
 export const selectRandomCreature = (creatures) => {
-  return creatures[Math.floor(Math.random() * creatures.length)];
-};
+  return creatures[Math.floor(Math.random() * creatures.length)]
+}
 
 export const calculateHealedHealth = (creature, healAmount) => {
-  return Math.min(creature.health + healAmount, creature.maxHealth);
-};
-
+  return Math.min(creature.health + healAmount, creature.maxHealth)
+}
 
 export const processEndOfTurn = (state, dispatch) => {
   // Apply end-of-turn effects to the player's and computer's creatures
   const updatedPlayerCreatures = handleEndOfTurnEffects(state.playerCreatures)
-  const updatedComputerCreatures = handleEndOfTurnEffects(state.computerCreatures)
+  const updatedComputerCreatures = handleEndOfTurnEffects(
+    state.computerCreatures
+  )
 
-  console.log("Updated Player Creatures: ", updatedPlayerCreatures)
-  console.log("Updated Computer Creatures: ", updatedComputerCreatures)
+  console.log(
+    "Updated Player Creatures & Updated Computer Creatures. Move to back?:",
+    updatedPlayerCreatures,
+    updatedComputerCreatures
+  )
 
   // Move dead creatures to the back
   updatedPlayerCreatures.forEach((creature) => {
@@ -38,7 +39,6 @@ export const processEndOfTurn = (state, dispatch) => {
       })
     }
   })
-
   updatedComputerCreatures.forEach((creature) => {
     if (creature.health <= 0) {
       dispatch({
@@ -54,7 +54,6 @@ export const processEndOfTurn = (state, dispatch) => {
     side: "playerCreatures",
     creatures: updatedPlayerCreatures,
   })
-
   dispatch({
     type: "UPDATE_CREATURES",
     side: "computerCreatures",
@@ -62,8 +61,27 @@ export const processEndOfTurn = (state, dispatch) => {
   })
 
   // Check for game over conditions
-  const playerLost = checkGameOver(updatedPlayerCreatures)
-  const computerLost = checkGameOver(updatedComputerCreatures)
+  checkAndHandleGameOver(updatedPlayerCreatures, updatedComputerCreatures, dispatch)
+
+  // Return the game status
+  return {
+    playerLost: checkGameOver(updatedPlayerCreatures),
+    computerLost: checkGameOver(updatedComputerCreatures),
+  }
+}
+
+export const getAliveCreatures = (creatures) => {
+  return creatures.filter((c) => c.health > 0)
+}
+
+// Abstracted game over check logic
+export const checkAndHandleGameOver = (
+  playerCreatures,
+  computerCreatures,
+  dispatch
+) => {
+  const playerLost = checkGameOver(playerCreatures)
+  const computerLost = checkGameOver(computerCreatures)
 
   if (computerLost) {
     dispatch({ type: "WIN_GAME" })
@@ -74,14 +92,4 @@ export const processEndOfTurn = (state, dispatch) => {
     console.log("Player lost, game over!")
     setTimeout(() => dispatch({ type: "RESET_BATTLE" }), 100)
   }
-
-  // Return the game status
-  return { playerLost, computerLost }
-}
-
-// const aliveComputerCreatures = state.computerCreatures.filter(
-//   (c) => c.health > 0
-// )
-export const getAliveCreatures = (creatures) => {
-  return creatures.filter((c) => c.health > 0)
 }

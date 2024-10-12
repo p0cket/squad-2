@@ -25,7 +25,7 @@ const baseStats = {
 // },
 export const CREATURES = {
   dragon: {
-    name: "🐉",
+    name: "Draco",
     icon: "🐉",
     template: "dragon",
     health: MAX_HP,
@@ -36,18 +36,18 @@ export const CREATURES = {
     mods: [],
   },
   unicorn: {
-    name: "🦄",
+    name: "Sparkle",
     icon: "🦄",
     template: "unicorn",
-    health: MAX_HP,
-    maxHealth: MAX_HP,
+    health: 200,
+    maxHealth: 200,
     attack: 110,
     trueDamage: 10,
     defence: 5,
     mods: [],
   },
   alien: {
-    name: "👾",
+    name: "Zorg",
     icon: "👾",
     template: "alien",
     health: MAX_HP,
@@ -58,7 +58,7 @@ export const CREATURES = {
     mods: [],
   },
   fish: {
-    name: "🐙",
+    name: "Octavia",
     icon: "🐙",
     template: "fish",
     health: MAX_HP,
@@ -69,7 +69,7 @@ export const CREATURES = {
     mods: [],
   },
   phoenix: {
-    name: "🦅",
+    name: "Ash",
     icon: "🦅",
     template: "phoenix",
     health: MAX_HP,
@@ -80,7 +80,7 @@ export const CREATURES = {
     mods: [],
   },
   minotaur: {
-    name: "🐂",
+    name: "Asterion",
     icon: "🐂",
     template: "minotaur",
     health: MAX_HP,
@@ -91,7 +91,7 @@ export const CREATURES = {
     mods: [],
   },
   werewolf: {
-    name: "🐺",
+    name: "Fang",
     icon: "🐺",
     template: "werewolf",
     health: MAX_HP,
@@ -102,7 +102,7 @@ export const CREATURES = {
     mods: [],
   },
   giant: {
-    name: "👹",
+    name: "Goliath",
     icon: "👹",
     template: "giant",
     health: MAX_HP,
@@ -113,8 +113,8 @@ export const CREATURES = {
     mods: [],
   },
   golem: {
-    name: "🗿",
-    icon: "🗿",
+    name: "Rocky",
+    icon: "🟠",
     template: "golem",
     health: MAX_HP,
     maxHealth: MAX_HP,
@@ -124,8 +124,8 @@ export const CREATURES = {
     mods: [],
   },
   vampire: {
-    name: "🧛",
-    icon: "🧛",
+    name: "Vlad",
+    icon: "🦛",
     template: "vampire",
     health: MAX_HP,
     maxHealth: MAX_HP,
@@ -135,7 +135,7 @@ export const CREATURES = {
     mods: [],
   },
   cyclops: {
-    name: "👁",
+    name: "Argus",
     icon: "👁",
     template: "cyclops",
     health: MAX_HP,
@@ -146,7 +146,7 @@ export const CREATURES = {
     mods: [],
   },
   gryphon: {
-    name: "🦅",
+    name: "Griff",
     icon: "🦅",
     template: "gryphon",
     health: MAX_HP,
@@ -157,7 +157,7 @@ export const CREATURES = {
     mods: [],
   },
   kraken: {
-    name: "🦑",
+    name: "Kraken",
     icon: "🦑",
     template: "kraken",
     health: MAX_HP,
@@ -168,7 +168,7 @@ export const CREATURES = {
     mods: [],
   },
   pegasus: {
-    name: "🦄",
+    name: "Wings",
     icon: "🦄",
     template: "pegasus",
     health: MAX_HP,
@@ -179,7 +179,7 @@ export const CREATURES = {
     mods: [],
   },
   banshee: {
-    name: "👻",
+    name: "Wail",
     icon: "👻",
     template: "banshee",
     health: MAX_HP,
@@ -190,7 +190,7 @@ export const CREATURES = {
     mods: [],
   },
   chimera: {
-    name: "🐉",
+    name: "Chimmy",
     icon: "🐉",
     template: "chimera",
     health: MAX_HP,
@@ -201,7 +201,7 @@ export const CREATURES = {
     mods: [],
   },
   basilisk: {
-    name: "🐍",
+    name: "Slither",
     icon: "🐍",
     template: "basilisk",
     health: MAX_HP,
@@ -212,7 +212,7 @@ export const CREATURES = {
     mods: [],
   },
   centaur: {
-    name: "🐎",
+    name: "Cento",
     icon: "🐎",
     template: "centaur",
     health: MAX_HP,
@@ -223,7 +223,7 @@ export const CREATURES = {
     mods: [],
   },
   cerberus: {
-    name: "🐶",
+    name: "Hades",
     icon: "🐶",
     template: "cerberus",
     health: MAX_HP,
@@ -234,7 +234,7 @@ export const CREATURES = {
     mods: [],
   },
   hydra: {
-    name: "🐍",
+    name: "Hydro",
     icon: "🐍",
     template: "hydra",
     health: MAX_HP,
@@ -245,8 +245,8 @@ export const CREATURES = {
     mods: [],
   },
   sphinx: {
-    name: "🦁",
-    icon: "🦁",
+    name: "Riddle",
+    icon: "🐯",
     template: "sphinx",
     health: MAX_HP,
     maxHealth: MAX_HP,
@@ -256,7 +256,7 @@ export const CREATURES = {
     mods: [],
   },
   harpy: {
-    name: "🦅",
+    name: "Harper",
     icon: "🦅",
     template: "harpy",
     health: MAX_HP,
@@ -267,7 +267,7 @@ export const CREATURES = {
     mods: [],
   },
   leviathan: {
-    name: "🐋",
+    name: "Levi",
     icon: "🐋",
     template: "leviathan",
     health: MAX_HP,
@@ -278,7 +278,7 @@ export const CREATURES = {
     mods: [],
   },
   troll: {
-    name: "👹",
+    name: "Grump",
     icon: "👹",
     template: "troll",
     health: MAX_HP,
@@ -289,8 +289,8 @@ export const CREATURES = {
     mods: [],
   },
   manticore: {
-    name: "🦁",
-    icon: "🦁",
+    name: "Manny",
+    icon: "🐯",
     template: "manticore",
     health: MAX_HP,
     maxHealth: MAX_HP,
@@ -300,7 +300,7 @@ export const CREATURES = {
     mods: [],
   },
   ghoul: {
-    name: "👻",
+    name: "Spooky",
     icon: "👻",
     template: "ghoul",
     health: MAX_HP,
@@ -311,7 +311,7 @@ export const CREATURES = {
     mods: [],
   },
   faun: {
-    name: "🐐",
+    name: "Pan",
     icon: "🐐",
     template: "faun",
     health: MAX_HP,
@@ -322,7 +322,7 @@ export const CREATURES = {
     mods: [],
   },
   satyr: {
-    name: "🐐",
+    name: "Sylvan",
     icon: "🐐",
     template: "satyr",
     health: MAX_HP,
@@ -333,7 +333,7 @@ export const CREATURES = {
     mods: [],
   },
   wendigo: {
-    name: "👹",
+    name: "Frost",
     icon: "👹",
     template: "wendigo",
     health: MAX_HP,
@@ -344,7 +344,7 @@ export const CREATURES = {
     mods: [],
   },
   salamander: {
-    name: "🦎",
+    name: "Lizard",
     icon: "🦎",
     template: "salamander",
     health: MAX_HP,
@@ -354,7 +354,7 @@ export const CREATURES = {
     defence: 5,
     mods: [],
   },
-}
+};
 
 export const NEW_OBJ_FOR_CREATURES = {
   dragon: {

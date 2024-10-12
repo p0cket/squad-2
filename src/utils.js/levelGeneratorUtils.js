@@ -29,7 +29,9 @@ export const generateLevels = (numLevels) => {
   for (let i = 1; i <= numLevels; i++) {
     console.group(`Generating Level ${i}`);
 
-    const numberOfCreatures = Math.floor(Math.random() * 10) + 1; // 1 to 10 creatures per level
+    const numberOfCreatures = Math.floor(Math.random() * 3) + 1; // 1 to 10 creatures per level
+    // const numberOfCreatures = 10; // 1 to 10 creatures per level
+
     console.log(`Number of opponent creatures: ${numberOfCreatures}`);
     const opponentCreatures = [];
 
@@ -44,7 +46,9 @@ export const generateLevels = (numLevels) => {
       console.log(`Selected creature: ${randomCreatureKey}`);
 
       // Scale creature stats based on level (exponential scaling)
-      randomCreature.health = scaleStat(randomCreature.health, i);
+      const newHealth = scaleStat(randomCreature.maxHealth, i);
+      randomCreature.maxHealth = newHealth;
+      randomCreature.health = newHealth;
       randomCreature.attack = scaleStat(randomCreature.attack, i);
       randomCreature.defence = scaleStat(randomCreature.defence, i);
 
