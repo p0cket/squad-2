@@ -1,3 +1,17 @@
+// const availableRunes = [
+//   {
+//     name: "Rune of Strength",
+//     effect: "Increases attack by 10",
+//     statEffect: { stat: "attack", value: 10 },
+//   },
+//   {
+//     name: "Rune of Vitality",
+//     effect: "Increases health by 20",
+//     statEffect: { stat: "health", value: 20 },
+//   },
+// ]
+
+
 export const BASE_RUNES = [
   {
     id: 1,

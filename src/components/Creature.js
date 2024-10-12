@@ -1,37 +1,63 @@
-import React, { useEffect, useState } from "react"
-import { motion, useAnimationControls } from "framer-motion"
-import CreatureModal from "./modals/CreatureModal"
+import React, { useEffect, useState } from "react";
+import { motion, useAnimationControls } from "framer-motion";
+import CreatureModal from "./modals/CreatureModal";
+import { useDispatchContext } from "../GameContext";
+import ReplaceCreatureModal from "./modals/ReplaceCreatureModal";
 
 const Creature = ({
-  name,
-  icon,
-  health,
-  maxHealth,
   position,
   isPlayer,
   setCreatureControls,
   creatureObj,
 }) => {
-  const controls = useAnimationControls()
-  const [damageAmount, setDamageAmount] = useState(null)
-  const [openModal, setOpenModal] = useState(false) // State to control modal
+  const {ID, icon, health, maxHealth} = creatureObj
+  const dispatch = useDispatchContext();
+  const controls = useAnimationControls();
+  const [damageAmount, setDamageAmount] = useState(null);
+  const [openModal, setOpenModal] = useState(false); // State to control modal
 
-  const handleOpenModal = () => setOpenModal(true)
-  const handleCloseModal = () => setOpenModal(false)
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+  const [selectNewActive, setSelectNewActive] = useState(false);
+  // Function to handle new active creature selection
+  const handleSelectNewActive = (newActiveCreatureID) => {
+    setSelectNewActive(false);
+    dispatch({
+      type: "SWAP_CREATURE_POSITION",
+      payload: {
+        side: "playerCreatures",
+        newActiveCreatureID,
+      },
+    });
+  };
 
+  useEffect(() => {
+    if (isPlayer && health <= 0 && position === 0) {
+      setSelectNewActive(true); // Trigger modal if the active creature is dead
+    }
+  }, [health, isPlayer, position]);
   // Register controls when the component mounts
   useEffect(() => {
     if (setCreatureControls) {
-      setCreatureControls(name, {
+      console.log(`Setting creature controls for ID: ${ID}, Damage amount before reset:`, damageAmount);
+      setCreatureControls(ID, {
         controls,
-        showDamage: (damage) => setDamageAmount(damage),
+        showDamage: (damage) => {
+          console.log("showDamage received damage:", damage);
+          setDamageAmount(damage);
+        },
         creature: creatureObj, // Ensure full creature object is passed
-      })
+      });
     }
-  }, [name, controls, setCreatureControls, creatureObj])
+  }, [ID, controls, setCreatureControls, creatureObj]);
 
   return (
     <>
+      <ReplaceCreatureModal
+        open={selectNewActive}
+        onSelect={handleSelectNewActive}
+        // availableCreatures={getAliveCreatures(state.playerCreatures)}
+      />
       <motion.div
         className={`flex flex-col items-center ${
           health <= 0 ? "opacity-50" : ""
@@ -51,7 +77,7 @@ const Creature = ({
         </motion.div>
         {/* Show creature as defeated */}
         {health <= 0 && <div className="text-6xl mb-2">❌</div>}
-        
+
         {/* Health Bar */}
         <div className="bg-gray-700 w-24 h-4 rounded-full overflow-hidden">
           <motion.div
@@ -85,7 +111,6 @@ const Creature = ({
           </motion.div>
         )}
       </motion.div>
-
       {/* Render the CreatureModal */}
       <CreatureModal
         open={openModal}
@@ -93,7 +118,7 @@ const Creature = ({
         creature={{ ...creatureObj, health, maxHealth }} // Pass health and maxHealth
       />
     </>
-  )
-}
+  );
+};
 
-export default Creature
+export default Creature;
