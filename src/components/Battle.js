@@ -7,6 +7,10 @@ import ActionButtons from "./battle/ActionButtons"
 import CreatureGroup from "./battle/CreatureGroup"
 import { useCreatureControls } from "../hooks/useCreatureControls"
 import { useBattleActions } from "../hooks/useBattleActions"
+// import Hand from "./hand/Hand"
+import { cardDataList } from "../consts/consts"
+import Hand from "./hand/Hand"
+import ClassicHand from "./hand/ClassicHand"
 // import { useEndOfTurnEffects } from "../hooks/useEndOfTurnEffects"
 
 const Battle = () => {
@@ -56,6 +60,8 @@ const Battle = () => {
           />
         </div>
       </div>
+      <ClassicHand />
+      {/* <Hand cards={cardDataList} />  */}
       <ActionButtons handleAttack={handleAttack} />
       <CreatureStats />
     </div>
