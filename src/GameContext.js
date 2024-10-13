@@ -12,9 +12,9 @@ import { createUniqueParty } from "./utils.js/creatureUtils"
 export const INITIAL_MAX_MP = 50
 export const INITIAL_MP_PER_TURN = 5
 // Define enhancements for creatures
-const { dragon, fish, alien, unicorn } = CREATURES
+const { dragon, fish, unicorn, faun, harpy } = CREATURES
 export const basePlayerCreatures = [dragon, unicorn]
-export const baseComputerCreatures = [alien, fish]
+export const baseComputerCreatures = [ fish, faun, harpy]
 
 // Initial State
 const generatedLevels = generateLevels(10) // Generate levels once here
