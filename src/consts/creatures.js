@@ -1,3 +1,5 @@
+import { attacks } from "./attacks"
+
 export const MAX_HP = 100
 const BASE_HEALTH = 100
 const BASE_ATTACK = 20
@@ -23,6 +25,8 @@ const baseStats = {
 //   },
 //   mods: [],
 // },
+// creatures.js
+
 export const CREATURES = {
   dragon: {
     name: "Draco",
@@ -34,6 +38,12 @@ export const CREATURES = {
     trueDamage: 90,
     defence: 5,
     mods: [],
+    startingAttacks: [attacks.fireball, attacks.rend],
+    possibleAttacks: [
+      attacks.battle_cry,
+      attacks.ultimate_blast,
+      attacks.inspire
+    ]
   },
   unicorn: {
     name: "Sparkle",
@@ -45,6 +55,12 @@ export const CREATURES = {
     trueDamage: 10,
     defence: 5,
     mods: [],
+    startingAttacks: [attacks.heal, attacks.pierce],
+    possibleAttacks: [
+      attacks.haste,
+      attacks.arcane_blast,
+      attacks.fortify
+    ]
   },
   alien: {
     name: "Zorg",
@@ -56,6 +72,12 @@ export const CREATURES = {
     trueDamage: 15,
     defence: 8,
     mods: [],
+    startingAttacks: [attacks.mana_leech, attacks.shockwave],
+    possibleAttacks: [
+      attacks.venom_strike,
+      attacks.thunderbolt,
+      attacks.phase_shift
+    ]
   },
   fish: {
     name: "Octavia",
@@ -67,6 +89,12 @@ export const CREATURES = {
     trueDamage: 5,
     defence: 5,
     mods: [],
+    startingAttacks: [attacks.camouflage, attacks.ice_shard],
+    possibleAttacks: [
+      attacks.quicksand,
+      attacks.rain_dance,
+      attacks.snipe
+    ]
   },
   phoenix: {
     name: "Ash",
@@ -78,6 +106,12 @@ export const CREATURES = {
     trueDamage: 20,
     defence: 8,
     mods: [],
+    startingAttacks: [attacks.fireball, attacks.heal],
+    possibleAttacks: [
+      attacks.battle_cry,
+      attacks.elemental_burst,
+      attacks.inspire
+    ]
   },
   minotaur: {
     name: "Asterion",
@@ -89,6 +123,12 @@ export const CREATURES = {
     trueDamage: 25,
     defence: 15,
     mods: [],
+    startingAttacks: [attacks.rend, attacks.twin_slash],
+    possibleAttacks: [
+      attacks.whirlwind,
+      attacks.battle_cry,
+      attacks.fortify
+    ]
   },
   werewolf: {
     name: "Fang",
@@ -100,6 +140,12 @@ export const CREATURES = {
     trueDamage: 20,
     defence: 10,
     mods: [],
+    startingAttacks: [attacks.dizzying_blow, attacks.shadow_step],
+    possibleAttacks: [
+      attacks.sneak_attack,
+      attacks.volley,
+      attacks.vanish
+    ]
   },
   giant: {
     name: "Goliath",
@@ -111,6 +157,12 @@ export const CREATURES = {
     trueDamage: 40,
     defence: 20,
     mods: [],
+    startingAttacks: [attacks.rock_slide, attacks.bash],
+    possibleAttacks: [
+      attacks.quicksand,
+      attacks.flurry,
+      attacks.fortify
+    ]
   },
   golem: {
     name: "Rocky",
@@ -122,6 +174,12 @@ export const CREATURES = {
     trueDamage: 10,
     defence: 50,
     mods: [],
+    startingAttacks: [attacks.protect, attacks.bash],
+    possibleAttacks: [
+      attacks.quicksand,
+      attacks.rend,
+      attacks.heal
+    ]
   },
   vampire: {
     name: "Vlad",
@@ -133,6 +191,12 @@ export const CREATURES = {
     trueDamage: 15,
     defence: 10,
     mods: [],
+    startingAttacks: [attacks.mana_leech, attacks.sneak_attack],
+    possibleAttacks: [
+      attacks.shadow_step,
+      attacks.dizzying_blow,
+      attacks.venom_strike
+    ]
   },
   cyclops: {
     name: "Argus",
@@ -144,6 +208,12 @@ export const CREATURES = {
     trueDamage: 35,
     defence: 25,
     mods: [],
+    startingAttacks: [attacks.shockwave, attacks.arcane_blast],
+    possibleAttacks: [
+      attacks.ultimate_blast,
+      attacks.bash,
+      attacks.flurry
+    ]
   },
   gryphon: {
     name: "Griff",
@@ -155,6 +225,12 @@ export const CREATURES = {
     trueDamage: 20,
     defence: 15,
     mods: [],
+    startingAttacks: [attacks.snipe, attacks.haste],
+    possibleAttacks: [
+      attacks.camouflage,
+      attacks.rend,
+      attacks.inspire
+    ]
   },
   kraken: {
     name: "Kraken",
@@ -166,6 +242,12 @@ export const CREATURES = {
     trueDamage: 50,
     defence: 20,
     mods: [],
+    startingAttacks: [attacks.rend, attacks.quicksand],
+    possibleAttacks: [
+      attacks.snipe,
+      attacks.volley,
+      attacks.camouflage
+    ]
   },
   pegasus: {
     name: "Wings",
@@ -177,6 +259,12 @@ export const CREATURES = {
     trueDamage: 10,
     defence: 20,
     mods: [],
+    startingAttacks: [attacks.haste, attacks.heal],
+    possibleAttacks: [
+      attacks.battle_cry,
+      attacks.fortify,
+      attacks.arcane_blast
+    ]
   },
   banshee: {
     name: "Wail",
@@ -188,6 +276,12 @@ export const CREATURES = {
     trueDamage: 15,
     defence: 10,
     mods: [],
+    startingAttacks: [attacks.dizzying_blow, attacks.venom_strike],
+    possibleAttacks: [
+      attacks.shadow_step,
+      attacks.lullaby,
+      attacks.sneak_attack
+    ]
   },
   chimera: {
     name: "Chimmy",
@@ -199,6 +293,12 @@ export const CREATURES = {
     trueDamage: 30,
     defence: 25,
     mods: [],
+    startingAttacks: [attacks.elemental_burst, attacks.flurry],
+    possibleAttacks: [
+      attacks.fireball,
+      attacks.rend,
+      attacks.battle_cry
+    ]
   },
   basilisk: {
     name: "Slither",
@@ -210,6 +310,12 @@ export const CREATURES = {
     trueDamage: 20,
     defence: 15,
     mods: [],
+    startingAttacks: [attacks.venom_strike, attacks.camouflage],
+    possibleAttacks: [
+      attacks.snipe,
+      attacks.quicksand,
+      attacks.shadow_step
+    ]
   },
   centaur: {
     name: "Cento",
@@ -221,6 +327,12 @@ export const CREATURES = {
     trueDamage: 15,
     defence: 20,
     mods: [],
+    startingAttacks: [attacks.pierce, attacks.heal],
+    possibleAttacks: [
+      attacks.battle_cry,
+      attacks.fortify,
+      attacks.rend
+    ]
   },
   cerberus: {
     name: "Hades",
@@ -232,6 +344,12 @@ export const CREATURES = {
     trueDamage: 40,
     defence: 25,
     mods: [],
+    startingAttacks: [attacks.twin_slash, attacks.flurry],
+    possibleAttacks: [
+      attacks.ultimate_blast,
+      attacks.sneak_attack,
+      attacks.vanish
+    ]
   },
   hydra: {
     name: "Hydro",
@@ -243,6 +361,12 @@ export const CREATURES = {
     trueDamage: 35,
     defence: 20,
     mods: [],
+    startingAttacks: [attacks.rend, attacks.quicksand],
+    possibleAttacks: [
+      attacks.arcane_blast,
+      attacks.volley,
+      attacks.fireball
+    ]
   },
   sphinx: {
     name: "Riddle",
@@ -254,6 +378,12 @@ export const CREATURES = {
     trueDamage: 25,
     defence: 15,
     mods: [],
+    startingAttacks: [attacks.camouflage, attacks.heal],
+    possibleAttacks: [
+      attacks.battle_cry,
+      attacks.arcane_blast,
+      attacks.fortify
+    ]
   },
   harpy: {
     name: "Harper",
@@ -265,6 +395,12 @@ export const CREATURES = {
     trueDamage: 10,
     defence: 10,
     mods: [],
+    startingAttacks: [attacks.snipe, attacks.rain_dance],
+    possibleAttacks: [
+      attacks.flurry,
+      attacks.whirlwind,
+      attacks.inspire
+    ]
   },
   leviathan: {
     name: "Levi",
@@ -276,6 +412,12 @@ export const CREATURES = {
     trueDamage: 60,
     defence: 30,
     mods: [],
+    startingAttacks: [attacks.quicksand, attacks.ultimate_blast],
+    possibleAttacks: [
+      attacks.volley,
+      attacks.fireball,
+      attacks.camouflage
+    ]
   },
   troll: {
     name: "Grump",
@@ -287,6 +429,12 @@ export const CREATURES = {
     trueDamage: 20,
     defence: 15,
     mods: [],
+    startingAttacks: [attacks.bash, attacks.dizzying_blow],
+    possibleAttacks: [
+      attacks.flurry,
+      attacks.rock_slide,
+      attacks.fortify
+    ]
   },
   manticore: {
     name: "Manny",
@@ -298,6 +446,12 @@ export const CREATURES = {
     trueDamage: 30,
     defence: 20,
     mods: [],
+    startingAttacks: [attacks.snipe, attacks.shadow_step],
+    possibleAttacks: [
+      attacks.elemental_burst,
+      attacks.rend,
+      attacks.flurry
+    ]
   },
   ghoul: {
     name: "Spooky",
@@ -309,6 +463,12 @@ export const CREATURES = {
     trueDamage: 10,
     defence: 10,
     mods: [],
+    startingAttacks: [attacks.dizzying_blow, attacks.venom_strike],
+    possibleAttacks: [
+      attacks.shadow_step,
+      attacks.sneak_attack,
+      attacks.lullaby
+    ]
   },
   faun: {
     name: "Pan",
@@ -320,6 +480,12 @@ export const CREATURES = {
     trueDamage: 5,
     defence: 15,
     mods: [],
+    startingAttacks: [attacks.heal, attacks.camouflage],
+    possibleAttacks: [
+      attacks.battle_cry,
+      attacks.fortify,
+      attacks.snipe
+    ]
   },
   satyr: {
     name: "Sylvan",
@@ -331,6 +497,12 @@ export const CREATURES = {
     trueDamage: 10,
     defence: 20,
     mods: [],
+    startingAttacks: [attacks.heal, attacks.pierce],
+    possibleAttacks: [
+      attacks.inspire,
+      attacks.battle_cry,
+      attacks.fortify
+    ]
   },
   wendigo: {
     name: "Frost",
@@ -342,6 +514,12 @@ export const CREATURES = {
     trueDamage: 50,
     defence: 25,
     mods: [],
+    startingAttacks: [attacks.quicksand, attacks.flurry],
+    possibleAttacks: [
+      attacks.ultimate_blast,
+      attacks.camouflage,
+      attacks.rend
+    ]
   },
   salamander: {
     name: "Lizard",
@@ -353,7 +531,13 @@ export const CREATURES = {
     trueDamage: 5,
     defence: 5,
     mods: [],
-  },
+    startingAttacks: [attacks.fireball, attacks.heal],
+    possibleAttacks: [
+      attacks.camouflage,
+      attacks.rain_dance,
+      attacks.volley
+    ]
+  }
 };
 
 // Grouping of Creatures by Power Level
