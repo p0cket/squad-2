@@ -1,28 +1,26 @@
-export const calcDamage = (attacker, target) => {
-  console.group("calcDamage");
+export const calcDamage = (attacker, target, attack) => {
+  console.group("calcDamage: attacker, target, attack",attacker, target, attack);
+
   if (!attacker || !target) {
     console.error("Undefined attacker or target in calcDamage");
     console.groupEnd();
     return 0;
   }
 
-  console.log("Attacker:", attacker);
-  console.log("Target:", target);
-
-  const attack = attacker.attack || 0;
+  const attackDmg = attacker.attack || 0;
   const defense = target.defense || 0;
   const trueDamage = attacker.trueDamage || 0;
 
 
-  // Calculate base damage
-  let baseDamage = attack - defense;
+  // Calculate base damage. attack.damage 
+  let baseDamage = attackDmg - defense;
   if (baseDamage < 0) baseDamage = 0;
 
   console.log("Base Damage:", baseDamage);
 
   // Add true damage
   const totalDamage = baseDamage + trueDamage;
-  console.log(`(Attack ${attack} - Defense ${defense}) + TrueDamage: ${trueDamage} = ${totalDamage}`);
+  console.log(`(Attack ${attackDmg} - Defense ${defense}) + TrueDamage: ${trueDamage} = ${totalDamage}`);
   // Add some randomness
   // const randomFactor = 1; // Random factor between 0.9 and 1.1
   // const randomFactor = Math.random() * 0.2 + 0.9; // Random factor between 0.9 and 1.1
@@ -39,7 +37,8 @@ export const performAttack = async (
   target,
   isPlayerAttack,
   playerCreatureControlsRef,
-  enemyCreatureControlsRef
+  enemyCreatureControlsRef,
+  attack
 ) => {
   console.group("performAttack");
   console.log("Performing attack from:", attacker, "to:", target);

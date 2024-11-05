@@ -1,7 +1,6 @@
 // utils/gameUtils.js
 
 // Define possible status effects
-// Define possible status effects
 const STATUS_EFFECTS = {
   POISON: {
     name: "Poison",

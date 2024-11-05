@@ -15,6 +15,7 @@ import ClassicHand from "./hand/ClassicHand"
 
 const Battle = () => {
   const state = useStateContext()
+  console.log(`state:`,state)
   const dispatch = useDispatchContext()
   const {
     playerCreatureControlsRef,
@@ -60,7 +61,10 @@ const Battle = () => {
           />
         </div>
       </div>
-      <ClassicHand />
+      <ClassicHand
+        playerCreatureControlsRef={playerCreatureControlsRef}
+        enemyCreatureControlsRef={enemyCreatureControlsRef}
+      />
       {/* <Hand cards={cardDataList} />  */}
       <ActionButtons handleAttack={handleAttack} />
       <CreatureStats />

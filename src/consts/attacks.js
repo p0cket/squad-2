@@ -272,6 +272,7 @@ export const attacks = {
     attackType: "Physical",
     effects: [effects.physical_critical_hit],
     chanceToLand: 0.95,
+    damage: 12,
     icon: "sword_icon",
     notes: "Basic physical attack with a chance for a critical hit."
   },
@@ -281,6 +282,7 @@ export const attacks = {
     attackType: "Physical",
     effects: [effects.physical_armor_penetration],
     chanceToLand: 0.9,
+    damage: 15,
     icon: "spear_icon",
     notes: "Attack that penetrates enemy armor."
   },
@@ -290,6 +292,7 @@ export const attacks = {
     attackType: "Physical",
     effects: [effects.physical_bleed],
     chanceToLand: 0.85,
+    damage: 10,
     icon: "axe_icon",
     notes: "Attack that causes bleeding over time."
   },
@@ -299,6 +302,7 @@ export const attacks = {
     attackType: "Physical",
     effects: [],
     chanceToLand: 0.9,
+    damage: 18,
     icon: "hammer_icon",
     notes: "A strong attack that may stun the enemy."
   },
@@ -308,6 +312,7 @@ export const attacks = {
     attackType: "Elemental",
     effects: [effects.elemental_burn],
     chanceToLand: 0.9,
+    damage: 20,
     icon: "fireball_icon",
     notes: "Deals fire damage with a chance to burn the target."
   },
@@ -317,6 +322,7 @@ export const attacks = {
     attackType: "Elemental",
     effects: [effects.elemental_paralysis],
     chanceToLand: 0.85,
+    damage: 22,
     icon: "lightning_icon",
     notes: "Deals electric damage with a chance to paralyze."
   },
@@ -326,6 +332,7 @@ export const attacks = {
     attackType: "Elemental",
     effects: [],
     chanceToLand: 0.95,
+    damage: 14,
     icon: "ice_icon",
     notes: "Basic ice attack with high accuracy."
   },
@@ -335,6 +342,7 @@ export const attacks = {
     attackType: "Elemental",
     effects: [effects.elemental_shock],
     chanceToLand: 0.8,
+    damage: 25,
     icon: "shockwave_icon",
     notes: "Earth attack that may shock the enemy."
   },
@@ -344,6 +352,7 @@ export const attacks = {
     attackType: "Status",
     effects: [effects.status_poison],
     chanceToLand: 0.8,
+    damage: 8,
     icon: "poison_icon",
     notes: "Inflicts poison on the enemy."
   },
@@ -353,6 +362,7 @@ export const attacks = {
     attackType: "Status",
     effects: [effects.status_sleep],
     chanceToLand: 0.6,
+    damage: 0,
     icon: "sleep_icon",
     notes: "Puts the enemy to sleep."
   },
@@ -362,6 +372,7 @@ export const attacks = {
     attackType: "Status",
     effects: [effects.status_confusion],
     chanceToLand: 0.75,
+    damage: 10,
     icon: "confusion_icon",
     notes: "May confuse the enemy."
   },
@@ -371,6 +382,7 @@ export const attacks = {
     attackType: "Status",
     effects: [],
     chanceToLand: 0.85,
+    damage: 5,
     icon: "weakness_icon",
     notes: "Reduces enemy's attack power."
   },
@@ -380,6 +392,7 @@ export const attacks = {
     attackType: "Support/Healing",
     effects: [effects.support_regeneration],
     chanceToLand: 1.0,
+    damage: -15,
     icon: "heal_icon",
     notes: "Restores health to an ally over time."
   },
@@ -389,6 +402,7 @@ export const attacks = {
     attackType: "Support/Healing",
     effects: [effects.support_shield],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "shield_icon",
     notes: "Shields an ally, reducing incoming damage."
   },
@@ -398,6 +412,7 @@ export const attacks = {
     attackType: "Support/Healing",
     effects: [effects.support_cure_status],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "cure_icon",
     notes: "Removes negative status effects from an ally."
   },
@@ -407,6 +422,7 @@ export const attacks = {
     attackType: "Support/Healing",
     effects: [],
     chanceToLand: 1.0,
+    damage: -20,
     icon: "revitalize_icon",
     notes: "Restores a moderate amount of health instantly."
   },
@@ -416,6 +432,7 @@ export const attacks = {
     attackType: "Magical",
     effects: [],
     chanceToLand: 0.9,
+    damage: 18,
     icon: "arcane_icon",
     notes: "Deals magical damage to an enemy."
   },
@@ -425,6 +442,7 @@ export const attacks = {
     attackType: "Magical",
     effects: [effects.magical_mana_drain],
     chanceToLand: 0.85,
+    damage: 10,
     icon: "mana_icon",
     notes: "Drains mana from the enemy."
   },
@@ -434,6 +452,7 @@ export const attacks = {
     attackType: "Magical",
     effects: [effects.magical_magic_amplify],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "magic_boost_icon",
     notes: "Increases caster's magic power."
   },
@@ -443,6 +462,7 @@ export const attacks = {
     attackType: "Magical",
     effects: [effects.magical_spell_reflect],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "reflect_icon",
     notes: "Reflects enemy spells back at them."
   },
@@ -452,6 +472,7 @@ export const attacks = {
     attackType: "Ranged",
     effects: [],
     chanceToLand: 0.95,
+    damage: 15,
     icon: "arrow_icon",
     notes: "Basic ranged attack."
   },
@@ -461,6 +482,7 @@ export const attacks = {
     attackType: "Ranged",
     effects: [effects.ranged_long_shot],
     chanceToLand: 0.8,
+    damage: 25,
     icon: "long_arrow_icon",
     notes: "High damage at a distance."
   },
@@ -470,6 +492,7 @@ export const attacks = {
     attackType: "Ranged",
     effects: [effects.ranged_multi_target],
     chanceToLand: 0.85,
+    damage: 10,
     icon: "multiple_arrows_icon",
     notes: "Attacks multiple enemies."
   },
@@ -479,6 +502,7 @@ export const attacks = {
     attackType: "Ranged",
     effects: [effects.ranged_piercing_shot],
     chanceToLand: 0.75,
+    damage: 18,
     icon: "piercing_arrow_icon",
     notes: "Ignores enemy defenses."
   },
@@ -488,6 +512,7 @@ export const attacks = {
     attackType: "Auras",
     effects: [effects.aura_strength],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "strength_icon",
     notes: "Boosts allies' attack power."
   },
@@ -497,6 +522,7 @@ export const attacks = {
     attackType: "Auras",
     effects: [effects.aura_defense],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "defense_icon",
     notes: "Boosts allies' defense."
   },
@@ -506,6 +532,7 @@ export const attacks = {
     attackType: "Auras",
     effects: [effects.aura_speed],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "speed_icon",
     notes: "Boosts allies' speed."
   },
@@ -515,6 +542,7 @@ export const attacks = {
     attackType: "Auras",
     effects: [],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "inspire_icon",
     notes: "Boosts allies' morale."
   },
@@ -524,6 +552,7 @@ export const attacks = {
     attackType: "Environmental",
     effects: [effects.environmental_trap],
     chanceToLand: 0.9,
+    damage: 5,
     icon: "quicksand_icon",
     notes: "Sets a trap that slows enemies."
   },
@@ -533,6 +562,7 @@ export const attacks = {
     attackType: "Environmental",
     effects: [effects.environmental_weather_effect],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "rain_icon",
     notes: "Changes weather to rain."
   },
@@ -542,6 +572,7 @@ export const attacks = {
     attackType: "Environmental",
     effects: [],
     chanceToLand: 0.85,
+    damage: 20,
     icon: "rock_icon",
     notes: "Deals damage using the environment."
   },
@@ -551,6 +582,7 @@ export const attacks = {
     attackType: "Environmental",
     effects: [effects.environmental_terrain_advantage],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "camouflage_icon",
     notes: "Uses terrain to hide and gain advantage."
   },
@@ -560,6 +592,7 @@ export const attacks = {
     attackType: "Special",
     effects: [effects.special_time_stop],
     chanceToLand: 0.15,
+    damage: 50,
     icon: "time_icon",
     notes: "Attempts to stop time for enemies."
   },
@@ -569,6 +602,7 @@ export const attacks = {
     attackType: "Special",
     effects: [effects.special_teleport],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "teleport_icon",
     notes: "Evades attacks by teleporting."
   },
@@ -578,6 +612,7 @@ export const attacks = {
     attackType: "Special",
     effects: [effects.special_clone],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "clone_icon",
     notes: "Creates clones to confuse enemies."
   },
@@ -587,6 +622,7 @@ export const attacks = {
     attackType: "Special",
     effects: [],
     chanceToLand: 0.7,
+    damage: 60,
     icon: "blast_icon",
     notes: "A powerful attack with high damage."
   },
@@ -596,6 +632,7 @@ export const attacks = {
     attackType: "Combo",
     effects: [effects.combo_double_strike],
     chanceToLand: 0.9,
+    damage: 10,
     icon: "double_sword_icon",
     notes: "Attacks twice in quick succession."
   },
@@ -605,6 +642,7 @@ export const attacks = {
     attackType: "Combo",
     effects: [effects.combo_chain_attack],
     chanceToLand: 0.85,
+    damage: 18,
     icon: "whirlwind_icon",
     notes: "Attacks multiple enemies in succession."
   },
@@ -614,6 +652,7 @@ export const attacks = {
     attackType: "Combo",
     effects: [effects.combo_elemental_fusion],
     chanceToLand: 0.8,
+    damage: 25,
     icon: "fusion_icon",
     notes: "Combines elements for massive damage."
   },
@@ -623,6 +662,7 @@ export const attacks = {
     attackType: "Combo",
     effects: [],
     chanceToLand: 0.95,
+    damage: 8,
     icon: "flurry_icon",
     notes: "Rapidly attacks the enemy multiple times."
   },
@@ -632,6 +672,7 @@ export const attacks = {
     attackType: "Stealth",
     effects: [effects.stealth_backstab],
     chanceToLand: 1.0,
+    damage: 20,
     icon: "dagger_icon",
     notes: "Deals high damage when undetected."
   },
@@ -641,6 +682,7 @@ export const attacks = {
     attackType: "Stealth",
     effects: [effects.stealth_invisibility],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "invisibility_icon",
     notes: "Becomes invisible to enemies."
   },
@@ -650,6 +692,7 @@ export const attacks = {
     attackType: "Stealth",
     effects: [effects.stealth_silent_kill],
     chanceToLand: 0.5,
+    damage: 30,
     icon: "silent_kill_icon",
     notes: "Chance to instantly defeat an enemy."
   },
@@ -659,10 +702,12 @@ export const attacks = {
     attackType: "Stealth",
     effects: [],
     chanceToLand: 1.0,
+    damage: 0,
     icon: "shadow_icon",
     notes: "Moves swiftly, increasing evasion."
   }
 };
+
 
 export const attackTypes = {
   Physical: [
