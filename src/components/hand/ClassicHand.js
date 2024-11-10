@@ -1,113 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { attacks, effects } from "../../consts/attacks";
-import ChooseTargets from "../battle/ChooseTargets";
+import ChooseTargets from "../modals/ChooseTargetsModal";
+import AttackCard from "./AttackCard";
+import CardModal from "./CardModal";
+import ChooseTargetsModal from "../modals/ChooseTargetsModal";
 
-// Define color classes for each attack type
-const typeColors = {
-  Physical: "bg-gray-500 text-gray-100",
-  Elemental: "bg-red-500 text-red-100",
-  Support: "bg-green-500 text-green-100",
-  Ranged: "bg-blue-500 text-blue-100",
-  Aura: "bg-yellow-500 text-yellow-100",
-  Environmental: "bg-emerald-500 text-emerald-100",
-  Special: "bg-purple-500 text-purple-100",
-  Combo: "bg-orange-500 text-orange-100",
-  Stealth: "bg-indigo-500 text-indigo-100",
-};
-
-const AttackItem = ({ attack, onUse, showUseButton = true, onClick }) => (
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    className="w-full"
-    onClick={onClick}
-  >
-    <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden relative cursor-pointer p-2 flex flex-col space-y-2">
-      <div className="flex items-center space-x-3">
-        {/* Attack Icon */}
-        <motion.div
-          className="text-2xl"
-          whileHover={{ rotate: 360 }}
-          transition={{ duration: 0.3 }}
-        >
-          {attack?.icon}
-        </motion.div>
-
-        {/* Attack Details */}
-        <div className="flex flex-col flex-grow">
-          <h3 className="text-sm font-bold text-gray-200">{attack.name}</h3>
-          <div className="flex items-center justify-between">
-            {/* Type with Color */}
-            <span
-              className={`${
-                typeColors[attack.attackType]
-              } px-1 py-0.5 text-xs rounded`}
-            >
-              {attack.attackType}
-            </span>
-
-            {/* Additional Info (Effects, Damage) */}
-            <div className="flex items-center space-x-2 text-xs text-gray-400">
-              <span>
-                Effects:{" "}
-                {attack?.effects
-                  ?.map((effect) => effects?.[effect]?.name)
-                  .join(", ")}
-              </span>
-              <span>DMG: {attack?.damage}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Cost and Use Button */}
-      <div className="flex justify-between items-center mt-1">
-        <div className="text-xs font-semibold text-yellow-400">
-          Chance: {attack?.chanceToLand * 100}%
-        </div>
-        {showUseButton && (
-          <button
-            onClick={() => onUse(attack)}
-            className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-2 rounded text-sm"
-          >
-            Use Attack
-          </button>
-        )}
-      </div>
-    </div>
-  </motion.div>
-);
-
-const CardsModal = ({ title, cards, onClose }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-gray-800 p-4 rounded-lg w-3/4 max-w-md">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold text-white">{title}</h2>
-        <button onClick={onClose} className="text-white text-2xl">
-          &times;
-        </button>
-      </div>
-      <div className="space-y-2 overflow-y-auto max-h-96">
-        {cards.length === 0 ? (
-          <div className="text-gray-400">No cards</div>
-        ) : (
-          cards.map((card) => (
-            <div key={card.id}>
-              <AttackItem
-                attack={card}
-                onUse={() => console.log(`Used attack: ${card.name}`)}
-                showUseButton={false}
-              />
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  </div>
-);
-
-const ClassicHand = ({ playerCreatureControlsRef, enemyCreatureControlsRef }) => {
+const ClassicHand = ({
+  playerCreatureControlsRef,
+  enemyCreatureControlsRef,
+}) => {
   const [deck, setDeck] = useState([]);
   const [hand, setHand] = useState([]);
   const [discardPile, setDiscardPile] = useState([]);
@@ -115,6 +17,11 @@ const ClassicHand = ({ playerCreatureControlsRef, enemyCreatureControlsRef }) =>
 
   const [showDeckModal, setShowDeckModal] = useState(false);
   const [showDiscardModal, setShowDiscardModal] = useState(false);
+  const [showChooseTargetsModal, setShowChooseTargetsModal] = useState(false);
+  const toggleChooseTargetsModal = () =>
+    setShowChooseTargetsModal(!showChooseTargetsModal);
+  const [showModal, setShowModal] = useState(false);
+  const toggleModal = () => setShowModal(!showModal);
 
   useEffect(() => {
     initializeDeck();
@@ -156,7 +63,8 @@ const ClassicHand = ({ playerCreatureControlsRef, enemyCreatureControlsRef }) =>
     setDiscardPile([...discardPile, ...hand]);
   };
 
-  const useAttack = (attack) => {
+  const runAttack = (attack) => {
+    //   const useAttack = (attack) => {
     console.log(`Used attack: ${attack.name}`);
     const newHand = hand.filter((card) => card.id !== attack.id);
     setHand(newHand);
@@ -182,6 +90,7 @@ const ClassicHand = ({ playerCreatureControlsRef, enemyCreatureControlsRef }) =>
   // Trigger ChooseTargets modal by selecting an attack
   const handleSelectAttack = (attack) => {
     setSelectedAttack(attack);
+    toggleChooseTargetsModal();
     console.log(`Attack selected: ${attack.name}`);
   };
 
@@ -192,7 +101,6 @@ const ClassicHand = ({ playerCreatureControlsRef, enemyCreatureControlsRef }) =>
       <h1 className="text-2xl font-bold text-yellow-500 mb-1">
         Attack Selector
       </h1>
-
       <div className="flex justify-between mb-1">
         <div
           className="text-blue-400 cursor-pointer"
@@ -244,9 +152,9 @@ const ClassicHand = ({ playerCreatureControlsRef, enemyCreatureControlsRef }) =>
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.3 }}
             >
-              <AttackItem
+              <AttackCard
                 attack={attack}
-                onUse={useAttack}
+                // onUse={useAttack} //runAttack now
                 onClick={() => handleSelectAttack(attack)}
               />
             </motion.div>
@@ -256,28 +164,28 @@ const ClassicHand = ({ playerCreatureControlsRef, enemyCreatureControlsRef }) =>
 
       {/* Modals */}
       {showDeckModal && (
-        <CardsModal
+        <CardModal
           title="Deck"
           cards={deck}
           onClose={() => setShowDeckModal(false)}
         />
       )}
-
       {showDiscardModal && (
-        <CardsModal
+        <CardModal
           title="Discard Pile"
           cards={discardPile}
           onClose={() => setShowDiscardModal(false)}
         />
       )}
-
       {/* ChooseTargets Modal */}
       {selectedAttack && (
-        <ChooseTargets
+        <ChooseTargetsModal
           attack={selectedAttack}
           onClose={closeTargetModal}
           playerCreatureControlsRef={playerCreatureControlsRef}
           enemyCreatureControlsRef={enemyCreatureControlsRef}
+          showChooseTargetsModal={showChooseTargetsModal}
+          toggleChooseTargetsModal={toggleChooseTargetsModal}
         />
       )}
     </div>
