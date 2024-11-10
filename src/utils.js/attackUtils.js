@@ -1,37 +1,51 @@
+import {
+  moveAttacker,
+  returnAttacker,
+  shakeTarget,
+} from "../components/animations/attackAnimations"
+import { STATUS_EFFECTS } from "../consts/effects"
+
 export const calcDamage = (attacker, target, attack) => {
-  console.group("calcDamage: attacker, target, attack",attacker, target, attack);
+  console.group(
+    "calcDamage: attacker, target, attack",
+    attacker,
+    target,
+    attack
+  )
 
   if (!attacker || !target) {
-    console.error("Undefined attacker or target in calcDamage");
-    console.groupEnd();
-    return 0;
+    console.error("Undefined attacker or target in calcDamage")
+    console.groupEnd()
+    return 0
   }
 
-  const attackDmg = attacker.attack || 0;
-  const defense = target.defense || 0;
-  const trueDamage = attacker.trueDamage || 0;
+  const attackDmg = attacker.attack || 0
+  const defense = target.defense || 0
+  const trueDamage = attacker.trueDamage || 0
 
+  // Calculate base damage. attack.damage
+  let baseDamage = attackDmg - defense
+  if (baseDamage < 0) baseDamage = 0
 
-  // Calculate base damage. attack.damage 
-  let baseDamage = attackDmg - defense;
-  if (baseDamage < 0) baseDamage = 0;
-
-  console.log("Base Damage:", baseDamage);
+  console.log("Base Damage:", baseDamage)
 
   // Add true damage
-  const totalDamage = baseDamage + trueDamage;
-  console.log(`(Attack ${attackDmg} - Defense ${defense}) + TrueDamage: ${trueDamage} = ${totalDamage}`);
+  const totalDamage = baseDamage + trueDamage
+  console.log(
+    `(Attack ${attackDmg} - Defense ${defense}) + TrueDamage: ${trueDamage} = ${totalDamage}`
+  )
   // Add some randomness
   // const randomFactor = 1; // Random factor between 0.9 and 1.1
   // const randomFactor = Math.random() * 0.2 + 0.9; // Random factor between 0.9 and 1.1
   // const damage = totalDamage * randomFactor;
   const damage = totalDamage
-  console.log("Total Damage after Random Factor:", damage);
-  console.groupEnd();
+  console.log("Total Damage after Random Factor:", damage)
+  console.groupEnd()
 
-  return Math.floor(damage);
-};
+  return Math.floor(damage)
+}
 
+// Main performAttack function
 export const performAttack = async (
   attacker,
   target,
@@ -40,134 +54,116 @@ export const performAttack = async (
   enemyCreatureControlsRef,
   attack
 ) => {
-  console.group("performAttack");
-  console.log("Performing attack from:", attacker, "to:", target);
+  console.group("performAttack")
+  console.log(
+    "Performing attack from:",
+    attacker,
+    "to:",
+    target,
+    "attack is:",
+    attack
+  )
 
-  // Ensure we're using the correct key for IDs
-  const attackerID = attacker.ID;
-  const targetID = target.ID;
+  const attackerID = attacker.ID
+  const targetID = target.ID
 
-  console.group("ID and Controls Validation");
-  console.log("Attacker ID:", attackerID);
-  console.log("Target ID:", targetID);
-  console.log("All Player Controls:", playerCreatureControlsRef.current);
-  console.log("All Enemy Controls:", enemyCreatureControlsRef.current);
-  console.groupEnd();
+  // Retrieve the correct controls
+  const controlsRef = isPlayerAttack
+    ? playerCreatureControlsRef
+    : enemyCreatureControlsRef
+  const opponentControlsRef = isPlayerAttack
+    ? enemyCreatureControlsRef
+    : playerCreatureControlsRef
 
-  // Retrieve the correct controls using the IDs
-  const attackerControls = isPlayerAttack
-    ? playerCreatureControlsRef.current[attackerID]?.controls
-    : enemyCreatureControlsRef.current[attackerID]?.controls;
-
-  const targetControls = isPlayerAttack
-    ? enemyCreatureControlsRef.current[targetID]?.controls
-    : playerCreatureControlsRef.current[targetID]?.controls;
-
-  const targetShowDamage = isPlayerAttack
-    ? enemyCreatureControlsRef.current[targetID]?.showDamage
-    : playerCreatureControlsRef.current[targetID]?.showDamage;
-
-  console.group("Controls Assignment Check");
-  console.log("Attacker Controls:", attackerControls);
-  console.log("Target Controls:", targetControls);
-  console.log("Target Show Damage Function:", targetShowDamage);
-  console.groupEnd();
+  const attackerControls = controlsRef.current[attackerID]?.controls
+  const targetControls = opponentControlsRef.current[targetID]?.controls
+  const targetShowDamage = opponentControlsRef.current[targetID]?.showDamage
 
   if (!attackerControls || !targetControls) {
     console.warn(
       `Animation controls not found for attacker ID: ${attackerID} or target ID: ${targetID}, skipping attack animation.`
-    );
-    console.groupEnd();
-    return 0; // Ensure a valid return value to avoid NaN errors later
+    )
+    console.groupEnd()
+    return 0 // Return to avoid NaN errors later
   }
 
-  const direction = isPlayerAttack ? -1 : 1;
-  const distance = 150;
+  const direction = isPlayerAttack ? -1 : 1
+  const distance = 150
 
-  // Move attacker towards target
-  try {
-    console.group("Animation Step: Attacker Moving");
-    console.log(
-      "Attacker moving towards target... Direction:",
-      direction,
-      "Distance:",
-      distance
-    );
-    await attackerControls.start({
-      y: direction * distance,
-      transition: { duration: 0.3 },
-    });
-    console.groupEnd();
-  } catch (error) {
-    console.error("Error moving attacker:", error);
-  }
+  // Execute animations in sequence
+  await moveAttacker(attackerControls, direction, distance)
+  await shakeTarget(targetControls)
+  await returnAttacker(attackerControls)
 
-  // Simulate attack impact with a shake
-  try {
-    if (targetControls) {
-      console.group("Animation Step: Target Shake");
-      console.log("Target shaking...");
-      await targetControls.start({
-        x: [0, -10, 10, -10, 10, 0],
-        transition: { duration: 0.3 },
-      });
-      console.groupEnd();
-    }
-  } catch (error) {
-    console.error("Error shaking target:", error);
-  }
+  // Calculate damage
+  console.group("Damage Calculation & Show Damage")
 
-  // Return attacker to original position
-  try {
-    console.group("Animation Step: Attacker Returning");
-    console.log("Attacker returning to original position...");
-    await attackerControls.start({
-      y: 0,
-      transition: { duration: 0.3 },
-    });
-    console.groupEnd();
-  } catch (error) {
-    console.error("Error returning attacker to position:", error);
-  }
-
-  const damage = calcDamage(attacker, target);
+  // apply immediate effects
+  // applyImmediateEffects(attacker, target, attack)
+  const damage = calcDamage(attacker, target)
+  // apply effects
+  // applyEffects(attacker, target, attack)
   if (typeof damage !== "number" || isNaN(damage)) {
-    console.error("Calculated damage is not a valid number:", damage);
-    console.groupEnd();
-    return 0; // Ensure we return a valid number
+    console.error("Calculated damage is not a valid number:", damage)
+    console.groupEnd()
+    return 0 // Ensure we return a valid number
   }
 
-  // Apply damage to target health
-  console.group("Damage Calculation and Application");
-  console.log(`target.health -=  calcDamage(attacker, target) ${target.health} -= ${damage}. Attacker, target:`, attacker, target);
-  // console.log("Damage dealt:", damage);
-  console.log("Target's health before damage:", target.health);
-  // target.health -= damage;
   const damagedHP = target.health - damage
+  console.log("Target's health after damage:", damagedHP)
+  console.groupEnd()
 
-  if (typeof damagedHP !== "number" || isNaN(damagedHP)) {
-    console.error(
-      "Target's health became invalid after applying damage. Setting health to 0:",
-      damagedHP
-    );
-    console.error("damagedHP not a number or NaN:", damagedHP);
-  } else {
-    console.log("Target's health after damage:", damagedHP);
-  }
-  console.groupEnd();
-
-  // Show damage on target if the function is available
+  // Show damage on target
   if (targetShowDamage) {
     try {
-      console.group("Showing Damage on Target");
-      console.log("Showing damage on target:", targetID);
+      console.log("Showing damage on target:", targetID)
       targetShowDamage(damage);
-      console.groupEnd();
+      console.groupEnd()
     } catch (error) {
-      console.error("Error showing damage on target:", error);
+      console.error("Error showing damage on target:", error)
     }
   }
 
-  console.groupEnd();
-  return damage; // Ensure we return a valid number
-};
+  console.groupEnd()
+  return damage // Return valid number
+}
+
+const applyImmediateEffects = (attacker, target, attack, damage) => {
+  // Apply immediate effects that modify damage (e.g., critical hits)
+  if (attack.effects && attack.effects.length > 0) {
+    attack.effects.forEach((effect) => {
+      const effectDef = STATUS_EFFECTS[effect.id]
+      if (effectDef && effectDef.durationRange === "Instant") {
+        const effectRoll = Math.random()
+        if (effectRoll <= effect.effectChance) {
+          damage = effectDef.applyEffect(attacker, target, damage)
+          console.log(`Effect ${effectDef.name} modified damage to ${damage}`)
+        }
+      }
+    })
+  }
+}
+const applyEffects = (attacker, target, attack) => {
+  // Apply ongoing status effects
+  if (attack.effects && attack.effects.length > 0) {
+    attack.effects.forEach((effect) => {
+      const effectDef = STATUS_EFFECTS[effect.id]
+      if (effectDef && effectDef.durationRange !== "Instant") {
+        const effectRoll = Math.random()
+        if (effectRoll <= effect.effectChance) {
+          // const duration = parseDurationRange(effectDef.durationRange)
+          const mod = {
+            ...effectDef,
+            // duration,
+          }
+          target.mods.push(mod)
+          console.log(`Applied effect ${effectDef.name} to ${target.name}`)
+        } else {
+          console.log(
+            `Effect ${effectDef.name} did not apply to ${target.name}`
+          )
+        }
+      }
+    })
+  }
+}

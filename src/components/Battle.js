@@ -1,32 +1,32 @@
-import React, { useEffect } from "react"
-import { useDispatchContext, useStateContext } from "../GameContext"
-import OwnedRunes from "./OwnedRunes"
-import CreatureStats from "./CreatureStats"
-import Hud from "./Hud"
-import ActionButtons from "./battle/ActionButtons"
-import CreatureGroup from "./battle/CreatureGroup"
-import { useCreatureControls } from "../hooks/useCreatureControls"
-import { useBattleActions } from "../hooks/useBattleActions"
+import React, { useEffect } from "react";
+import { useDispatchContext, useStateContext } from "../GameContext";
+import OwnedRunes from "./OwnedRunes";
+import CreatureStats from "./CreatureStats";
+import Hud from "./Hud";
+import ActionButtons from "./battle/ActionButtons";
+import CreatureGroup from "./battle/CreatureGroup";
+import { useCreatureControls } from "../hooks/useCreatureControls";
+import { handleAttack, useBattleActions } from "../hooks/useBattleActions";
 // import Hand from "./hand/Hand"
-import { cardDataList } from "../consts/consts"
-import Hand from "./hand/Hand"
-import ClassicHand from "./hand/ClassicHand"
+import { cardDataList } from "../consts/consts";
+import Hand from "./hand/Hand";
+import ClassicHand from "./hand/ClassicHand";
 // import { useEndOfTurnEffects } from "../hooks/useEndOfTurnEffects"
 
 const Battle = () => {
-  const state = useStateContext()
-  console.log(`state:`,state)
-  const dispatch = useDispatchContext()
+  const state = useStateContext();
+  console.log(`state:`, state);
+  const dispatch = useDispatchContext();
   const {
     playerCreatureControlsRef,
     enemyCreatureControlsRef,
     setCreatureControls,
-  } = useCreatureControls()
+  } = useCreatureControls();
 
-  const { handleAttack } = useBattleActions(
-    playerCreatureControlsRef,
-    enemyCreatureControlsRef
-  )
+  // const { handleAttack } = useBattleActions(
+  //   playerCreatureControlsRef,
+  //   enemyCreatureControlsRef
+  // )
 
   // Apply end-of-turn effects using the custom hook
   // useEndOfTurnEffects(state, dispatch)
@@ -35,8 +35,8 @@ const Battle = () => {
     dispatch({
       type: "UPDATE_MP",
       mp: Math.min(state.mp + state.mpPerTurn, state.maxMp),
-    })
-  }, [state.turn, dispatch, state.mp, state.mpPerTurn, state.maxMp])
+    });
+  }, [state.turn, dispatch, state.mp, state.mpPerTurn, state.maxMp]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white p-1">
@@ -66,10 +66,19 @@ const Battle = () => {
         enemyCreatureControlsRef={enemyCreatureControlsRef}
       />
       {/* <Hand cards={cardDataList} />  */}
-      <ActionButtons handleAttack={handleAttack} />
+      <ActionButtons
+        handleAttack={() =>
+          handleAttack(
+            state,
+            dispatch,
+            playerCreatureControlsRef,
+            enemyCreatureControlsRef
+          )
+        }
+      />
       <CreatureStats />
     </div>
-  )
-}
+  );
+};
 
-export default Battle
+export default Battle;

@@ -90,10 +90,27 @@ export const handleEndOfTurnEffects = (creatures) => {
 //   return creaturesApplied
 // }
 
+// replace this with isPartyDead
 export const checkGameOver = (creatures) => {
   console.log(
     `checkGameOver: ${creatures.every((creature) => creature.health <= 0)}`,
     creatures
   )
   return creatures.every((creature) => creature.health <= 0)
+}
+
+export const checkIfPartyDead = (creatures) => {
+  console.log(
+    `checkGameOver: ${creatures.every((creature) => creature.health <= 0)}`,
+    creatures
+  )
+  return creatures.every((creature) => creature.health <= 0)
+}
+
+export const didPlayerWin = (computerCreatures) => {
+  return checkGameOver(computerCreatures)
+}
+
+export const didPlayerLose = (playerCreatures)=> {
+  return checkGameOver(playerCreatures)
 }
