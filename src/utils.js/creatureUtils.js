@@ -4,16 +4,17 @@ export const generateUniqueId = () => {
   return creatureIdCounter++
 }
 
-export const creatureUniqueCreature = (creatureTemplate) => {
+export const creatureUniqueCreature = (creatureTemplate, owner = null) => {
   return {
     ...creatureTemplate,
     ID: generateUniqueId(),
+    owner: owner,
   }
 }
 
 // We pass in an array of creature templates like [CREATURES.dragon, CREATURES.unicorn]
-export const createUniqueParty = (creatureTemplates) => {
+export const createUniqueParty = (creatureTemplates, owner) => {
   return creatureTemplates.map((template) => {
-    return creatureUniqueCreature(template)
+    return creatureUniqueCreature(template, owner)
   })
 }

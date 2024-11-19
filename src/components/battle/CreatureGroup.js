@@ -10,7 +10,6 @@ const CreatureGroup = ({
   // Splitting the creatures array into first and the rest
   const firstCreature = creatures[0];
   const restOfCreatures = creatures.slice(1);
-
   // Define classes for size differences and row flipping logic
   const secondRowClass = "flex flex-row space-x-4"; // Regular row style
   const firstRowCreatureSize = "scale-100"; // Full size for first creature

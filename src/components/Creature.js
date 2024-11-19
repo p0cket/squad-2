@@ -4,13 +4,8 @@ import CreatureModal from "./modals/CreatureModal";
 import { useDispatchContext } from "../GameContext";
 import ReplaceCreatureModal from "./modals/ReplaceCreatureModal";
 
-const Creature = ({
-  position,
-  isPlayer,
-  setCreatureControls,
-  creatureObj,
-}) => {
-  const {ID, icon, health, maxHealth} = creatureObj
+const Creature = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
+  const { ID, icon, health, maxHealth } = creatureObj;
   const dispatch = useDispatchContext();
   const controls = useAnimationControls();
   const [damageAmount, setDamageAmount] = useState(null);
@@ -39,11 +34,16 @@ const Creature = ({
   // Register controls when the component mounts
   useEffect(() => {
     if (setCreatureControls) {
-      console.log(`Setting creature controls for ID: ${ID}, Damage amount before reset:`, damageAmount);
+      console.log(
+        `Setting creature controls for ID: ${ID}, Damage amount before reset:`,
+        damageAmount
+      );
       setCreatureControls(ID, {
         controls,
         showDamage: (damage) => {
           console.log("showDamage received damage:", damage);
+          // do we reset this by putting a
+          // timer and setDamageAmount in 1 second to null?
           setDamageAmount(damage);
         },
         creature: creatureObj, // Ensure full creature object is passed

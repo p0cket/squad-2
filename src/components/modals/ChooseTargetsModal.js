@@ -3,6 +3,9 @@ import { useDispatchContext, useStateContext } from "../../GameContext";
 import CompactCreatureList from "../battle/CompactCreatureList";
 import { Box, Modal } from "@mui/material";
 import { modalStyle } from "../../consts/consts";
+import AttackDetails from "../battle/AttackDetails";
+import { handleTargetedAttack } from "../../utils.js/moves/handleConfirmedAttack";
+// import { handleConfirmedAttack, handleTargetedAttack } from "../../utils.js/moves/attackUtils";
 
 export default function ChooseTargetsModal({
   attack,
@@ -15,25 +18,32 @@ export default function ChooseTargetsModal({
   const state = useStateContext();
   const dispatch = useDispatchContext();
   const { computerCreatures, playerCreatures } = state;
+  const [selectedTarget, setSelectedTarget] = useState(null);
+
+  console.log(`attack`, attack);
 
   // Determine the attacker based on attack.attackerId or default to the first creature
   const attacker = attack?.attackerId
     ? playerCreatures.find((creature) => creature.ID === attack.attackerId)
     : playerCreatures[0];
 
-  const [selectedTarget, setSelectedTarget] = useState(null);
-
   // Handler for selecting a creature as the target
   const handleSelectTarget = (creature) => {
     setSelectedTarget(creature);
-    console.log(`Target selected: ${creature.name} with ID: ${creature.ID}`);
+    console.log(
+      `Target selected: ${creature.name} with ID: ${creature.ID}`,
+      creature
+    );
   };
 
   const handleConfirmTarget = () => {
+    // Check if the attacker is a player creature.
+    // Not sure if this is needed, but it's here for now.
     const isPlayerAttack = playerCreatures.some(
       (creature) => creature.ID === attacker.ID
     );
 
+    toggleChooseTargetsModal();
     console.log(
       `Target confirmed: ${selectedTarget.name}, ID: ${selectedTarget.ID}. Performing Atk:  attacker,
       selectedTarget,
@@ -48,37 +58,22 @@ export default function ChooseTargetsModal({
       enemyCreatureControlsRef,
       attack
     );
+
+    const attackPayload = {
+      attacker,
+      selectedTarget,
+      isPlayerAttack,
+      attack,
+    };
+
+    handleTargetedAttack(
+      state,
+      dispatch,
+      playerCreatureControlsRef,
+      enemyCreatureControlsRef,
+      attackPayload
+    );
   };
-  // Confirm selection and dispatch action
-  //   const handleConfirmTarget = async () => {
-  //     if (selectedTarget) {
-  //       // Determine if it's a player or enemy attack based on the attacker
-  //       const isPlayerAttack = playerCreatures.some(creature => creature.ID === attacker.ID);
-
-  //       // Perform the attack with necessary parameters
-  //       const damage = await performAttack(
-  //         attacker,
-  //         selectedTarget,
-  //         isPlayerAttack,
-  //         playerCreatureControlsRef,
-  //         enemyCreatureControlsRef,
-  //         attack
-  //       );
-
-  //       console.log(`Attack performed with ${damage} damage dealt.`);
-
-  //       // Update game state, possibly dispatching an action
-  //       dispatch({
-  //         type: 'APPLY_DAMAGE',
-  //         payload: { targetId: selectedTarget.ID, damage }
-  //       });
-
-  //       setSelectedTarget(null); // Reset selection after confirmation
-  //       onClose(); // Close the modal
-  //     } else {
-  //       console.log("No target selected");
-  //     }
-  //   };
 
   return (
     <Modal
@@ -88,25 +83,17 @@ export default function ChooseTargetsModal({
       aria-describedby="modal-modal-description"
     >
       <Box sx={modalStyle}>
-        {/* <Box sx={style}> */}
-        {/* <Typography id="modal-modal-title" variant="h6" component="h2">
-          Text in a modal
-        </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-        </Typography> */}
         <div className="container mx-auto p-4 bg-gray-900 text-gray-200">
-          <h2 className="text-2xl font-bold text-yellow-500 mb-4">
-            Choose Target
-          </h2>
-
-          {/* Display Attacker Info */}
-          <div className="text-center mb-4">
-            <div className="text-green-400">
-              Attacker: <strong>{attacker.name}</strong> (ID: {attacker.ID})
-            </div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-yellow-500">
+              Choose Target For{" "}
+              <span className="text-green-400">
+                <strong>{attacker.name}</strong>
+              </span>{" "}
+              to use <span className="text-white">{attack?.name}</span>
+            </h2>
           </div>
-
+          <AttackDetails attack={attack} />
           <div className="flex justify-between mb-4">
             {/* Player Creatures */}
             <div className="w-1/2">
@@ -117,6 +104,7 @@ export default function ChooseTargetsModal({
                 creatures={playerCreatures}
                 onSelect={handleSelectTarget}
                 isPlayer={true}
+                selectedTarget={selectedTarget}
               />
             </div>
 
@@ -129,6 +117,7 @@ export default function ChooseTargetsModal({
                 creatures={computerCreatures}
                 onSelect={handleSelectTarget}
                 isPlayer={false}
+                selectedTarget={selectedTarget}
               />
             </div>
           </div>
@@ -143,12 +132,14 @@ export default function ChooseTargetsModal({
             ) : (
               <div className="text-gray-500 mb-4">No target selected</div>
             )}
-            <button
-              onClick={handleConfirmTarget}
-              className="bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded"
-            >
-              Confirm Target
-            </button>
+            {selectedTarget && (
+              <button
+                onClick={handleConfirmTarget}
+                className="bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded"
+              >
+                Confirm Target: Run Attack
+              </button>
+            )}
           </div>
         </div>
       </Box>

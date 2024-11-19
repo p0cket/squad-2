@@ -61,7 +61,11 @@ export const processEndOfTurn = (state, dispatch) => {
   })
 
   // Check for game over conditions
-  checkAndHandleGameOver(updatedPlayerCreatures, updatedComputerCreatures, dispatch)
+  checkAndHandleGameOver(
+    updatedPlayerCreatures,
+    updatedComputerCreatures,
+    dispatch
+  )
 
   // Return the game status
   return {

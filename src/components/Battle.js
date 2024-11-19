@@ -10,7 +10,8 @@ import { useCreatureControls } from "../hooks/useCreatureControls";
 import { cardDataList } from "../consts/consts";
 import Hand from "./hand/Hand";
 import ClassicHand from "./hand/ClassicHand";
-import { handleAttack } from "../utils.js/attackUtils";
+import { handleAttack } from "../utils.js/moves/handleConfirmedAttack";
+// import { handleConfirmedAttack } from "../utils.js/moves/attackUtils";
 // import { useEndOfTurnEffects } from "../hooks/useEndOfTurnEffects"
 
 const Battle = () => {
@@ -23,7 +24,7 @@ const Battle = () => {
     setCreatureControls,
   } = useCreatureControls();
 
-  // const { handleAttack } = useBattleActions(
+  // const { handleConfirmedAttack } = useBattleActions(
   //   playerCreatureControlsRef,
   //   enemyCreatureControlsRef
   // )
@@ -67,7 +68,7 @@ const Battle = () => {
       />
       {/* <Hand cards={cardDataList} />  */}
       <ActionButtons
-        handleAttack={() =>
+        handleConfirmedAttack={() =>
           handleAttack(
             state,
             dispatch,

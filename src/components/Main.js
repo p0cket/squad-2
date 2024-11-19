@@ -1,15 +1,17 @@
-import React from "react"
-import Battle from "./Battle"
-import { useStateContext } from "../GameContext"
-import Results from "./screens/Results"
-import Death from "./screens/GameOver"
+import React from "react";
+import Battle from "./Battle";
+import { useStateContext } from "../GameContext";
+import Results from "./screens/Results";
+import Death from "./screens/GameOver";
+import Login from "./Login";
 
 function Main() {
-  const state = useStateContext()
-  const { screen } = state
+  const state = useStateContext();
+  const { screen } = state;
   return (
     <>
-     {/* <Results /> */}
+      {<Login />}
+      {/* <Results /> */}
       {screen === "battle" && <Battle />}
       {screen === "results" && <Results />}
       {screen === "game_over" && <Death />}
@@ -17,7 +19,7 @@ function Main() {
       {screen === "intro" && <Battle />}
       {screen === "shop" && <Battle />}
     </>
-  )
+  );
 }
 
-export default Main
+export default Main;
