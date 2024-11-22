@@ -10,9 +10,9 @@
 //     statEffect: { stat: "health", value: 20 },
 //   },
 // ]
+import { type Rune } from "./types"
 
-
-export const BASE_RUNES = [
+export const BASE_RUNES: Rune[] = [
   {
     id: 1,
     name: "Rune of Strength",

@@ -1,33 +1,37 @@
-import { effectFunctions, STATUS_EFFECTS } from "../turnUtils"
-import { calcDamage, newCalcDamage } from "./calcDamage"
+import { moveAttacker, returnAttacker, shakeTarget } from "../../components/animations/attackAnimations"
+import { effectFunctions, STATUS_EFFECTS } from "../../consts/statuses"
+// import { effectFunctions } from "../turnUtils"
+import { newCalcDamage } from "./calcDamage"
 
-// if an effect aplication time, or `timing` is `beforeAttack`,
-// then apply the effect
-export const applyImmediateEffects = (attacker, target, attack) => {
+// Utility to get effects based on timing
+const getStatusesByPhase = (effects, timing) => {
+  return effects.filter((effect) => {
+    const effectDef = STATUS_EFFECTS[effect.id]
+    return effectDef && effectDef.timing === timing
+  })
+}
+
+// Apply effects based on timing
+const applyStatuses = (attacker, target, attack, timing) => {
+  let changes
+  const relevantEffects = getStatusesByPhase(attack.effects, timing)
+  relevantEffects.forEach((effect) => {
+    const effectDef = STATUS_EFFECTS[effect.id]
+    changes = applyEffect(attacker, target, effect, effectDef)
+  })
+  return changes
+}
+
+export const applyPhaseStatuses = (attacker, target, attack, timing) => {
   let changes
   if (attack.effects && attack.effects.length > 0) {
-    attack.effects.forEach((effect) => {
-      const effectDef = STATUS_EFFECTS[effect.id]
-      if (effectDef && effectDef.timing === "beforeAttack") {
-        // this should change anything affected by
-        // the status. attacker, target, attack
-        changes = applyEffect(attacker, target, effect, effectDef)
-      }
-    })
+    changes = applyStatuses(attacker, target, attack, timing)
   }
   return { attacker, target, attack, changes }
-}
-// export const applyEffect = (attacker, target, effect, effectDef) => {
-//   let dmg = null
-//   const effectRoll = Math.random()
-//   if (effectRoll <= effect.effectChance) {
-//     dmg = effectDef.applyEffect(attacker, target)
-//     console.log(`Effect ${effectDef.name} modified damage to ${dmg}`)
-//   }
-//   return dmg
-// }
+} 
 
-// creature.mods.forEach((effect) => {
+
+
 
 export const calcAttack = (attacker, target, attack) => {
   let statuses
@@ -214,3 +218,71 @@ export const applyStatusEffects = (effect, creature) => {
       console.log(`default applyStatusEffect hit,`, effect, newCreature)
   }
 }
+
+export const getControls = (
+  attacker,
+  target,
+  isPlayerAttack,
+  playerCreatureControlsRef,
+  enemyCreatureControlsRef
+) => {
+  const controlsRef = isPlayerAttack
+    ? playerCreatureControlsRef
+    : enemyCreatureControlsRef;
+
+  const attackerControls = controlsRef.current[attacker.ID]?.controls;
+  const targetControls = getCreatureControlsById(
+    target.ID,
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef
+  )?.controls;
+  const targetShowDamage = getCreatureControlsById(
+    target.ID,
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef
+  )?.showDamage;
+
+  return { attackerControls, targetControls, targetShowDamage };
+};
+
+export const performAttackAnimation = async (attackerControls, targetControls, direction, distance) => {
+  await moveAttacker(attackerControls, direction, distance);
+  await shakeTarget(targetControls);
+  await returnAttacker(attackerControls);
+};
+
+export const updateTargetState = (target, damage, statuses) => {
+  return {
+    ...target,
+    health: Math.max(0, target.health - damage),
+    statuses,
+  };
+};
+
+export const showDamageOnTarget = (targetShowDamage, damage, targetID) => {
+  if (targetShowDamage) {
+    try {
+      console.log("%cShowing damage on target:", "color: red;", targetID);
+      targetShowDamage(damage);
+    } catch (error) {
+      console.error("%cError showing damage on target:", "color: red;", error);
+    }
+  }
+};
+
+export const calculateDamageAndStatuses = (attacker, target, attack) => {
+  const objAfterImmediateStatuses = applyPhaseStatuses(
+    attacker,
+    target,
+    attack,
+    "beforeAttack"
+  );
+
+  const { statuses, damage } = calcAttack(
+    objAfterImmediateStatuses.attacker,
+    objAfterImmediateStatuses.target,
+    objAfterImmediateStatuses.attack
+  );
+
+  return { statuses, damage };
+};

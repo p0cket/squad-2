@@ -5,7 +5,7 @@ import { useDispatchContext } from "../GameContext";
 import ReplaceCreatureModal from "./modals/ReplaceCreatureModal";
 
 const Creature = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
-  const { ID, icon, health, maxHealth } = creatureObj;
+  const { ID, icon, health, maxHealth, statuses } = creatureObj;
   const dispatch = useDispatchContext();
   const controls = useAnimationControls();
   const [damageAmount, setDamageAmount] = useState(null);
@@ -34,10 +34,10 @@ const Creature = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
   // Register controls when the component mounts
   useEffect(() => {
     if (setCreatureControls) {
-      console.log(
-        `Setting creature controls for ID: ${ID}, Damage amount before reset:`,
-        damageAmount
-      );
+      // console.log(
+      //   `Setting creature controls for ID: ${ID}, Damage amount before reset:`,
+      //   damageAmount
+      // );
       setCreatureControls(ID, {
         controls,
         showDamage: (damage) => {
@@ -65,13 +65,14 @@ const Creature = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
         animate={controls}
         initial={position}
         style={{ position: "relative", cursor: "pointer" }}
-        onClick={handleOpenModal} // Open modal on click
       >
         {/* Creature Icon */}
         <motion.div
           className={`text-6xl mb-2 ${health <= 0 ? "hidden" : ""}`}
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
+          onClick={handleOpenModal} // Open modal on click
+
         >
           {icon}
         </motion.div>
@@ -87,7 +88,21 @@ const Creature = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
           />
         </div>
         <div className="mt-1">
-          {health} / {maxHealth}
+          {health} / {maxHealth}{" "}
+          <span>
+            {statuses?.map((status) => (
+              <span
+                key={status.id}
+                className="relative group"
+                style={{ cursor: "pointer" }}
+              >
+                {status.icon}
+                <span className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1">
+                  {status.description}
+                </span>
+              </span>
+            ))}
+          </span>
         </div>
 
         {/* Damage Animation */}

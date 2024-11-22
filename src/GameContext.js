@@ -4,10 +4,11 @@ import { applyRuneEffects } from "./utils.js/runeUtils"
 import { resetCreatures } from "./utils.js/battleUtils"
 import { applyMod, applyTurnEnhancementEffects } from "./utils.js/modUtils"
 import { CREATURES } from "./consts/creatures"
-import { BASE_RUNES } from "./consts/items"
+// import { BASE_RUNES } from "./consts/items"
 import { generateLevels, loadLevelData } from "./utils.js/levelGeneratorUtils"
 import { createUniqueParty } from "./utils.js/creatureUtils"
 import { updateCreatureInList } from "./utils.js/moves/attackUtils"
+import { BASE_RUNES } from "./consts/items"
 
 // Constants
 export const INITIAL_MAX_MP = 50

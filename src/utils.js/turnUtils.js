@@ -1,86 +1,4 @@
-export const applyPoison = (creature) => ({
-  ...creature,
-  health: Math.max(0, creature.health - 10),
-})
-
-export const applyBuff = (creature) => ({ ...creature, atk: creature.atk + 5 })
-
-export const applyBurn = (creature) => ({
-  ...creature,
-  health: Math.max(0, creature.health - 5),
-})
-
-export const applyStun = (creature) => ({ ...creature, stunned: true })
-
-export const applyRegeneration = (creature) => ({
-  ...creature,
-  health: Math.min(creature.maxHealth, creature.health + 5),
-})
-export const tickDownEffects = (creature, statusName) => {
-  creature.statuses = creature.statuses
-    .map((status) => {
-      if (status.name === statusName) {
-        return {
-          ...status,
-          duration: status.duration - 1,
-        }
-      }
-      return status
-    })
-    .filter((status) => status.duration > 0) // Keep statuses that still have duration
-  return creature
-}
-
-export const STATUS_EFFECTS = {
-  POISON: {
-    name: "Poison",
-    type: "debuff",
-    timing: "afterAttack",
-    duration: 3,
-    applyEffect: "applyPoison",
-    chance: 1,
-  },
-  BUFF: {
-    name: "Buff",
-    type: "buff",
-    timing: `beforeAttack`,
-    duration: 2,
-    applyEffect: "applyBuff",
-    chance: 1,
-  },
-  BURN: {
-    name: "Burn",
-    type: "debuff",
-    timing: `afterAttack`,
-    duration: 3,
-    applyEffect: "applyBurn",
-    chance: 1,
-  },
-  STUN: {
-    name: "Stun",
-    type: "debuff",
-    timing: `beforeAttack`,
-    duration: 2,
-    applyEffect: "applyStun",
-    chance: 1,
-  },
-  REGENERATION: {
-    name: "Regeneration",
-    type: "buff",
-    timing: `afterAttack`,
-    duration: 3,
-    applyEffect: "applyRegeneration",
-    chance: 1,
-  },
-}
-
-export const effectFunctions = {
-  applyPoison,
-  applyBuff,
-  applyBurn,
-  applyStun,
-  applyRegeneration,
-}
+import { runApplyEffect, STATUS_EFFECTS } from "../consts/statuses"
 
 // export const handleEndOfTurnEffects = (creatures) => {
 //   const creaturesApplied = creatures.map((creature) => {
@@ -108,29 +26,52 @@ export const effectFunctions = {
 //   return creaturesApplied // Return the updated creatures
 // }
 
+// timing: 'endOfTurn' apply end of turn mods, effects, etc. to creatures, etc.
 export const handleEndOfTurnEffects = (creatures) => {
-  const creaturesApplied = creatures.map((creature) => {
-    // Apply each mod's effect to the creature
-    creature.mods.forEach((mod) => {
-      // Ensure the effect exists in STATUS_EFFECTS before applying it
-      if (STATUS_EFFECTS[mod.name]) {
-        STATUS_EFFECTS[mod.name].applyEffect(creature)
-      }
-    })
+  //this should just be handlePhaseEffects (`endOfTurn`, creatures)
 
-    // Reduce the duration of effects and filter out expired ones
-    creature.mods = creature.mods
-      .map((mod) => ({
-        ...mod,
-        duration: mod.duration - 1,
-      }))
-      .filter((mod) => mod.duration > 0) // Keep effects that still have duration
-
-    return { ...creature } // Return the updated creature
+  const creaturesAppliedWithMods = creatures.map((creature) => {
+    return applyMods(creature)
   })
-  return creaturesApplied // Return the updated creatures
+
+  // for the effects, run the effect, decrease the amount of turns left, and remove if 0
+  const creaturesAppliedWithEffects = creaturesAppliedWithMods.map(
+    (creature) => {
+      let updatedCreature = { ...creature }
+      if (creature.statuses) {
+        creature.statuses.forEach((status) => {
+          if (STATUS_EFFECTS[status.name]) {
+            //appluEffect is a string, so we need to use the effectFunctions object to get the function
+            const individualEffect = STATUS_EFFECTS[status.name].effectFuncName
+            updatedCreature = runApplyEffect(creature, individualEffect)
+          }
+        })
+      }
+      return updatedCreature
+    }
+  )
+
+  return creaturesAppliedWithEffects // Return the updated creatures
 }
 
+const applyMods = (creature) => {
+  creature.mods.forEach((mod) => {
+    // Ensure the effect exists in STATUS_EFFECTS before applying it
+    if (STATUS_EFFECTS[mod.name]) {
+      STATUS_EFFECTS[mod.name].applyEffect(creature)
+    }
+  })
+
+  // Reduce the duration of effects and filter out expired ones
+  creature.mods = creature.mods
+    .map((mod) => ({
+      ...mod,
+      duration: mod.duration - 1,
+    }))
+    .filter((mod) => mod.duration > 0) // Keep effects that still have duration
+
+  return creature
+}
 // export const handleEndOfTurnEffects = (creatures) => {
 //   const creaturesApplied = creatures.map((creature) => {
 //     // Apply each effect to the creature

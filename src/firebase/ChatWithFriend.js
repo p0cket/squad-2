@@ -33,7 +33,9 @@ function ChatWithFriend({ currentUserId, friendId }) {
                 console.log("User document does not exist.");
             }
         } catch (error) {
-            console.error("Error checking friendship:", error); // Log any errors encountered
+          console.error("Error checking friendship: fix later"); // Log any errors encountered
+
+            // console.error("Error checking friendship:", error); // Log any errors encountered
         }
     };
     

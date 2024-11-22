@@ -16,7 +16,6 @@ import { handleAttack } from "../utils.js/moves/handleConfirmedAttack";
 
 const Battle = () => {
   const state = useStateContext();
-  console.log(`state:`, state);
   const dispatch = useDispatchContext();
   const {
     playerCreatureControlsRef,
@@ -68,14 +67,14 @@ const Battle = () => {
       />
       {/* <Hand cards={cardDataList} />  */}
       <ActionButtons
-        handleConfirmedAttack={() =>
-          handleAttack(
-            state,
-            dispatch,
-            playerCreatureControlsRef,
-            enemyCreatureControlsRef
-          )
-        }
+        // handleConfirmedAttack={() =>
+        //   handleAttack(
+        //     state,
+        //     dispatch,
+        //     playerCreatureControlsRef,
+        //     enemyCreatureControlsRef
+        //   )
+        // }
       />
       <CreatureStats />
     </div>

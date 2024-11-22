@@ -18,3 +18,15 @@ export const createUniqueParty = (creatureTemplates, owner) => {
     return creatureUniqueCreature(template, owner)
   })
 }
+
+//partyUtils instead?
+export const moveDeadCreaturesToBack = (creatures, side, dispatch) => {
+  creatures.forEach((creature) => {
+    if (creature.health <= 0) {
+      dispatch({
+        type: "MOVE_CREATURE_TO_BACK",
+        payload: { side, creatureId: creature.ID },
+      })
+    }
+  })
+}

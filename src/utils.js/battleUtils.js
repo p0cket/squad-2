@@ -1,4 +1,5 @@
 import { checkGameOver, handleEndOfTurnEffects } from "./turnUtils"
+import { moveDeadCreaturesToBack } from "./creatureUtils"
 
 export const resetCreatures = (creatures) => {
   return creatures.map((creature) => {
@@ -17,61 +18,53 @@ export const calculateHealedHealth = (creature, healAmount) => {
   return Math.min(creature.health + healAmount, creature.maxHealth)
 }
 
+// go through all (mods, effects) and apply to each relevant
+// target (creature, party)
 export const processEndOfTurn = (state, dispatch) => {
+  console.group("%c🔄 processEndOfTurn", "color: blue; font-weight: bold;")
   // Apply end-of-turn effects to the player's and computer's creatures
-  const updatedPlayerCreatures = handleEndOfTurnEffects(state.playerCreatures)
-  const updatedComputerCreatures = handleEndOfTurnEffects(
-    state.computerCreatures
-  )
+  const updatedPlayers = handleEndOfTurnEffects(state.playerCreatures)
+  const updatedComputers = handleEndOfTurnEffects(state.computerCreatures)
 
   console.log(
     "Updated Player Creatures & Updated Computer Creatures. Move to back?:",
-    updatedPlayerCreatures,
-    updatedComputerCreatures
+    updatedPlayers,
+    updatedComputers
   )
 
   // Move dead creatures to the back
-  updatedPlayerCreatures.forEach((creature) => {
-    if (creature.health <= 0) {
-      dispatch({
-        type: "MOVE_CREATURE_TO_BACK",
-        payload: { side: "playerCreatures", creatureId: creature.ID },
-      })
-    }
-  })
-  updatedComputerCreatures.forEach((creature) => {
-    if (creature.health <= 0) {
-      dispatch({
-        type: "MOVE_CREATURE_TO_BACK",
-        payload: { side: "computerCreatures", creatureId: creature.ID },
-      })
-    }
-  })
+  moveDeadCreaturesToBack(updatedPlayers, "playerCreatures", dispatch)
+  moveDeadCreaturesToBack(updatedComputers, "computerCreatures", dispatch)
 
   // Update the state with the new creature states
   dispatch({
     type: "UPDATE_CREATURES",
     side: "playerCreatures",
-    creatures: updatedPlayerCreatures,
+    creatures: updatedPlayers,
   })
   dispatch({
     type: "UPDATE_CREATURES",
     side: "computerCreatures",
-    creatures: updatedComputerCreatures,
+    creatures: updatedComputers,
   })
 
   // Check for game over conditions
-  checkAndHandleGameOver(
-    updatedPlayerCreatures,
-    updatedComputerCreatures,
-    dispatch
+  checkAndHandleGameOver(updatedPlayers, updatedComputers, dispatch)
+
+  const playerLost = checkGameOver(updatedPlayers)
+  const computerLost = checkGameOver(updatedComputers)
+
+  console.log(
+    `End of turn processing results: Player Lost? ${playerLost} Computer Lost? ${computerLost}`
   )
 
-  // Return the game status
-  return {
-    playerLost: checkGameOver(updatedPlayerCreatures),
-    computerLost: checkGameOver(updatedComputerCreatures),
+  const bothTeamsHaventLost = !playerLost && !computerLost
+  if (bothTeamsHaventLost) {
+    console.log("bothTeamsHaventLost, So preparing for next turn...")
+    dispatch({ type: "INCREMENT_TURN" })
+    dispatch({ type: "PREPARE_NEXT_TURN" })
   }
+  console.groupEnd()
 }
 
 export const getAliveCreatures = (creatures) => {

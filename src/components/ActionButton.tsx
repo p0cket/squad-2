@@ -1,7 +1,13 @@
 // ActionButton.js
 import React from 'react';
 
-const ActionButton = ({ onClick, children, disabled }) => (
+type ActionButtonProps = {
+  onClick: () => void; //<HTMLButtonElement>
+  children: React.ReactNode;
+  disabled?: boolean;
+};
+
+const ActionButton: React.FC<ActionButtonProps> = ({ onClick, children, disabled }) => (
   <button
     onClick={onClick}
     disabled={disabled}

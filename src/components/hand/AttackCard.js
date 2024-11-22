@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { effects } from "../../consts/attacks";
+import { STATUS_EFFECTS } from "../../consts/statuses";
 // Define color classes for each attack type
 const typeColors = {
   Physical: "bg-gray-500 text-gray-100",
@@ -49,7 +49,7 @@ const AttackCard = ({ attack, onUse, showUseButton = true, onClick }) => (
               <span>
                 Effects:{" "}
                 {attack?.effects
-                  ?.map((effect) => effects?.[effect]?.name)
+                  ?.map((effect) => STATUS_EFFECTS?.[effect]?.name)
                   .join(", ")}
               </span>
               <span>DMG: {attack?.damage}</span>

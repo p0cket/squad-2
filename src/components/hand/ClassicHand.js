@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { attacks, effects } from "../../consts/attacks";
+import { attacks } from "../../consts/attacks";
 import ChooseTargets from "../modals/ChooseTargetsModal";
 import AttackCard from "./AttackCard";
 import CardModal from "./CardModal";
 import ChooseTargetsModal from "../modals/ChooseTargetsModal";
+import { STATUS_EFFECTS } from "../../consts/statuses";
 
 const ClassicHand = ({
   playerCreatureControlsRef,
@@ -31,7 +32,7 @@ const ClassicHand = ({
     const newDeck = Object.values(attacks).map((attack) => ({
       ...attack,
       id: Math.random().toString(36).substr(2, 9),
-      icon: effects[attack.effects?.[0]]?.icon || "🔥", // Fetch icon from effects, default if missing
+      icon: STATUS_EFFECTS[attack.effects?.[0]]?.icon || "🔥", // Fetch icon from effects, default if missing
     }));
     setDeck(newDeck);
     drawNewHand(newDeck);

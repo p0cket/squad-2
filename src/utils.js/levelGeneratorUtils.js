@@ -25,6 +25,10 @@ const levelEffects = [
 // Level Generator Function using the central `creatures` object
 export const generateLevels = (numLevels) => {
   const levels = []
+  console.groupCollapsed(
+    "%c🗺️ Generating Levels",
+    "color: #6a0dad; font-size: 16px; font-weight: bold;"
+  )
 
   for (let i = 1; i <= numLevels; i++) {
     console.group(`Generating Level ${i}`)
@@ -118,7 +122,8 @@ export const generateLevels = (numLevels) => {
     })
     console.groupEnd()
   }
-  console.log("Level generation complete.")
+  console.log("Level generation complete.", levels)
+  console.groupEnd()
   return levels
 }
 

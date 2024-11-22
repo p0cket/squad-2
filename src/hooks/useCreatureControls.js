@@ -15,6 +15,6 @@ export const useCreatureControls = () => {
     }
   }, []);
 
-  console.log(`useCreatureControls`, playerCreatureControlsRef.current, enemyCreatureControlsRef.current);
+  // console.log(`useCreatureControls`, playerCreatureControlsRef.current, enemyCreatureControlsRef.current);
   return { playerCreatureControlsRef, enemyCreatureControlsRef, setCreatureControls };
 };
