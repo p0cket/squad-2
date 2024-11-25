@@ -1,3 +1,4 @@
+
 export const STATUS_EFFECTS = {
   POISON: {
     name: "Poison",
@@ -7,6 +8,7 @@ export const STATUS_EFFECTS = {
     effectFuncName: "applyPoison",
     chance: 1,
     icon: "🧪",
+    id: `POISON`,
   },
   BUFF: {
     name: "Buff",
@@ -16,6 +18,7 @@ export const STATUS_EFFECTS = {
     effectFuncName: "applyBuff",
     chance: 1,
     icon: "✨",
+    id: `BUFF`,
   },
   BURN: {
     name: "Burn",
@@ -25,6 +28,7 @@ export const STATUS_EFFECTS = {
     effectFuncName: "applyBurn",
     chance: 1,
     icon: "🔥",
+    id: `BURN`,
   },
   STUN: {
     name: "Stun",
@@ -34,6 +38,7 @@ export const STATUS_EFFECTS = {
     effectFuncName: "applyStun",
     chance: 1,
     icon: "⚡",
+    id: `STUN`,
   },
   REGENERATION: {
     name: "Regeneration",
@@ -43,29 +48,42 @@ export const STATUS_EFFECTS = {
     effectFuncName: "applyRegeneration",
     chance: 1,
     icon: "💚",
+    id: `REGENERATION`,
   },
 }
 
-
-export const applyPoison = (creature) => ({
+// Function to apply poison effect, reducing health by 10
+export const applyPoison = (creature: Creature): Creature => ({
   ...creature,
   health: Math.max(0, creature.health - 10),
 })
 
-export const applyBuff = (creature) => ({ ...creature, atk: creature.atk + 5 })
+// Function to apply buff effect, increasing attack by 5
+export const applyBuff = (creature: Creature): Creature => ({
+  ...creature,
+  atk: creature.atk + 5,
+})
 
-export const applyBurn = (creature) => ({
+// Function to apply burn effect, reducing health by 5
+export const applyBurn = (creature: Creature): Creature => ({
   ...creature,
   health: Math.max(0, creature.health - 5),
 })
 
-export const applyStun = (creature) => ({ ...creature, stunned: true })
+// Function to apply stun effect, setting stunned to true
+export const applyStun = (creature: Creature): Creature => ({
+  ...creature,
+  stunned: true,
+})
 
-export const applyRegeneration = (creature) => ({
+// Function to apply regeneration effect, increasing health by 5 up to maxHealth
+export const applyRegeneration = (creature: Creature): Creature => ({
   ...creature,
   health: Math.min(creature.maxHealth, creature.health + 5),
 })
-export const tickDownEffectDuration = (creature, statusName) => {
+
+// Function to tick down the duration of a status effect
+export const tickDownEffectDuration = (creature: Creature, statusName: string): Creature => {
   creature.statuses = creature.statuses
     .map((status) => {
       if (status.name === statusName) {
@@ -88,28 +106,29 @@ export const effectFunctions = {
   applyRegeneration,
 }
 
-export const runApplyEffect = (creature, effectObj) => {
-  let updatedCreature = { ...creature };
-  switch (effectObj.applyEffect) {
-    case 'applyPoison':
-      updatedCreature = applyPoison(updatedCreature);
-      break;
-    case 'applyBuff':
-      updatedCreature = applyBuff(updatedCreature);
-      break;
-    case 'applyBurn':
-      updatedCreature = applyBurn(updatedCreature);
-      break;
-    case 'applyStun':
-      updatedCreature = applyStun(updatedCreature);
-      break;
-    case 'applyRegeneration':
-      updatedCreature = applyRegeneration(updatedCreature);
-      break;
+// Function to apply the effect to the creature
+export const runApplyEffect = (creature: Creature, effectObj: StatusEffect) => {
+  let updatedCreature = { ...creature }
+  switch (effectObj.effectFuncName) {
+    case "applyPoison":
+      updatedCreature = applyPoison(updatedCreature)
+      break
+    case "applyBuff":
+      updatedCreature = applyBuff(updatedCreature)
+      break
+    case "applyBurn":
+      updatedCreature = applyBurn(updatedCreature)
+      break
+    case "applyStun":
+      updatedCreature = applyStun(updatedCreature)
+      break
+    case "applyRegeneration":
+      updatedCreature = applyRegeneration(updatedCreature)
+      break
     default:
-      break;
+      break
   }
-  return tickDownEffectDuration(updatedCreature, effectObj.applyEffect);
+  return tickDownEffectDuration(updatedCreature, effectObj.effectFuncName)
 }
 
 //maybe effects for later

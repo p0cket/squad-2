@@ -5,7 +5,6 @@ import { Box, Modal } from "@mui/material";
 import { modalStyle } from "../../consts/consts";
 import AttackDetails from "../battle/AttackDetails";
 import { handleTargetedAttack } from "../../utils.js/moves/handleConfirmedAttack";
-// import { handleConfirmedAttack, handleTargetedAttack } from "../../utils.js/moves/attackUtils";
 
 export default function ChooseTargetsModal({
   attack,
@@ -52,25 +51,47 @@ export default function ChooseTargetsModal({
       enemyCreatureControlsRef,
       attack`,
       attacker,
-      selectedTarget,
+      selectedTarget, //target
       isPlayerAttack,
       playerCreatureControlsRef,
       enemyCreatureControlsRef,
       attack
     );
 
+    // const attackPayload = {
+    //   attacker,
+    //   selectedTarget,
+    //   isPlayerAttack,
+    //   attack,
+    // };
+    /**
+ * @typedef {Object} AttackPayload
+ * @property {any} attacker - The attacker (replace 'any' with the actual type)
+ * @property {any} target - The target (replace 'any' with the actual type)
+ * @property {boolean} isPlayerAttack - Whether it is a player attack
+ * @property {any} playerCreatureControlsRef - Player creature controls reference (replace 'any' with the actual type)
+ * @property {any} enemyCreatureControlsRef - Enemy creature controls reference (replace 'any' with the actual type)
+ * @property {any} attack - The attack (replace 'any' with the actual type)
+ * @property {React.Dispatch<any>} dispatch - The dispatch function (replace 'any' with the actual action type)
+ * @property {any[]} playerCreatures - The player creatures (replace 'any' with the actual creature type)
+ * @property {any[]} computerCreatures - The computer creatures (replace 'any' with the actual creature type)
+ */
+
+/** @type {AttackPayload} */
     const attackPayload = {
       attacker,
-      selectedTarget,
-      isPlayerAttack,
-      attack,
+      target: selectedTarget, //these should rly be indexes
+      isPlayerAttack: false, //isPlayer: false -> so computer
+      playerCreatureControlsRef,
+      enemyCreatureControlsRef,
+      attack, // attack. make a comp select a random attack they have
+      dispatch,
+      playerCreatures: state.playerCreatures,
+      computerCreatures: state.computerCreatures,
     };
 
     handleTargetedAttack(
       state,
-      dispatch,
-      playerCreatureControlsRef,
-      enemyCreatureControlsRef,
       attackPayload
     );
   };

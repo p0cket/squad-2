@@ -1,5 +1,5 @@
 import { attacks } from "../../consts/attacks"
-import { pocketLog } from "../../pocketLog/utils"
+// import { pocketLog } from "../../pocketLog/utils"
 import { getAliveCreatures, processEndOfTurn } from "../battleUtils"
 import { checkIfPartyDead } from "../turnUtils"
 import { newPerformAttack, performAttack } from "./performAttack"
@@ -154,64 +154,73 @@ import { newPerformAttack, performAttack } from "./performAttack"
 // from chooseTargetsModal.js use when someone selects a target and runs the attack
 export const handleTargetedAttack = async (
   state,
-  dispatch,
-  playerCreatureControlsRef,
-  enemyCreatureControlsRef,
   attackPayload
 ) => {
   if (!attackPayload) {
     console.error("No attackPayload provided for handleTargetedAttack")
     return
   }
-  const { attacker, selectedTarget, isPlayerAttack, attack } = attackPayload
-  console.group(`running attack: ${attacker.name} ${attack.name}`)
-
-  // Simple log
-  pocketLog(
-    `${new Date().toISOString()} isPlayerAttack ${Math.floor(
-      Math.random() * 1000
-    )}`,
-    isPlayerAttack
+  const {
+    attacker,
+    target,
+    isPlayerAttack,
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef,
+    attack,
+    dispatch,
+    playerCreatures,
+    computerCreatures,
+  } = attackPayload
+  console.group(
+    `running attack: ${attacker?.name} uses ${attack?.name} on ${target?.name}. AttackPayload:`,
+    attackPayload
   )
-
+  // Simple log
+  // pocketLog(
+  //   `${new Date().toISOString()} isPlayerAttack ${Math.floor(
+  //     Math.random() * 1000
+  //   )}`,
+  //   isPlayerAttack
+  // )
   // Log with tags
-  pocketLog("userScore", isPlayerAttack, { tags: ["score", "user"] })
-
+  // pocketLog("userScore", isPlayerAttack, { tags: ["score", "user"] })
   // Log with a condition
-  pocketLog("stateKeys", Object.keys(state).length, {
-    condition: Object.keys(state).length > 0 ? "warning" : null,
-  })
-
+  // pocketLog("stateKeys", Object.keys(state).length, {
+  //   condition: Object.keys(state).length > 0 ? "warning" : null,
+  // })
   // Log with a condition
-  const responseTime = await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(2500)
-    }, 1000)
-  })
+  // const responseTime = await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     resolve(2500)
+  //   }, 1000)
+  // })
   // Log with a custom message and condition
-  pocketLog("apiResponseTime", responseTime, {
-    message: "Response time exceeded threshold",
-    condition: responseTime > 2000 ? "issue" : null,
-  })
+  // pocketLog("apiResponseTime", responseTime, {
+  //   message: "Response time exceeded threshold",
+  //   condition: responseTime > 2000 ? "issue" : null,
+  // })
 
   // PLAYER ATTACK:
   try {
     await newPerformAttack(
-      attacker,
-      selectedTarget,
-      true, //isPlayer: true so not computer
-      playerCreatureControlsRef,
-      enemyCreatureControlsRef,
-      attack,
-      dispatch
+      // attacker,
+      // selectedTarget,
+      // true, //isPlayer: true so not computer
+      // playerCreatureControlsRef,
+      // enemyCreatureControlsRef,
+      // attack,
+      // dispatch,
+      // state.playerCreatures,
+      // state.computerCreatures
+      attackPayload
     )
   } catch (error) {
     console.error("Error in performAttack:", error)
   }
   console.log(
     `after newPerformAttack: state.playerCreatures, state.computerCreatures`,
-    state.playerCreatures,
-    state.computerCreatures
+    playerCreatures,
+    computerCreatures
   )
 
   // COMPUTER ATTACK:
@@ -221,20 +230,37 @@ export const handleTargetedAttack = async (
   if (bothTeamsAlive) {
     const computerAttacker = aliveComputers[0]
     const computersTarget = alivePlayers[0]
+    // const computerAttacker = { comp: 0 }
+    // const computersTarget = { user: 0 }
     console.log(
       "Computer attacking player: Computer Attacker details & Player Target details before attack:",
       computerAttacker,
       computersTarget
     )
+    const computerAttackPayload = {
+      attacker: computerAttacker,
+      target: computersTarget, //these should rly be indexes
+      playerCreatures: state.playerCreatures,
+      computerCreatures: state.computerCreatures,
+      isPlayerAttack: false, //isPlayer: false -> so computer
+      playerCreatureControlsRef,
+      enemyCreatureControlsRef,
+      attack: attacks.fireball, // attack. make a comp select a random attack they have
+      dispatch,
+    }
+
     try {
       await newPerformAttack(
-        computerAttacker,
-        computersTarget,
-        false, //isPlayer: false -> so computer
-        playerCreatureControlsRef,
-        enemyCreatureControlsRef,
-        attacks.fireball, // attack. make a comp select a random attack they have
-        dispatch
+        // computerAttacker,
+        // computersTarget,
+        // false, //isPlayer: false -> so computer
+        // playerCreatureControlsRef,
+        // enemyCreatureControlsRef,
+        // attacks.fireball, // attack. make a comp select a random attack they have
+        // dispatch,
+        // state.playerCreatures,
+        // state.computerCreatures
+        computerAttackPayload
       )
     } catch (error) {
       console.error("Error in performAttack:", error)

@@ -1,11 +1,12 @@
 import { STATUS_EFFECTS } from "./statuses";
+import { Attack } from "./types";
 
-export const attacks = {
+export const attacks: { [key: string]: Attack } = {
   slash: {
     template: "slash",
     name: "Slash",
     attackType: "Physical",
-    effects: [STATUS_EFFECTS.BUFF], // Example buff application
+    effects: [STATUS_EFFECTS.BUFF],
     chanceToLand: 0.95,
     damage: 10,
     trueDamage: 0,
@@ -16,7 +17,7 @@ export const attacks = {
     template: "pierce",
     name: "Pierce",
     attackType: "Physical",
-    effects: [], // No direct match in STATUS_EFFECTS for armor penetration
+    effects: [],
     chanceToLand: 0.9,
     damage: 12,
     trueDamage: 0,
@@ -27,7 +28,7 @@ export const attacks = {
     template: "rend",
     name: "Rend",
     attackType: "Physical",
-    effects: [STATUS_EFFECTS.POISON], // Replacing bleed with poison effect for similarity
+    effects: [STATUS_EFFECTS.POISON],
     chanceToLand: 0.85,
     damage: 8,
     trueDamage: 2,
@@ -38,7 +39,7 @@ export const attacks = {
     template: "bash",
     name: "Bash",
     attackType: "Physical",
-    effects: [STATUS_EFFECTS.STUN], // Stun effect added
+    effects: [STATUS_EFFECTS.STUN],
     chanceToLand: 0.9,
     damage: 15,
     trueDamage: 0,
@@ -49,7 +50,7 @@ export const attacks = {
     template: "fireball",
     name: "Fireball",
     attackType: "Elemental",
-    effects: [STATUS_EFFECTS.BURN], // Matches burn effect
+    effects: [STATUS_EFFECTS.BURN],
     chanceToLand: 0.9,
     damage: 20,
     trueDamage: 5,
@@ -60,7 +61,7 @@ export const attacks = {
     template: "thunderbolt",
     name: "Thunderbolt",
     attackType: "Elemental",
-    effects: [STATUS_EFFECTS.STUN], // Substituting paralysis with stun
+    effects: [STATUS_EFFECTS.STUN],
     chanceToLand: 0.85,
     damage: 18,
     trueDamage: 4,
@@ -104,7 +105,7 @@ export const attacks = {
     template: "lullaby",
     name: "Lullaby",
     attackType: "Status",
-    effects: [], // Sleep is not explicitly listed in STATUS_EFFECTS
+    effects: [],
     chanceToLand: 0.6,
     damage: 0,
     trueDamage: 0,
@@ -115,7 +116,7 @@ export const attacks = {
     template: "dizzying_blow",
     name: "Dizzying Blow",
     attackType: "Status",
-    effects: [STATUS_EFFECTS.STUN], // Confusion approximated as stun
+    effects: [STATUS_EFFECTS.STUN],
     chanceToLand: 0.75,
     damage: 12,
     trueDamage: 1,
@@ -136,7 +137,7 @@ export const attacks = {
   heal: {
     template: "heal",
     name: "Heal",
-    attackType: "Support/Healing",
+    attackType: "SupportHealing",
     effects: [STATUS_EFFECTS.REGENERATION],
     chanceToLand: 1.0,
     damage: 0,
@@ -147,7 +148,7 @@ export const attacks = {
   protect: {
     template: "protect",
     name: "Protect",
-    attackType: "Support/Healing",
+    attackType: "SupportHealing",
     effects: [],
     chanceToLand: 1.0,
     damage: 0,
@@ -158,7 +159,7 @@ export const attacks = {
   purify: {
     template: "purify",
     name: "Purify",
-    attackType: "Support/Healing",
+    attackType: "SupportHealing",
     effects: [],
     chanceToLand: 1.0,
     damage: 0,
@@ -169,7 +170,7 @@ export const attacks = {
   revitalize: {
     template: "revitalize",
     name: "Revitalize",
-    attackType: "Support/Healing",
+    attackType: "SupportHealing",
     effects: [],
     chanceToLand: 1.0,
     damage: 0,
@@ -203,7 +204,7 @@ export const attacks = {
     template: "spell_boost",
     name: "Spell Boost",
     attackType: "Magical",
-    effects: [STATUS_EFFECTS.BUFF], // Approximated as a buff
+    effects: [STATUS_EFFECTS.BUFF],
     chanceToLand: 1.0,
     damage: 0,
     trueDamage: 0,
@@ -268,7 +269,7 @@ export const attacks = {
   battle_cry: {
     template: "battle_cry",
     name: "Battle Cry",
-    attackType: "Auras",
+    attackType: "Support",
     effects: [STATUS_EFFECTS.BUFF], // Strength approximated as a buff
     chanceToLand: 1.0,
     damage: 0,
@@ -279,7 +280,7 @@ export const attacks = {
   fortify: {
     template: "fortify",
     name: "Fortify",
-    attackType: "Auras",
+    attackType: "Support",
     effects: [STATUS_EFFECTS.BUFF], // Defense approximated as a buff
     chanceToLand: 1.0,
     damage: 0,
@@ -290,7 +291,7 @@ export const attacks = {
   haste: {
     template: "haste",
     name: "Haste",
-    attackType: "Auras",
+    attackType: "Support",
     effects: [STATUS_EFFECTS.BUFF], // Speed approximated as a buff
     chanceToLand: 1.0,
     damage: 0,
@@ -312,7 +313,7 @@ export const attacks = {
   quicksand: {
     template: "quicksand",
     name: "Quicksand",
-    attackType: "Environmental",
+    attackType: "Trap",
     effects: [STATUS_EFFECTS.STUN], // Trap approximated as a stun effect
     chanceToLand: 0.9,
     damage: 5,
@@ -357,7 +358,7 @@ export const attacks = {
     template: "chrono_break",
     name: "Chrono Break",
     attackType: "Special",
-    effects: [STATUS_EFFECTS.STUN], // Time stop mapped to stun
+    effects: [STATUS_EFFECTS.STUN],
     chanceToLand: 0.15,
     damage: 10,
     trueDamage: 0,

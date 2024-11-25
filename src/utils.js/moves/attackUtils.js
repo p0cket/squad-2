@@ -1,37 +1,87 @@
-import { moveAttacker, returnAttacker, shakeTarget } from "../../components/animations/attackAnimations"
+import {
+  moveAttacker,
+  returnAttacker,
+  shakeTarget,
+} from "../../components/animations/attackAnimations"
 import { effectFunctions, STATUS_EFFECTS } from "../../consts/statuses"
 // import { effectFunctions } from "../turnUtils"
 import { newCalcDamage } from "./calcDamage"
 
 // Utility to get effects based on timing
 const getStatusesByPhase = (effects, timing) => {
+  console.log(
+    `#x 1b. effects`,
+    effects,
+    timing,
+    STATUS_EFFECTS,
+    STATUS_EFFECTS[effects[0].id]
+  )
+  console.log(
+    `#x 1c. effectDef && effectDef.timing === timing`,
+    STATUS_EFFECTS[effects[0].id],
+    timing,
+    STATUS_EFFECTS[effects[0].id].timing === timing
+  )
   return effects.filter((effect) => {
     const effectDef = STATUS_EFFECTS[effect.id]
     return effectDef && effectDef.timing === timing
   })
 }
 
-// Apply effects based on timing
-const applyStatuses = (attacker, target, attack, timing) => {
-  let changes
+// Apply effects based on timing // weak, etc.
+const procStatuses = (attacker, target, attack, timing) => {
+  let changes = null
   const relevantEffects = getStatusesByPhase(attack.effects, timing)
+  console.log(`#x 2. relevantEffects to be applied`, relevantEffects)
   relevantEffects.forEach((effect) => {
     const effectDef = STATUS_EFFECTS[effect.id]
-    changes = applyEffect(attacker, target, effect, effectDef)
+    console.log(`#x 2. effectDef`, effectDef)
+    changes = runEffect(attacker, target, effect, effectDef)
   })
+  console.log(`#x 3. changes`, changes)
   return changes
 }
 
-export const applyPhaseStatuses = (attacker, target, attack, timing) => {
-  let changes
-  if (attack.effects && attack.effects.length > 0) {
-    changes = applyStatuses(attacker, target, attack, timing)
+export const findRelevantProcs = (
+  // attacker,
+  // target,
+  // isPlayerAttack,
+  // playerCreatureControlsRef,
+  // enemyCreatureControlsRef,
+  // attack,
+  // dispatch,
+  // playerCreatures,
+  // computerCreatures,
+  attackPayload,
+  timing
+) => {
+  console.log(`findRelevantProcs: attackPayload, timing`, attackPayload, timing)
+  const {
+    attacker,
+    target,
+    isPlayerAttack,
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef,
+    attack,
+    dispatch,
+    playerCreatures,
+    computerCreatures,
+  } = attackPayload
+  let changes = null
+  const hasEffects = attack.effects && attack.effects.length > 0
+  console.log(
+    `#x 0. hasEffects:${hasEffects} attacker, target, attack, timing`,
+    attacker,
+    target,
+    attack,
+    timing
+  )
+  if (hasEffects) {
+    changes = procStatuses(attacker, target, attack, timing)
   }
+  console.log(`#x 1. changes`, changes)
   return { attacker, target, attack, changes }
-} 
-
-
-
+}
 
 export const calcAttack = (attacker, target, attack) => {
   let statuses
@@ -112,10 +162,19 @@ export const calcStatuses = (attacker, target, attack) => {
   return statuses
 }
 
-export const applyEffect = (creature, effect) => {
+export const runEffect = (creature, effect) => {
   // Apply each mod's effect to the creature
   // Ensure the effect exists in STATUS_EFFECTS before applying it
-  creature = effectFunctions[effect.applyEffect](creature, effect)
+  console.log(`#x 2. effectFunctions`, effectFunctions, effect, creature)
+  if (effectFunctions[effect.applyEffect]) {
+    creature = effectFunctions[effect.applyEffect](creature, effect)
+  } else {
+    console.log(
+      `#x 3. effectFunctions[${effect.applyEffect}] not found`,
+      effectFunctions,
+      effect.applyEffect
+    )
+  }
   return creature
 }
 
@@ -228,61 +287,139 @@ export const getControls = (
 ) => {
   const controlsRef = isPlayerAttack
     ? playerCreatureControlsRef
-    : enemyCreatureControlsRef;
+    : enemyCreatureControlsRef
 
-  const attackerControls = controlsRef.current[attacker.ID]?.controls;
+  console.log(
+    `getControls: attacker, target, isPlayerAttack, playerCreatureControlsRef, enemyCreatureControlsRef`,
+    attacker,
+    target,
+    isPlayerAttack,
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef
+  )
+
+  const attackerControls = controlsRef.current[attacker.ID]?.controls
   const targetControls = getCreatureControlsById(
     target.ID,
     playerCreatureControlsRef,
     enemyCreatureControlsRef
-  )?.controls;
+  )?.controls
   const targetShowDamage = getCreatureControlsById(
     target.ID,
     playerCreatureControlsRef,
     enemyCreatureControlsRef
-  )?.showDamage;
+  )?.showDamage
 
-  return { attackerControls, targetControls, targetShowDamage };
-};
+  if (!attackerControls || !targetControls) {
+    console.warn(
+      `%c⚠️ Animation controls not found for attacker ID: ${attacker.ID} or target ID: ${target.ID}, skipping attack animation.`,
+      "color: orange; font-weight: bold;"
+    )
+    console.groupEnd()
+    return {
+      attackerControls: null,
+      targetControls: null,
+      targetShowDamage: null,
+    }
+  }
 
-export const performAttackAnimation = async (attackerControls, targetControls, direction, distance) => {
-  await moveAttacker(attackerControls, direction, distance);
-  await shakeTarget(targetControls);
-  await returnAttacker(attackerControls);
-};
+  return { attackerControls, targetControls, targetShowDamage }
+  // const controlsRef = isPlayerAttack
+  //   ? playerCreatureControlsRef
+  //   : enemyCreatureControlsRef
+
+  // const attackerControls = controlsRef.current[attacker.ID]?.controls
+  // const targetControls = getCreatureControlsById(
+  //   target.ID,
+  //   playerCreatureControlsRef,
+  //   enemyCreatureControlsRef
+  // )?.controls
+  // const targetShowDamage = getCreatureControlsById(
+  //   target.ID,
+  //   playerCreatureControlsRef,
+  //   enemyCreatureControlsRef
+  // )?.showDamage
+}
+
+export const performAttackAnimation = async (
+  attackerControls,
+  targetControls,
+  isPlayerAttack
+) => {
+  const direction = isPlayerAttack ? -1 : 1
+  const distance = 150
+  await moveAttacker(attackerControls, direction, distance)
+  await shakeTarget(targetControls)
+  await returnAttacker(attackerControls)
+}
 
 export const updateTargetState = (target, damage, statuses) => {
   return {
     ...target,
     health: Math.max(0, target.health - damage),
     statuses,
-  };
-};
+  }
+}
 
 export const showDamageOnTarget = (targetShowDamage, damage, targetID) => {
   if (targetShowDamage) {
     try {
-      console.log("%cShowing damage on target:", "color: red;", targetID);
-      targetShowDamage(damage);
+      console.log("%cShowing damage on target:", "color: red;", targetID)
+      targetShowDamage(damage)
     } catch (error) {
-      console.error("%cError showing damage on target:", "color: red;", error);
+      console.error("%cError showing damage on target:", "color: red;", error)
     }
   }
-};
+}
 
-export const calculateDamageAndStatuses = (attacker, target, attack) => {
-  const objAfterImmediateStatuses = applyPhaseStatuses(
+export const calculateDamageAndStatuses = (
+  // attacker,
+  // target,
+  // isPlayerAttack,
+  // playerCreatureControlsRef,
+  // enemyCreatureControlsRef,
+  // attack,
+  // dispatch,
+  // playerCreatures,
+  // computerCreatures
+  attackPayload
+) => {
+  console.log(`calculateDamageAndStatuses: attackPayload`, attackPayload)
+  const {
     attacker,
     target,
+    isPlayerAttack,
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef,
     attack,
+    dispatch,
+    playerCreatures,
+    computerCreatures,
+  } = attackPayload
+  // findRelevantProcs
+  const objAfterImmediateStatuses = findRelevantProcs(
+    // attacker,
+    // target,
+    // isPlayerAttack,
+    // playerCreatureControlsRef,
+    // enemyCreatureControlsRef,
+    // attack,
+    // dispatch,
+    // playerCreatures,
+    // computerCreatures,
+    attackPayload,
     "beforeAttack"
-  );
+  )
+  console.log(
+    `calculateDamageAndStatuses: objAfterImmediateStatuses`,
+    objAfterImmediateStatuses
+  )
 
   const { statuses, damage } = calcAttack(
     objAfterImmediateStatuses.attacker,
     objAfterImmediateStatuses.target,
     objAfterImmediateStatuses.attack
-  );
+  )
 
-  return { statuses, damage };
-};
+  return { statuses, damage }
+}

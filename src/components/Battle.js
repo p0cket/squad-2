@@ -23,11 +23,6 @@ const Battle = () => {
     setCreatureControls,
   } = useCreatureControls();
 
-  // const { handleConfirmedAttack } = useBattleActions(
-  //   playerCreatureControlsRef,
-  //   enemyCreatureControlsRef
-  // )
-
   // Apply end-of-turn effects using the custom hook
   // useEndOfTurnEffects(state, dispatch)
 

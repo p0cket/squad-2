@@ -1,4 +1,5 @@
 import { attacks } from "./attacks"
+import { Attack } from "./attacks";
 
 export const MAX_HP = 100
 const BASE_HEALTH = 100
@@ -26,7 +27,31 @@ const baseStats = {
 //   mods: [],
 // },
 // creatures.js
+export interface Creature {
+  id: number;
+  name: string;
+  icon: string;
+  template: string;
+  health: number;
+  maxHealth: number;
+  attack: number;
+  trueDamage: number;
+  defence: number;
+  mods: any[];
+  startingAttacks: Attack[];
+  possibleAttacks: Attack[];
+  statuses?: string[];
+}
 
+export interface PowerLevels {
+  weak: Creature[];
+  moderate: Creature[];
+  strong: Creature[];
+  powerful: Creature[];
+  legendary: Creature[];
+}
+
+// Assuming Attack is defined in the attacks module
 export const CREATURES = {
   dragon: {
     name: "Draco",
