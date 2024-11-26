@@ -1,9 +1,11 @@
 import { attacks } from "../../consts/attacks"
+import { Creature } from "../../consts/types"
+import { processEndOfTurn } from "../turn/processEndOfTurn"
 // import { pocketLog } from "../../pocketLog/utils"
-import { getAliveCreatures, processEndOfTurn } from "../battleUtils"
-import { checkIfPartyDead } from "../turnUtils"
-import { newPerformAttack, performAttack } from "./performAttack"
-
+import { newPerformAttack } from "./performAttack"
+export const getAliveCreatures = (creatures: Creature[]) => {
+  return creatures.filter((c) => c.health > 0)
+}
 // export const handleAttack = async (
 //   state,
 //   dispatch,
@@ -152,10 +154,7 @@ import { newPerformAttack, performAttack } from "./performAttack"
 //   }
 // }
 // from chooseTargetsModal.js use when someone selects a target and runs the attack
-export const handleTargetedAttack = async (
-  state,
-  attackPayload
-) => {
+export const handleTargetedAttack = async (state, attackPayload) => {
   if (!attackPayload) {
     console.error("No attackPayload provided for handleTargetedAttack")
     return
@@ -175,31 +174,6 @@ export const handleTargetedAttack = async (
     `running attack: ${attacker?.name} uses ${attack?.name} on ${target?.name}. AttackPayload:`,
     attackPayload
   )
-  // Simple log
-  // pocketLog(
-  //   `${new Date().toISOString()} isPlayerAttack ${Math.floor(
-  //     Math.random() * 1000
-  //   )}`,
-  //   isPlayerAttack
-  // )
-  // Log with tags
-  // pocketLog("userScore", isPlayerAttack, { tags: ["score", "user"] })
-  // Log with a condition
-  // pocketLog("stateKeys", Object.keys(state).length, {
-  //   condition: Object.keys(state).length > 0 ? "warning" : null,
-  // })
-  // Log with a condition
-  // const responseTime = await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve(2500)
-  //   }, 1000)
-  // })
-  // Log with a custom message and condition
-  // pocketLog("apiResponseTime", responseTime, {
-  //   message: "Response time exceeded threshold",
-  //   condition: responseTime > 2000 ? "issue" : null,
-  // })
-
   // PLAYER ATTACK:
   try {
     await newPerformAttack(
@@ -278,3 +252,27 @@ export const handleTargetedAttack = async (
 }
 
 export const runPlayerMove = async () => {}
+// Simple log
+// pocketLog(
+//   `${new Date().toISOString()} isPlayerAttack ${Math.floor(
+//     Math.random() * 1000
+//   )}`,
+//   isPlayerAttack
+// )
+// Log with tags
+// pocketLog("userScore", isPlayerAttack, { tags: ["score", "user"] })
+// Log with a condition
+// pocketLog("stateKeys", Object.keys(state).length, {
+//   condition: Object.keys(state).length > 0 ? "warning" : null,
+// })
+// Log with a condition
+// const responseTime = await new Promise((resolve) => {
+//   setTimeout(() => {
+//     resolve(2500)
+//   }, 1000)
+// })
+// Log with a custom message and condition
+// pocketLog("apiResponseTime", responseTime, {
+//   message: "Response time exceeded threshold",
+//   condition: responseTime > 2000 ? "issue" : null,
+// })

@@ -1,21 +1,130 @@
-import {
-  moveAttacker,
-  returnAttacker,
-  shakeTarget,
-} from "../../components/animations/attackAnimations"
-import {
-  //   applyEffects,
-  // applyPhaseStatuses,
-  calcAttack,
-  calculateDamageAndStatuses,
-  findRelevantProcs,
-  getControls,
-  getCreatureControlsById,
-  performAttackAnimation,
-  showDamageOnTarget,
-  updateTargetState,
-} from "./attackUtils"
+import { Attack, Creature } from "../../consts/types"
+import { getControls } from "../anim/getControls"
+import { performAttackAnimation } from "../anim/performAttackAnimation"
+import { showDamageOnTarget } from "../anim/showDamageOnTarget"
+import { updateTargetState } from "../party/updateTargetState"
+import { calculateDamageAndStatuses } from "./calculateDamageAndStatuses"
+// import {
+//   //   applyEffects,
+//   // applyPhaseStatuses,
+  
+//   // getControls,
+//   // calculateDamageAndStatuses,
+//   // performAttackAnimation,
+//   // showDamageOnTarget,
+//   // updateTargetState,
+// } from "./attackUtils"
 
+export type AttackPayload = {
+  attacker: Creature
+  target: Creature
+  isPlayerAttack: boolean
+  // playerCreatureControlsRef: React.RefObject<CreatureControls>;
+  // enemyCreatureControlsRef: React.RefObject<CreatureControls>;
+  playerCreatureControlsRef: React.RefObject<any>
+  enemyCreatureControlsRef: React.RefObject<any>
+  attack: Attack
+  dispatch: React.Dispatch<any>
+  playerCreatures: Creature[]
+  computerCreatures: Creature[]
+}
+export const newPerformAttack = async (
+  // attacker,
+  // target,
+  // isPlayerAttack,
+  // playerCreatureControlsRef,
+  // enemyCreatureControlsRef,
+  // attack,
+  // dispatch,
+  // playerCreatures,
+  // computerCreatures
+  attackPayload: AttackPayload
+) => {
+  const {
+    attacker,
+    target,
+    isPlayerAttack,
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef,
+    attack,
+    dispatch,
+    playerCreatures,
+    computerCreatures,
+  } = attackPayload
+  console.group("%cnewPerformAttack", "color: blue; font-weight: bold;")
+  console.log(
+    "%cPerforming attack from:",
+    "color: green;",
+    attacker,
+    "%cto:",
+    "color: green;",
+    target,
+    "%cattack is:",
+    "color: green;",
+    attack
+  )
+
+  // Retrieve controls
+  const { attackerControls, targetControls, targetShowDamage } = getControls(
+    attacker,
+    target,
+    isPlayerAttack,
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef
+  )
+
+  // Execute animations
+  await performAttackAnimation(attackerControls, targetControls, isPlayerAttack)
+
+  // Calculate damage and apply new statuses
+  console.group(
+    "%cDamage Calculation & Show Damage",
+    "color: purple; font-weight: bold;"
+  )
+  // new statuses
+  // if the attack has a status, add it to the creature it
+  // if there are any statuses on the creature that are applied before the attack,
+  // apply them
+  const { statuses, damage } = calculateDamageAndStatuses(
+    // attacker,
+    // target,
+    // isPlayerAttack,
+    // playerCreatureControlsRef,
+    // enemyCreatureControlsRef,
+    // attack,
+    // dispatch,
+    // playerCreatures,
+    // computerCreatures
+    attackPayload
+  )
+
+  console.log(
+    "%cTarget's health after damage:",
+    "color: red;",
+    target.health - damage
+  )
+  console.groupEnd()
+
+  // Show damage on target
+  showDamageOnTarget(targetShowDamage, damage, target.ID)
+
+  // Update target's health and statuses
+  const updatedCreatureObj = updateTargetState(target, damage, statuses)
+
+  console.log(
+    `updatedCreatureObj (with status) after attack`,
+    updatedCreatureObj
+  )
+
+  // Dispatch the update
+  dispatch({
+    type: "UPDATE_CREATURE",
+    side: isPlayerAttack ? "computerCreatures" : "playerCreatures",
+    creature: updatedCreatureObj,
+  })
+
+  console.groupEnd()
+}
 // export const newOldPerformAttack = async (
 //   attacker,
 //   target,
@@ -234,101 +343,3 @@ import {
 //   // changeTurns
 //   // run end of turn things (turn + 1, change priority)
 // }
-
-export const newPerformAttack = async (
-  // attacker,
-  // target,
-  // isPlayerAttack,
-  // playerCreatureControlsRef,
-  // enemyCreatureControlsRef,
-  // attack,
-  // dispatch,
-  // playerCreatures,
-  // computerCreatures
-  attackPayload
-) => {
-  const {
-    attacker,
-    target,
-    isPlayerAttack,
-    playerCreatureControlsRef,
-    enemyCreatureControlsRef,
-    attack,
-    dispatch,
-    playerCreatures,
-    computerCreatures,
-  } = attackPayload
-  console.group("%cnewPerformAttack", "color: blue; font-weight: bold;")
-  console.log(
-    "%cPerforming attack from:",
-    "color: green;",
-    attacker,
-    "%cto:",
-    "color: green;",
-    target,
-    "%cattack is:",
-    "color: green;",
-    attack
-  )
-
-  // Retrieve controls
-  const { attackerControls, targetControls, targetShowDamage } = getControls(
-    attacker,
-    target,
-    isPlayerAttack,
-    playerCreatureControlsRef,
-    enemyCreatureControlsRef
-  )
-
-  // Execute animations
-  await performAttackAnimation(attackerControls, targetControls, isPlayerAttack)
-
-  // Calculate damage and apply new statuses
-  console.group(
-    "%cDamage Calculation & Show Damage",
-    "color: purple; font-weight: bold;"
-  )
-  // new statuses
-  // if the attack has a status, add it to the creature it
-  // if there are any statuses on the creature that are applied before the attack,
-  // apply them
-  const { statuses, damage } = calculateDamageAndStatuses(
-    // attacker,
-    // target,
-    // isPlayerAttack,
-    // playerCreatureControlsRef,
-    // enemyCreatureControlsRef,
-    // attack,
-    // dispatch,
-    // playerCreatures,
-    // computerCreatures
-    attackPayload
-  )
-
-  console.log(
-    "%cTarget's health after damage:",
-    "color: red;",
-    target.health - damage
-  )
-  console.groupEnd()
-
-  // Show damage on target
-  showDamageOnTarget(targetShowDamage, damage, target.ID)
-
-  // Update target's health and statuses
-  const updatedCreatureObj = updateTargetState(target, damage, statuses)
-
-  console.log(
-    `updatedCreatureObj (with status) after attack`,
-    updatedCreatureObj
-  )
-
-  // Dispatch the update
-  dispatch({
-    type: "UPDATE_CREATURE",
-    side: isPlayerAttack ? "computerCreatures" : "playerCreatures",
-    creature: updatedCreatureObj,
-  })
-
-  console.groupEnd()
-}

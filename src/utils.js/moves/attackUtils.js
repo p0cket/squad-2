@@ -228,9 +228,7 @@ export const clearStatuses = (creature) => {
 //     })
 //   }
 // }
-export const getCreatureControlsById = (id, playerRef, enemyRef) => {
-  return playerRef.current[id] || enemyRef.current[id] || null
-}
+
 
 export const updateCreatureInList = (creatures, updatedCreature) => {
   console.log("updateCreatureInList called with:", creatures, updatedCreature)
@@ -278,148 +276,9 @@ export const applyStatusEffects = (effect, creature) => {
   }
 }
 
-export const getControls = (
-  attacker,
-  target,
-  isPlayerAttack,
-  playerCreatureControlsRef,
-  enemyCreatureControlsRef
-) => {
-  const controlsRef = isPlayerAttack
-    ? playerCreatureControlsRef
-    : enemyCreatureControlsRef
 
-  console.log(
-    `getControls: attacker, target, isPlayerAttack, playerCreatureControlsRef, enemyCreatureControlsRef`,
-    attacker,
-    target,
-    isPlayerAttack,
-    playerCreatureControlsRef,
-    enemyCreatureControlsRef
-  )
 
-  const attackerControls = controlsRef.current[attacker.ID]?.controls
-  const targetControls = getCreatureControlsById(
-    target.ID,
-    playerCreatureControlsRef,
-    enemyCreatureControlsRef
-  )?.controls
-  const targetShowDamage = getCreatureControlsById(
-    target.ID,
-    playerCreatureControlsRef,
-    enemyCreatureControlsRef
-  )?.showDamage
 
-  if (!attackerControls || !targetControls) {
-    console.warn(
-      `%c⚠️ Animation controls not found for attacker ID: ${attacker.ID} or target ID: ${target.ID}, skipping attack animation.`,
-      "color: orange; font-weight: bold;"
-    )
-    console.groupEnd()
-    return {
-      attackerControls: null,
-      targetControls: null,
-      targetShowDamage: null,
-    }
-  }
 
-  return { attackerControls, targetControls, targetShowDamage }
-  // const controlsRef = isPlayerAttack
-  //   ? playerCreatureControlsRef
-  //   : enemyCreatureControlsRef
 
-  // const attackerControls = controlsRef.current[attacker.ID]?.controls
-  // const targetControls = getCreatureControlsById(
-  //   target.ID,
-  //   playerCreatureControlsRef,
-  //   enemyCreatureControlsRef
-  // )?.controls
-  // const targetShowDamage = getCreatureControlsById(
-  //   target.ID,
-  //   playerCreatureControlsRef,
-  //   enemyCreatureControlsRef
-  // )?.showDamage
-}
 
-export const performAttackAnimation = async (
-  attackerControls,
-  targetControls,
-  isPlayerAttack
-) => {
-  const direction = isPlayerAttack ? -1 : 1
-  const distance = 150
-  await moveAttacker(attackerControls, direction, distance)
-  await shakeTarget(targetControls)
-  await returnAttacker(attackerControls)
-}
-
-export const updateTargetState = (target, damage, statuses) => {
-  return {
-    ...target,
-    health: Math.max(0, target.health - damage),
-    statuses,
-  }
-}
-
-export const showDamageOnTarget = (targetShowDamage, damage, targetID) => {
-  if (targetShowDamage) {
-    try {
-      console.log("%cShowing damage on target:", "color: red;", targetID)
-      targetShowDamage(damage)
-    } catch (error) {
-      console.error("%cError showing damage on target:", "color: red;", error)
-    }
-  }
-}
-
-export const calculateDamageAndStatuses = (
-  // attacker,
-  // target,
-  // isPlayerAttack,
-  // playerCreatureControlsRef,
-  // enemyCreatureControlsRef,
-  // attack,
-  // dispatch,
-  // playerCreatures,
-  // computerCreatures
-  attackPayload
-) => {
-  console.log(`calculateDamageAndStatuses: attackPayload`, attackPayload)
-  const {
-    attacker,
-    target,
-    isPlayerAttack,
-    playerCreatureControlsRef,
-    enemyCreatureControlsRef,
-    attack,
-    dispatch,
-    playerCreatures,
-    computerCreatures,
-  } = attackPayload
-  // findRelevantProcs
-  const objAfterImmediateStatuses = findRelevantProcs(
-    // attacker,
-    // target,
-    // isPlayerAttack,
-    // playerCreatureControlsRef,
-    // enemyCreatureControlsRef,
-    // attack,
-    // dispatch,
-    // playerCreatures,
-    // computerCreatures,
-    attackPayload,
-    "beforeAttack"
-  )
-  console.log(
-    `calculateDamageAndStatuses: objAfterImmediateStatuses`,
-    objAfterImmediateStatuses
-  )
-
-  const { statuses, damage } = calcAttack(
-    objAfterImmediateStatuses.attacker,
-    objAfterImmediateStatuses.target,
-    objAfterImmediateStatuses.attack
-  )
-
-  return { statuses, damage }
-}

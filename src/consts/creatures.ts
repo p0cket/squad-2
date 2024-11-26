@@ -1,5 +1,5 @@
 import { attacks } from "./attacks"
-import { Attack } from "./attacks";
+import { BaseCreature, Creature } from "./types";
 
 export const MAX_HP = 100
 const BASE_HEALTH = 100
@@ -27,32 +27,18 @@ const baseStats = {
 //   mods: [],
 // },
 // creatures.js
-export interface Creature {
-  id: number;
-  name: string;
-  icon: string;
-  template: string;
-  health: number;
-  maxHealth: number;
-  attack: number;
-  trueDamage: number;
-  defence: number;
-  mods: any[];
-  startingAttacks: Attack[];
-  possibleAttacks: Attack[];
-  statuses?: string[];
-}
+
 
 export interface PowerLevels {
-  weak: Creature[];
-  moderate: Creature[];
-  strong: Creature[];
-  powerful: Creature[];
-  legendary: Creature[];
+  weak: BaseCreature[];
+  moderate: BaseCreature[];
+  strong: BaseCreature[];
+  powerful: BaseCreature[];
+  legendary: BaseCreature[];
 }
 
 // Assuming Attack is defined in the attacks module
-export const CREATURES = {
+export const CREATURES: { [key: string]: BaseCreature } = {
   dragon: {
     name: "Draco",
     icon: "🐉",
@@ -566,7 +552,7 @@ export const CREATURES = {
 };
 
 // Grouping of Creatures by Power Level
-export const POWER_LEVELS = {
+export const POWER_LEVELS: PowerLevels = {
   weak: [
     CREATURES.fish,
     CREATURES.faun,

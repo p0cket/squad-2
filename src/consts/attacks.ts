@@ -1,17 +1,18 @@
-import { STATUS_EFFECTS } from "./statuses";
-import { Attack } from "./types";
+import { STATUS_EFFECTS } from "./statuses"
+import { Attack } from "./types"
 
 export const attacks: { [key: string]: Attack } = {
   slash: {
     template: "slash",
     name: "Slash",
     attackType: "Physical",
-    effects: [STATUS_EFFECTS.BUFF],
+    // effects: [STATUS_EFFECTS.BUFF],
+    effects: ["BUFF"],
     chanceToLand: 0.95,
     damage: 10,
     trueDamage: 0,
     icon: "sword_icon",
-    notes: "Basic physical attack with a chance for a critical hit."
+    notes: "Basic physical attack with a chance for a critical hit.",
   },
   pierce: {
     template: "pierce",
@@ -22,51 +23,51 @@ export const attacks: { [key: string]: Attack } = {
     damage: 12,
     trueDamage: 0,
     icon: "spear_icon",
-    notes: "Attack that penetrates enemy armor."
+    notes: "Attack that penetrates enemy armor.",
   },
   rend: {
     template: "rend",
     name: "Rend",
     attackType: "Physical",
-    effects: [STATUS_EFFECTS.POISON],
+    effects: ["POISON"],
     chanceToLand: 0.85,
     damage: 8,
     trueDamage: 2,
     icon: "axe_icon",
-    notes: "Attack that causes bleeding over time."
+    notes: "Attack that causes bleeding over time.",
   },
   bash: {
     template: "bash",
     name: "Bash",
     attackType: "Physical",
-    effects: [STATUS_EFFECTS.STUN],
+    effects: ["STUN"],
     chanceToLand: 0.9,
     damage: 15,
     trueDamage: 0,
     icon: "hammer_icon",
-    notes: "A strong attack that may stun the enemy."
+    notes: "A strong attack that may stun the enemy.",
   },
   fireball: {
     template: "fireball",
     name: "Fireball",
     attackType: "Elemental",
-    effects: [STATUS_EFFECTS.BURN],
+    effects: ["BURN"],
     chanceToLand: 0.9,
     damage: 20,
     trueDamage: 5,
     icon: "fireball_icon",
-    notes: "Deals fire damage with a chance to burn the target."
+    notes: "Deals fire damage with a chance to burn the target.",
   },
   thunderbolt: {
     template: "thunderbolt",
     name: "Thunderbolt",
     attackType: "Elemental",
-    effects: [STATUS_EFFECTS.STUN],
+    effects: ["STUN"],
     chanceToLand: 0.85,
     damage: 18,
     trueDamage: 4,
     icon: "lightning_icon",
-    notes: "Deals electric damage with a chance to paralyze."
+    notes: "Deals electric damage with a chance to paralyze.",
   },
   ice_shard: {
     template: "ice_shard",
@@ -77,7 +78,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 10,
     trueDamage: 0,
     icon: "ice_icon",
-    notes: "Basic ice attack with high accuracy."
+    notes: "Basic ice attack with high accuracy.",
   },
   shockwave: {
     template: "shockwave",
@@ -88,18 +89,18 @@ export const attacks: { [key: string]: Attack } = {
     damage: 14,
     trueDamage: 2,
     icon: "shockwave_icon",
-    notes: "Earth attack that may shock the enemy."
+    notes: "Earth attack that may shock the enemy.",
   },
   venom_strike: {
     template: "venom_strike",
     name: "Venom Strike",
     attackType: "Status",
-    effects: [STATUS_EFFECTS.POISON],
+    effects: ["POISON"],
     chanceToLand: 0.8,
     damage: 6,
     trueDamage: 3,
     icon: "poison_icon",
-    notes: "Inflicts poison on the enemy."
+    notes: "Inflicts poison on the enemy.",
   },
   lullaby: {
     template: "lullaby",
@@ -110,18 +111,18 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "sleep_icon",
-    notes: "Puts the enemy to sleep."
+    notes: "Puts the enemy to sleep.",
   },
   dizzying_blow: {
     template: "dizzying_blow",
     name: "Dizzying Blow",
     attackType: "Status",
-    effects: [STATUS_EFFECTS.STUN],
+    effects: ["STUN"],
     chanceToLand: 0.75,
     damage: 12,
     trueDamage: 1,
     icon: "confusion_icon",
-    notes: "May confuse the enemy."
+    notes: "May confuse the enemy.",
   },
   weakening_touch: {
     template: "weakening_touch",
@@ -132,18 +133,18 @@ export const attacks: { [key: string]: Attack } = {
     damage: 5,
     trueDamage: 0,
     icon: "weakness_icon",
-    notes: "Reduces enemy's attack power."
+    notes: "Reduces enemy's attack power.",
   },
   heal: {
     template: "heal",
     name: "Heal",
     attackType: "SupportHealing",
-    effects: [STATUS_EFFECTS.REGENERATION],
+    effects: ["REGENERATION"],
     chanceToLand: 1.0,
     damage: 0,
     trueDamage: 0,
     icon: "heal_icon",
-    notes: "Restores health to an ally over time."
+    notes: "Restores health to an ally over time.",
   },
   protect: {
     template: "protect",
@@ -154,7 +155,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "shield_icon",
-    notes: "Shields an ally, reducing incoming damage."
+    notes: "Shields an ally, reducing incoming damage.",
   },
   purify: {
     template: "purify",
@@ -165,7 +166,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "cure_icon",
-    notes: "Removes negative status effects from an ally."
+    notes: "Removes negative status effects from an ally.",
   },
   revitalize: {
     template: "revitalize",
@@ -176,7 +177,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "revitalize_icon",
-    notes: "Restores a moderate amount of health instantly."
+    notes: "Restores a moderate amount of health instantly.",
   },
   arcane_blast: {
     template: "arcane_blast",
@@ -187,7 +188,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 20,
     trueDamage: 0,
     icon: "arcane_icon",
-    notes: "Deals magical damage to an enemy."
+    notes: "Deals magical damage to an enemy.",
   },
   mana_leech: {
     template: "mana_leech",
@@ -198,18 +199,18 @@ export const attacks: { [key: string]: Attack } = {
     damage: 10,
     trueDamage: 2,
     icon: "mana_icon",
-    notes: "Drains mana from the enemy."
+    notes: "Drains mana from the enemy.",
   },
   spell_boost: {
     template: "spell_boost",
     name: "Spell Boost",
     attackType: "Magical",
-    effects: [STATUS_EFFECTS.BUFF],
+    effects: ["BUFF"],
     chanceToLand: 1.0,
     damage: 0,
     trueDamage: 0,
     icon: "magic_boost_icon",
-    notes: "Increases caster's magic power."
+    notes: "Increases caster's magic power.",
   },
   reflective_shield: {
     template: "reflective_shield",
@@ -220,7 +221,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "reflect_icon",
-    notes: "Reflects enemy spells back at them."
+    notes: "Reflects enemy spells back at them.",
   },
   arrow_shot: {
     template: "arrow_shot",
@@ -231,7 +232,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 10,
     trueDamage: 0,
     icon: "arrow_icon",
-    notes: "Basic ranged attack."
+    notes: "Basic ranged attack.",
   },
   snipe: {
     template: "snipe",
@@ -242,7 +243,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 25,
     trueDamage: 5,
     icon: "long_arrow_icon",
-    notes: "High damage at a distance."
+    notes: "High damage at a distance.",
   },
   volley: {
     template: "volley",
@@ -253,7 +254,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 15,
     trueDamage: 0,
     icon: "multiple_arrows_icon",
-    notes: "Attacks multiple enemies."
+    notes: "Attacks multiple enemies.",
   },
   penetrating_shot: {
     template: "penetrating_shot",
@@ -264,40 +265,40 @@ export const attacks: { [key: string]: Attack } = {
     damage: 18,
     trueDamage: 0,
     icon: "piercing_arrow_icon",
-    notes: "Ignores enemy defenses."
+    notes: "Ignores enemy defenses.",
   },
   battle_cry: {
     template: "battle_cry",
     name: "Battle Cry",
     attackType: "Support",
-    effects: [STATUS_EFFECTS.BUFF], // Strength approximated as a buff
+    effects: ["BUFF"], // Strength approximated as a buff
     chanceToLand: 1.0,
     damage: 0,
     trueDamage: 0,
     icon: "strength_icon",
-    notes: "Boosts allies' attack power."
+    notes: "Boosts allies' attack power.",
   },
   fortify: {
     template: "fortify",
     name: "Fortify",
     attackType: "Support",
-    effects: [STATUS_EFFECTS.BUFF], // Defense approximated as a buff
+    effects: ["BUFF"], // Defense approximated as a buff
     chanceToLand: 1.0,
     damage: 0,
     trueDamage: 0,
     icon: "defense_icon",
-    notes: "Boosts allies' defense."
+    notes: "Boosts allies' defense.",
   },
   haste: {
     template: "haste",
     name: "Haste",
     attackType: "Support",
-    effects: [STATUS_EFFECTS.BUFF], // Speed approximated as a buff
+    effects: ["BUFF"], // Speed approximated as a buff
     chanceToLand: 1.0,
     damage: 0,
     trueDamage: 0,
     icon: "speed_icon",
-    notes: "Boosts allies' speed."
+    notes: "Boosts allies' speed.",
   },
   inspire: {
     template: "inspire",
@@ -308,18 +309,18 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "inspire_icon",
-    notes: "Boosts allies' morale."
+    notes: "Boosts allies' morale.",
   },
   quicksand: {
     template: "quicksand",
     name: "Quicksand",
     attackType: "Trap",
-    effects: [STATUS_EFFECTS.STUN], // Trap approximated as a stun effect
+    effects: ["STUN"], // Trap approximated as a stun effect
     chanceToLand: 0.9,
     damage: 5,
     trueDamage: 0,
     icon: "quicksand_icon",
-    notes: "Sets a trap that slows enemies."
+    notes: "Sets a trap that slows enemies.",
   },
   rain_dance: {
     template: "rain_dance",
@@ -330,7 +331,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "rain_icon",
-    notes: "Changes weather to rain."
+    notes: "Changes weather to rain.",
   },
   rock_slide: {
     template: "rock_slide",
@@ -341,7 +342,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 20,
     trueDamage: 0,
     icon: "rock_icon",
-    notes: "Deals damage using the environment."
+    notes: "Deals damage using the environment.",
   },
   camouflage: {
     template: "camouflage",
@@ -352,18 +353,18 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "camouflage_icon",
-    notes: "Uses terrain to hide and gain advantage."
+    notes: "Uses terrain to hide and gain advantage.",
   },
   chrono_break: {
     template: "chrono_break",
     name: "Chrono Break",
     attackType: "Special",
-    effects: [STATUS_EFFECTS.STUN],
+    effects: ["STUN"],
     chanceToLand: 0.15,
     damage: 10,
     trueDamage: 0,
     icon: "time_icon",
-    notes: "Attempts to stop time for enemies."
+    notes: "Attempts to stop time for enemies.",
   },
   phase_shift: {
     template: "phase_shift",
@@ -374,7 +375,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "teleport_icon",
-    notes: "Evades attacks by teleporting."
+    notes: "Evades attacks by teleporting.",
   },
   mirror_image: {
     template: "mirror_image",
@@ -385,7 +386,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "clone_icon",
-    notes: "Creates clones to confuse enemies."
+    notes: "Creates clones to confuse enemies.",
   },
   ultimate_blast: {
     template: "ultimate_blast",
@@ -396,7 +397,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 40,
     trueDamage: 5,
     icon: "blast_icon",
-    notes: "A powerful attack with high damage."
+    notes: "A powerful attack with high damage.",
   },
   twin_slash: {
     template: "twin_slash",
@@ -407,7 +408,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 15,
     trueDamage: 0,
     icon: "double_sword_icon",
-    notes: "Attacks twice in quick succession."
+    notes: "Attacks twice in quick succession.",
   },
   whirlwind: {
     template: "whirlwind",
@@ -418,7 +419,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 18,
     trueDamage: 2,
     icon: "whirlwind_icon",
-    notes: "Attacks multiple enemies in succession."
+    notes: "Attacks multiple enemies in succession.",
   },
   elemental_burst: {
     template: "elemental_burst",
@@ -429,7 +430,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 30,
     trueDamage: 5,
     icon: "fusion_icon",
-    notes: "Combines elements for massive damage."
+    notes: "Combines elements for massive damage.",
   },
   flurry: {
     template: "flurry",
@@ -440,7 +441,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 12,
     trueDamage: 0,
     icon: "flurry_icon",
-    notes: "Rapidly attacks the enemy multiple times."
+    notes: "Rapidly attacks the enemy multiple times.",
   },
   sneak_attack: {
     template: "sneak_attack",
@@ -451,7 +452,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 20,
     trueDamage: 5,
     icon: "dagger_icon",
-    notes: "Deals high damage when undetected."
+    notes: "Deals high damage when undetected.",
   },
   vanish: {
     template: "vanish",
@@ -462,7 +463,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 0,
     trueDamage: 0,
     icon: "invisibility_icon",
-    notes: "Becomes invisible to enemies."
+    notes: "Becomes invisible to enemies.",
   },
   silent_strike: {
     template: "silent_strike",
@@ -473,7 +474,7 @@ export const attacks: { [key: string]: Attack } = {
     damage: 25,
     trueDamage: 10,
     icon: "silent_kill_icon",
-    notes: "Chance to instantly defeat an enemy."
+    notes: "Chance to instantly defeat an enemy.",
   },
   shadow_step: {
     template: "shadow_step",
@@ -484,68 +485,61 @@ export const attacks: { [key: string]: Attack } = {
     damage: 5,
     trueDamage: 0,
     icon: "shadow_icon",
-    notes: "Moves swiftly, increasing evasion."
-  }
-};
-
-
+    notes: "Moves swiftly, increasing evasion.",
+  },
+}
 
 export const attackTypes = {
-  Physical: [
-    attacks.slash,
-    attacks.pierce,
-    attacks.rend,
-    attacks.bash
-  ],
+  Physical: [attacks.slash, attacks.pierce, attacks.rend, attacks.bash],
   Elemental: [
     attacks.fireball,
     attacks.thunderbolt,
     attacks.ice_shard,
-    attacks.shockwave
+    attacks.shockwave,
   ],
   Status: [
     attacks.venom_strike,
     attacks.lullaby,
     attacks.dizzying_blow,
-    attacks.weakening_touch
+    attacks.weakening_touch,
   ],
   SupportHealing: [
     attacks.heal,
     attacks.protect,
     attacks.purify,
-    attacks.revitalize
+    attacks.revitalize,
   ],
   Magical: [
     attacks.arcane_blast,
     attacks.mana_leech,
     attacks.spell_boost,
-    attacks.reflective_shield
+    attacks.reflective_shield,
   ],
   Ranged: [
     attacks.arrow_shot,
     attacks.snipe,
     attacks.volley,
-    attacks.penetrating_shot
+    attacks.penetrating_shot,
   ],
   Special: [
     attacks.chrono_break,
     attacks.phase_shift,
     attacks.mirror_image,
-    attacks.ultimate_blast
+    attacks.ultimate_blast,
   ],
   Combo: [
     attacks.twin_slash,
     attacks.whirlwind,
     attacks.elemental_burst,
-    attacks.flurry
+    attacks.flurry,
   ],
   Stealth: [
     attacks.sneak_attack,
     attacks.vanish,
     attacks.silent_strike,
-    attacks.shadow_step
-  ]
-};
+    attacks.shadow_step,
+  ],
+}
 
 // // Example of how you might use these in a component
 // import { attacks } from './attacks';

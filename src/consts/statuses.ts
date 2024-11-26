@@ -1,3 +1,4 @@
+import { Creature, StatusEffect } from "./types"
 
 export const STATUS_EFFECTS = {
   POISON: {
@@ -61,7 +62,7 @@ export const applyPoison = (creature: Creature): Creature => ({
 // Function to apply buff effect, increasing attack by 5
 export const applyBuff = (creature: Creature): Creature => ({
   ...creature,
-  atk: creature.atk + 5,
+  attack: creature.attack + 5,
 })
 
 // Function to apply burn effect, reducing health by 5
@@ -73,7 +74,7 @@ export const applyBurn = (creature: Creature): Creature => ({
 // Function to apply stun effect, setting stunned to true
 export const applyStun = (creature: Creature): Creature => ({
   ...creature,
-  stunned: true,
+  // stunned: true, // Uncomment this line when you have a 'stunned' property in the Creature type
 })
 
 // Function to apply regeneration effect, increasing health by 5 up to maxHealth
@@ -84,17 +85,19 @@ export const applyRegeneration = (creature: Creature): Creature => ({
 
 // Function to tick down the duration of a status effect
 export const tickDownEffectDuration = (creature: Creature, statusName: string): Creature => {
-  creature.statuses = creature.statuses
-    .map((status) => {
-      if (status.name === statusName) {
-        return {
-          ...status,
-          duration: status.duration - 1,
+  if (creature.statuses) {
+    creature.statuses = creature.statuses
+      .map((status) => {
+        if (status.name === statusName) {
+          return {
+            ...status,
+            duration: status.duration - 1,
+          }
         }
-      }
-      return status
-    })
-    .filter((status) => status.duration > 0) // Keep statuses that still have duration
+        return status
+      })
+      .filter((status) => status.duration > 0) // Keep statuses that still have duration
+  }
   return creature
 }
 
@@ -107,7 +110,7 @@ export const effectFunctions = {
 }
 
 // Function to apply the effect to the creature
-export const runApplyEffect = (creature: Creature, effectObj: StatusEffect) => {
+export const runApplyEffect = (creature: Creature, effectObj: StatusEffect ) => {
   let updatedCreature = { ...creature }
   switch (effectObj.effectFuncName) {
     case "applyPoison":
