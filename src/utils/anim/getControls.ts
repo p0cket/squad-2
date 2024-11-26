@@ -13,12 +13,22 @@ export const getControls = (
     : enemyCreatureControlsRef
 
   console.log(
-    `getControls: attacker, target, isPlayerAttack, playerCreatureControlsRef, enemyCreatureControlsRef`,
-    attacker,
-    target,
-    isPlayerAttack,
-    playerCreatureControlsRef,
-    enemyCreatureControlsRef
+    `%c[getControls] Attacker ID: ${attacker.ID}, Target ID: ${target.ID}, isPlayerAttack: ${isPlayerAttack}, controlsRef: ${
+      controlsRef === playerCreatureControlsRef
+        ? "playerCreatureControlsRef"
+        : "enemyCreatureControlsRef"
+    }`,
+    "color: yellow; background-color: black;"
+  )
+  console.log(
+    `%c[getControls] playerCreatureControlsRef.current: %o`,
+    "color: yellow; background-color: black;",
+    playerCreatureControlsRef.current
+  )
+  console.log(
+    `%c[getControls] enemyCreatureControlsRef.current: %o`,
+    "color: yellow; background-color: black;",
+    enemyCreatureControlsRef.current
   )
 
   const attackerControls = controlsRef.current[attacker.ID]?.controls
@@ -33,12 +43,27 @@ export const getControls = (
     enemyCreatureControlsRef
   )?.showDamage
 
+  console.log(
+    `%c[getControls] attackerControls: %o`,
+    "color: yellow; background-color: black;",
+    attackerControls
+  )
+  console.log(
+    `%c[getControls] targetControls: %o`,
+    "color: yellow; background-color: black;",
+    targetControls
+  )
+  console.log(
+    `%c[getControls] targetShowDamage: %o`,
+    "color: yellow; background-color: black;",
+    targetShowDamage
+  )
+
   if (!attackerControls || !targetControls) {
     console.warn(
       `%c⚠️ Animation controls not found for attacker ID: ${attacker.ID} or target ID: ${target.ID}, skipping attack animation.`,
       "color: orange; font-weight: bold;"
     )
-    console.groupEnd()
     return {
       attackerControls: null,
       targetControls: null,
@@ -54,9 +79,52 @@ function getCreatureControlsById(
   playerCreatureControlsRef: RefObject<any>,
   enemyCreatureControlsRef: RefObject<any>
 ) {
-  return (
-    playerCreatureControlsRef.current[ID] ||
-    enemyCreatureControlsRef.current[ID] ||
-    null
+  console.log(
+    `%c[getCreatureControlsById] Searching for ID: ${ID}`,
+    "color: yellow; background-color: black;"
   )
+  console.log(
+    `%c[getCreatureControlsById] playerCreatureControlsRef.current: %o`,
+    "color: yellow; background-color: black;",
+    playerCreatureControlsRef.current
+  )
+  console.log(
+    `%c[getCreatureControlsById] enemyCreatureControlsRef.current: %o`,
+    "color: yellow; background-color: black;",
+    enemyCreatureControlsRef.current
+  )
+
+  const playerControl = playerCreatureControlsRef.current[ID]
+  const enemyControl = enemyCreatureControlsRef.current[ID]
+
+  console.log(
+    `%c[getCreatureControlsById] playerControl for ID ${ID}: %o`,
+    "color: yellow; background-color: black;",
+    playerControl
+  )
+  console.log(
+    `%c[getCreatureControlsById] enemyControl for ID ${ID}: %o`,
+    "color: yellow; background-color: black;",
+    enemyControl
+  )
+
+  if (playerControl) {
+    console.log(
+      `%c[getCreatureControlsById] Found in playerCreatureControlsRef for ID: ${ID}`,
+      "color: yellow; background-color: black;"
+    )
+    return playerControl
+  } else if (enemyControl) {
+    console.log(
+      `%c[getCreatureControlsById] Found in enemyCreatureControlsRef for ID: ${ID}`,
+      "color: yellow; background-color: black;"
+    )
+    return enemyControl
+  } else {
+    console.warn(
+      `%c[getCreatureControlsById] ID: ${ID} not found in any controls references.`,
+      "color: yellow; background-color: black;"
+    )
+    return null
+  }
 }

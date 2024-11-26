@@ -62,14 +62,14 @@ const Battle = () => {
       />
       {/* <Hand cards={cardDataList} />  */}
       <ActionButtons
-        // handleConfirmedAttack={() =>
-        //   handleAttack(
-        //     state,
-        //     dispatch,
-        //     playerCreatureControlsRef,
-        //     enemyCreatureControlsRef
-        //   )
-        // }
+      // handleConfirmedAttack={() =>
+      //   handleAttack(
+      //     state,
+      //     dispatch,
+      //     playerCreatureControlsRef,
+      //     enemyCreatureControlsRef
+      //   )
+      // }
       />
       <CreatureStats />
     </div>

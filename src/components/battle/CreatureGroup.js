@@ -21,7 +21,7 @@ const CreatureGroup = ({
         <div className={firstRowCreatureSize}>
           <Creature
             isPlayer={isPlayer}
-            setCreatureControls={(name, data) =>
+            setCreatureControls={(name, data) => 
               setCreatureControls(name, data, isPlayer)
             }
             creatureObj={firstCreature}

@@ -19,7 +19,7 @@ export default function ChooseTargetsModal({
   const { computerCreatures, playerCreatures } = state;
   const [selectedTarget, setSelectedTarget] = useState(null);
 
-  console.log(`attack`, attack);
+  // console.log(`attack`, attack);
 
   // Determine the attacker based on attack.attackerId or default to the first creature
   const attacker = attack?.attackerId
@@ -64,24 +64,10 @@ export default function ChooseTargetsModal({
     //   isPlayerAttack,
     //   attack,
     // };
-    /**
- * @typedef {Object} AttackPayload
- * @property {any} attacker - The attacker (replace 'any' with the actual type)
- * @property {any} target - The target (replace 'any' with the actual type)
- * @property {boolean} isPlayerAttack - Whether it is a player attack
- * @property {any} playerCreatureControlsRef - Player creature controls reference (replace 'any' with the actual type)
- * @property {any} enemyCreatureControlsRef - Enemy creature controls reference (replace 'any' with the actual type)
- * @property {any} attack - The attack (replace 'any' with the actual type)
- * @property {React.Dispatch<any>} dispatch - The dispatch function (replace 'any' with the actual action type)
- * @property {any[]} playerCreatures - The player creatures (replace 'any' with the actual creature type)
- * @property {any[]} computerCreatures - The computer creatures (replace 'any' with the actual creature type)
- */
-
-/** @type {AttackPayload} */
     const attackPayload = {
       attacker,
       target: selectedTarget, //these should rly be indexes
-      isPlayerAttack: false, //isPlayer: false -> so computer
+      isPlayerAttack: true, //isPlayer: tru -> so player
       playerCreatureControlsRef,
       enemyCreatureControlsRef,
       attack, // attack. make a comp select a random attack they have

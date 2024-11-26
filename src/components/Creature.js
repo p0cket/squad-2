@@ -32,24 +32,40 @@ const Creature = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
     }
   }, [health, isPlayer, position]);
   // Register controls when the component mounts
+  // useEffect(() => {
+  //   if (setCreatureControls) {
+  //     // console.log(
+  //     //   `Setting creature controls for ID: ${ID}, Damage amount before reset:`,
+  //     //   damageAmount
+  //     // );
+  //     setCreatureControls(ID, {
+  //       controls,
+  //       showDamage: (damage) => {
+  //         console.log("showDamage received damage:", damage);
+  //         // do we reset this by putting a
+  //         // timer and setDamageAmount in 1 second to null?
+  //         setDamageAmount(damage);
+  //       },
+  //       creature: creatureObj, // Ensure full creature object is passed
+  //     });
+  //   }
+  // }, [ID, controls, setCreatureControls, creatureObj]);
+  // In Creature component
   useEffect(() => {
     if (setCreatureControls) {
-      // console.log(
-      //   `Setting creature controls for ID: ${ID}, Damage amount before reset:`,
-      //   damageAmount
-      // );
-      setCreatureControls(ID, {
-        controls,
-        showDamage: (damage) => {
-          console.log("showDamage received damage:", damage);
-          // do we reset this by putting a
-          // timer and setDamageAmount in 1 second to null?
-          setDamageAmount(damage);
+      setCreatureControls(
+        ID,
+        {
+          controls,
+          showDamage: (damage) => {
+            setDamageAmount(damage);
+          },
+          creature: creatureObj,
         },
-        creature: creatureObj, // Ensure full creature object is passed
-      });
+        isPlayer // Pass the isPlayer flag here
+      );
     }
-  }, [ID, controls, setCreatureControls, creatureObj]);
+  }, [ID, controls, setCreatureControls, creatureObj, isPlayer]);
 
   return (
     <>
@@ -72,7 +88,6 @@ const Creature = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
           onClick={handleOpenModal} // Open modal on click
-
         >
           {icon}
         </motion.div>
