@@ -2021,7 +2021,7 @@ const Levels = () => {
                         <strong>Attack:</strong> {creature.attack}
                       </Typography>
                       <Typography variant="body2" sx={{ mb: 1 }}>
-                        <strong>Defence:</strong> {creature.defence}
+                        <strong>Defence:</strong> {creature.defense}
                       </Typography>
 
                       {/* Display creature's mods */}
@@ -3989,7 +3989,7 @@ export const statDescriptions = {
     maxHealth: "MAX_HP",
     attack: 20,
     trueDamage: 10,
-    defence: 5,
+    defense: 5,
     statusEffects: [],
   },
   runes: {
@@ -4026,7 +4026,7 @@ export const objShapeExamples = {
       maxHealth: 100,
       attack: 20,
       trueDamage: 10,
-      defence: 5,
+      defense: 5,
       statusEffects: [],
     },
   },
@@ -4069,7 +4069,7 @@ const BASE_TRUE_DAMAGE = 15
 const baseStats = {
   health: 100,
   attack: 20,
-  defence: 10,
+  defense: 10,
   trueDamage: 15,
 }
 // dragon: {
@@ -4080,7 +4080,7 @@ const baseStats = {
 //   multipliers: {
 //     health: 1.5, // Dragon has 150% base health
 //     attack: 1.2, // Dragon has 120% base attack
-//     defence: 1.0, // Dragon has 100% base defence
+//     defense: 1.0, // Dragon has 100% base defense
 //     trueDamage: 1.3, // Dragon has 130% base true damage
 //   },
 //   mods: [],
@@ -4096,7 +4096,7 @@ export const CREATURES = {
     maxHealth: 250,
     attack: 20,
     trueDamage: 90,
-    defence: 5,
+    defense: 5,
     mods: [],
     startingAttacks: [attacks.fireball, attacks.rend],
     possibleAttacks: [
@@ -4113,7 +4113,7 @@ export const CREATURES = {
     maxHealth: 200,
     attack: 15,
     trueDamage: 10,
-    defence: 5,
+    defense: 5,
     mods: [],
     startingAttacks: [attacks.heal, attacks.pierce],
     possibleAttacks: [
@@ -4130,7 +4130,7 @@ export const CREATURES = {
     maxHealth: 180,
     attack: 20,
     trueDamage: 15,
-    defence: 8,
+    defense: 8,
     mods: [],
     startingAttacks: [attacks.mana_leech, attacks.shockwave],
     possibleAttacks: [
@@ -4147,7 +4147,7 @@ export const CREATURES = {
     maxHealth: 150,
     attack: 10,
     trueDamage: 5,
-    defence: 5,
+    defense: 5,
     mods: [],
     startingAttacks: [attacks.camouflage, attacks.ice_shard],
     possibleAttacks: [
@@ -4164,7 +4164,7 @@ export const CREATURES = {
     maxHealth: 300,
     attack: 30,
     trueDamage: 20,
-    defence: 8,
+    defense: 8,
     mods: [],
     startingAttacks: [attacks.fireball, attacks.heal],
     possibleAttacks: [
@@ -4181,7 +4181,7 @@ export const CREATURES = {
     maxHealth: 400,
     attack: 50,
     trueDamage: 25,
-    defence: 15,
+    defense: 15,
     mods: [],
     startingAttacks: [attacks.rend, attacks.twin_slash],
     possibleAttacks: [
@@ -4198,7 +4198,7 @@ export const CREATURES = {
     maxHealth: 350,
     attack: 45,
     trueDamage: 20,
-    defence: 10,
+    defense: 10,
     mods: [],
     startingAttacks: [attacks.dizzying_blow, attacks.shadow_step],
     possibleAttacks: [
@@ -4215,7 +4215,7 @@ export const CREATURES = {
     maxHealth: 500,
     attack: 60,
     trueDamage: 40,
-    defence: 20,
+    defense: 20,
     mods: [],
     startingAttacks: [attacks.rock_slide, attacks.bash],
     possibleAttacks: [
@@ -4232,7 +4232,7 @@ export const CREATURES = {
     maxHealth: 550,
     attack: 30,
     trueDamage: 10,
-    defence: 50,
+    defense: 50,
     mods: [],
     startingAttacks: [attacks.protect, attacks.bash],
     possibleAttacks: [
@@ -4249,7 +4249,7 @@ export const CREATURES = {
     maxHealth: 300,
     attack: 40,
     trueDamage: 15,
-    defence: 10,
+    defense: 10,
     mods: [],
     startingAttacks: [attacks.mana_leech, attacks.sneak_attack],
     possibleAttacks: [
@@ -4266,7 +4266,7 @@ export const CREATURES = {
     maxHealth: 450,
     attack: 55,
     trueDamage: 35,
-    defence: 25,
+    defense: 25,
     mods: [],
     startingAttacks: [attacks.shockwave, attacks.arcane_blast],
     possibleAttacks: [
@@ -4283,7 +4283,7 @@ export const CREATURES = {
     maxHealth: 350,
     attack: 35,
     trueDamage: 20,
-    defence: 15,
+    defense: 15,
     mods: [],
     startingAttacks: [attacks.snipe, attacks.haste],
     possibleAttacks: [
@@ -4300,7 +4300,7 @@ export const CREATURES = {
     maxHealth: 600,
     attack: 70,
     trueDamage: 50,
-    defence: 20,
+    defense: 20,
     mods: [],
     startingAttacks: [attacks.rend, attacks.quicksand],
     possibleAttacks: [
@@ -4317,7 +4317,7 @@ export const CREATURES = {
     maxHealth: 300,
     attack: 30,
     trueDamage: 10,
-    defence: 20,
+    defense: 20,
     mods: [],
     startingAttacks: [attacks.haste, attacks.heal],
     possibleAttacks: [
@@ -4334,7 +4334,7 @@ export const CREATURES = {
     maxHealth: 250,
     attack: 20,
     trueDamage: 15,
-    defence: 10,
+    defense: 10,
     mods: [],
     startingAttacks: [attacks.dizzying_blow, attacks.venom_strike],
     possibleAttacks: [
@@ -4351,7 +4351,7 @@ export const CREATURES = {
     maxHealth: 400,
     attack: 50,
     trueDamage: 30,
-    defence: 25,
+    defense: 25,
     mods: [],
     startingAttacks: [attacks.elemental_burst, attacks.flurry],
     possibleAttacks: [
@@ -4368,7 +4368,7 @@ export const CREATURES = {
     maxHealth: 350,
     attack: 40,
     trueDamage: 20,
-    defence: 15,
+    defense: 15,
     mods: [],
     startingAttacks: [attacks.venom_strike, attacks.camouflage],
     possibleAttacks: [
@@ -4385,7 +4385,7 @@ export const CREATURES = {
     maxHealth: 300,
     attack: 35,
     trueDamage: 15,
-    defence: 20,
+    defense: 20,
     mods: [],
     startingAttacks: [attacks.pierce, attacks.heal],
     possibleAttacks: [
@@ -4402,7 +4402,7 @@ export const CREATURES = {
     maxHealth: 550,
     attack: 60,
     trueDamage: 40,
-    defence: 25,
+    defense: 25,
     mods: [],
     startingAttacks: [attacks.twin_slash, attacks.flurry],
     possibleAttacks: [
@@ -4419,7 +4419,7 @@ export const CREATURES = {
     maxHealth: 500,
     attack: 55,
     trueDamage: 35,
-    defence: 20,
+    defense: 20,
     mods: [],
     startingAttacks: [attacks.rend, attacks.quicksand],
     possibleAttacks: [
@@ -4436,7 +4436,7 @@ export const CREATURES = {
     maxHealth: 400,
     attack: 45,
     trueDamage: 25,
-    defence: 15,
+    defense: 15,
     mods: [],
     startingAttacks: [attacks.camouflage, attacks.heal],
     possibleAttacks: [
@@ -4453,7 +4453,7 @@ export const CREATURES = {
     maxHealth: 200,
     attack: 15,
     trueDamage: 10,
-    defence: 10,
+    defense: 10,
     mods: [],
     startingAttacks: [attacks.snipe, attacks.rain_dance],
     possibleAttacks: [
@@ -4470,7 +4470,7 @@ export const CREATURES = {
     maxHealth: 700,
     attack: 80,
     trueDamage: 60,
-    defence: 30,
+    defense: 30,
     mods: [],
     startingAttacks: [attacks.quicksand, attacks.ultimate_blast],
     possibleAttacks: [
@@ -4487,7 +4487,7 @@ export const CREATURES = {
     maxHealth: 350,
     attack: 40,
     trueDamage: 20,
-    defence: 15,
+    defense: 15,
     mods: [],
     startingAttacks: [attacks.bash, attacks.dizzying_blow],
     possibleAttacks: [
@@ -4504,7 +4504,7 @@ export const CREATURES = {
     maxHealth: 400,
     attack: 50,
     trueDamage: 30,
-    defence: 20,
+    defense: 20,
     mods: [],
     startingAttacks: [attacks.snipe, attacks.shadow_step],
     possibleAttacks: [
@@ -4521,7 +4521,7 @@ export const CREATURES = {
     maxHealth: 250,
     attack: 20,
     trueDamage: 10,
-    defence: 10,
+    defense: 10,
     mods: [],
     startingAttacks: [attacks.dizzying_blow, attacks.venom_strike],
     possibleAttacks: [
@@ -4538,7 +4538,7 @@ export const CREATURES = {
     maxHealth: 180,
     attack: 10,
     trueDamage: 5,
-    defence: 15,
+    defense: 15,
     mods: [],
     startingAttacks: [attacks.heal, attacks.camouflage],
     possibleAttacks: [
@@ -4555,7 +4555,7 @@ export const CREATURES = {
     maxHealth: 200,
     attack: 15,
     trueDamage: 10,
-    defence: 20,
+    defense: 20,
     mods: [],
     startingAttacks: [attacks.heal, attacks.pierce],
     possibleAttacks: [
@@ -4572,7 +4572,7 @@ export const CREATURES = {
     maxHealth: 600,
     attack: 70,
     trueDamage: 50,
-    defence: 25,
+    defense: 25,
     mods: [],
     startingAttacks: [attacks.quicksand, attacks.flurry],
     possibleAttacks: [
@@ -4589,7 +4589,7 @@ export const CREATURES = {
     maxHealth: 150,
     attack: 10,
     trueDamage: 5,
-    defence: 5,
+    defense: 5,
     mods: [],
     startingAttacks: [attacks.fireball, attacks.heal],
     possibleAttacks: [
@@ -4651,7 +4651,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.5),
     maxHealth: Math.round(BASE_HEALTH * 1.5),
     attack: Math.round(BASE_ATTACK * 1.2),
-    defence: Math.round(BASE_DEFENCE * 1.0),
+    defense: Math.round(BASE_DEFENCE * 1.0),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.3),
     mods: [],
   },
@@ -4662,7 +4662,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.1),
     maxHealth: Math.round(BASE_HEALTH * 1.1),
     attack: Math.round(BASE_ATTACK * 1.0),
-    defence: Math.round(BASE_DEFENCE * 0.8),
+    defense: Math.round(BASE_DEFENCE * 0.8),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.0),
     mods: [],
   },
@@ -4673,7 +4673,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 2.0),
     maxHealth: Math.round(BASE_HEALTH * 2.0),
     attack: Math.round(BASE_ATTACK * 0.8),
-    defence: Math.round(BASE_DEFENCE * 1.8),
+    defense: Math.round(BASE_DEFENCE * 1.8),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 0.7),
     mods: [],
   },
@@ -4684,7 +4684,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.0),
     maxHealth: Math.round(BASE_HEALTH * 1.0),
     attack: Math.round(BASE_ATTACK * 1.4),
-    defence: Math.round(BASE_DEFENCE * 0.6),
+    defense: Math.round(BASE_DEFENCE * 0.6),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.5),
     mods: [],
   },
@@ -4695,7 +4695,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.3),
     maxHealth: Math.round(BASE_HEALTH * 1.3),
     attack: Math.round(BASE_ATTACK * 1.5),
-    defence: Math.round(BASE_DEFENCE * 0.9),
+    defense: Math.round(BASE_DEFENCE * 0.9),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.7),
     mods: [],
   },
@@ -4706,7 +4706,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.8),
     maxHealth: Math.round(BASE_HEALTH * 1.8),
     attack: Math.round(BASE_ATTACK * 1.6),
-    defence: Math.round(BASE_DEFENCE * 1.5),
+    defense: Math.round(BASE_DEFENCE * 1.5),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.2),
     mods: [],
   },
@@ -4717,7 +4717,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.2),
     maxHealth: Math.round(BASE_HEALTH * 1.2),
     attack: Math.round(BASE_ATTACK * 1.8),
-    defence: Math.round(BASE_DEFENCE * 1.0),
+    defense: Math.round(BASE_DEFENCE * 1.0),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.4),
     mods: [],
   },
@@ -4728,7 +4728,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 2.5),
     maxHealth: Math.round(BASE_HEALTH * 2.5),
     attack: Math.round(BASE_ATTACK * 1.5),
-    defence: Math.round(BASE_DEFENCE * 2.0),
+    defense: Math.round(BASE_DEFENCE * 2.0),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.5),
     mods: [],
   },
@@ -4739,7 +4739,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 2.0),
     maxHealth: Math.round(BASE_HEALTH * 2.0),
     attack: Math.round(BASE_ATTACK * 1.0),
-    defence: Math.round(BASE_DEFENCE * 2.5),
+    defense: Math.round(BASE_DEFENCE * 2.5),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.0),
     mods: [],
   },
@@ -4750,7 +4750,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.1),
     maxHealth: Math.round(BASE_HEALTH * 1.1),
     attack: Math.round(BASE_ATTACK * 1.6),
-    defence: Math.round(BASE_DEFENCE * 0.8),
+    defense: Math.round(BASE_DEFENCE * 0.8),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.5),
     mods: [],
   },
@@ -4761,7 +4761,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.8),
     maxHealth: Math.round(BASE_HEALTH * 1.8),
     attack: Math.round(BASE_ATTACK * 1.4),
-    defence: Math.round(BASE_DEFENCE * 1.2),
+    defense: Math.round(BASE_DEFENCE * 1.2),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.3),
     mods: [],
   },
@@ -4772,7 +4772,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.2),
     maxHealth: Math.round(BASE_HEALTH * 1.2),
     attack: Math.round(BASE_ATTACK * 1.4),
-    defence: Math.round(BASE_DEFENCE * 1.1),
+    defense: Math.round(BASE_DEFENCE * 1.1),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.5),
     mods: [],
   },
@@ -4783,7 +4783,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 2.2),
     maxHealth: Math.round(BASE_HEALTH * 2.2),
     attack: Math.round(BASE_ATTACK * 1.7),
-    defence: Math.round(BASE_DEFENCE * 1.8),
+    defense: Math.round(BASE_DEFENCE * 1.8),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.5),
     mods: [],
   },
@@ -4794,7 +4794,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.3),
     maxHealth: Math.round(BASE_HEALTH * 1.3),
     attack: Math.round(BASE_ATTACK * 1.1),
-    defence: Math.round(BASE_DEFENCE * 1.0),
+    defense: Math.round(BASE_DEFENCE * 1.0),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.1),
     mods: [],
   },
@@ -4805,7 +4805,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.0),
     maxHealth: Math.round(BASE_HEALTH * 1.0),
     attack: Math.round(BASE_ATTACK * 1.5),
-    defence: Math.round(BASE_DEFENCE * 0.7),
+    defense: Math.round(BASE_DEFENCE * 0.7),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.4),
     mods: [],
   },
@@ -4816,7 +4816,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.8),
     maxHealth: Math.round(BASE_HEALTH * 1.8),
     attack: Math.round(BASE_ATTACK * 1.7),
-    defence: Math.round(BASE_DEFENCE * 1.4),
+    defense: Math.round(BASE_DEFENCE * 1.4),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.6),
     mods: [],
   },
@@ -4827,7 +4827,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.4),
     maxHealth: Math.round(BASE_HEALTH * 1.4),
     attack: Math.round(BASE_ATTACK * 1.3),
-    defence: Math.round(BASE_DEFENCE * 1.1),
+    defense: Math.round(BASE_DEFENCE * 1.1),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.5),
     mods: [],
   },
@@ -4838,7 +4838,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.3),
     maxHealth: Math.round(BASE_HEALTH * 1.3),
     attack: Math.round(BASE_ATTACK * 1.4),
-    defence: Math.round(BASE_DEFENCE * 1.2),
+    defense: Math.round(BASE_DEFENCE * 1.2),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.0),
     mods: [],
   },
@@ -4849,7 +4849,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 2.2),
     maxHealth: Math.round(BASE_HEALTH * 2.2),
     attack: Math.round(BASE_ATTACK * 1.8),
-    defence: Math.round(BASE_DEFENCE * 1.7),
+    defense: Math.round(BASE_DEFENCE * 1.7),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.6),
     mods: [],
   },
@@ -4860,7 +4860,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 2.0),
     maxHealth: Math.round(BASE_HEALTH * 2.0),
     attack: Math.round(BASE_ATTACK * 1.6),
-    defence: Math.round(BASE_DEFENCE * 1.5),
+    defense: Math.round(BASE_DEFENCE * 1.5),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.7),
     mods: [],
   },
@@ -4871,7 +4871,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.6),
     maxHealth: Math.round(BASE_HEALTH * 1.6),
     attack: Math.round(BASE_ATTACK * 1.4),
-    defence: Math.round(BASE_DEFENCE * 1.2),
+    defense: Math.round(BASE_DEFENCE * 1.2),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.1),
     mods: [],
   },
@@ -4882,7 +4882,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.2),
     maxHealth: Math.round(BASE_HEALTH * 1.2),
     attack: Math.round(BASE_ATTACK * 1.1),
-    defence: Math.round(BASE_DEFENCE * 1.0),
+    defense: Math.round(BASE_DEFENCE * 1.0),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.2),
     mods: [],
   },
@@ -4893,7 +4893,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 2.3),
     maxHealth: Math.round(BASE_HEALTH * 2.3),
     attack: Math.round(BASE_ATTACK * 1.8),
-    defence: Math.round(BASE_DEFENCE * 1.9),
+    defense: Math.round(BASE_DEFENCE * 1.9),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.8),
     mods: [],
   },
@@ -4904,7 +4904,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.7),
     maxHealth: Math.round(BASE_HEALTH * 1.7),
     attack: Math.round(BASE_ATTACK * 1.4),
-    defence: Math.round(BASE_DEFENCE * 1.5),
+    defense: Math.round(BASE_DEFENCE * 1.5),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.2),
     mods: [],
   },
@@ -4915,7 +4915,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.5),
     maxHealth: Math.round(BASE_HEALTH * 1.5),
     attack: Math.round(BASE_ATTACK * 1.3),
-    defence: Math.round(BASE_DEFENCE * 1.2),
+    defense: Math.round(BASE_DEFENCE * 1.2),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.3),
     mods: [],
   },
@@ -4926,7 +4926,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.4),
     maxHealth: Math.round(BASE_HEALTH * 1.4),
     attack: Math.round(BASE_ATTACK * 1.5),
-    defence: Math.round(BASE_DEFENCE * 1.0),
+    defense: Math.round(BASE_DEFENCE * 1.0),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.5),
     mods: [],
   },
@@ -4937,7 +4937,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 2.0),
     maxHealth: Math.round(BASE_HEALTH * 2.0),
     attack: Math.round(BASE_ATTACK * 1.6),
-    defence: Math.round(BASE_DEFENCE * 1.7),
+    defense: Math.round(BASE_DEFENCE * 1.7),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.5),
     mods: [],
   },
@@ -4948,7 +4948,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 2.0),
     maxHealth: Math.round(BASE_HEALTH * 2.0),
     attack: Math.round(BASE_ATTACK * 1.7),
-    defence: Math.round(BASE_DEFENCE * 1.5),
+    defense: Math.round(BASE_DEFENCE * 1.5),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.6),
     mods: [],
   },
@@ -4959,7 +4959,7 @@ export const NEW_OBJ_FOR_CREATURES = {
     health: Math.round(BASE_HEALTH * 1.2),
     maxHealth: Math.round(BASE_HEALTH * 1.2),
     attack: Math.round(BASE_ATTACK * 1.0),
-    defence: Math.round(BASE_DEFENCE * 1.0),
+    defense: Math.round(BASE_DEFENCE * 1.0),
     trueDamage: Math.round(BASE_TRUE_DAMAGE * 1.2),
     mods: [],
   },
@@ -7203,10 +7203,10 @@ export const generateLevels = (numLevels) => {
       randomCreature.maxHealth = newHealth
       randomCreature.health = newHealth
       randomCreature.attack = scaleStat(randomCreature.attack, i)
-      randomCreature.defence = scaleStat(randomCreature.defence, i)
+      randomCreature.defense = scaleStat(randomCreature.defense, i)
 
       console.log(
-        `Scaled stats - Health: ${randomCreature.health}, Attack: ${randomCreature.attack}, Defence: ${randomCreature.defence}`
+        `Scaled stats - Health: ${randomCreature.health}, Attack: ${randomCreature.attack}, Defence: ${randomCreature.defense}`
       )
 
       // Apply thematic mods to creatures (auras, buffs, debuffs)

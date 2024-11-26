@@ -43,7 +43,7 @@ export type BaseCreature = {
   maxHealth: number
   attack: number
   trueDamage: number
-  defence: number
+  defense: number
   mods?: any[]
   startingAttacks: Attack[]
   possibleAttacks: Attack[]

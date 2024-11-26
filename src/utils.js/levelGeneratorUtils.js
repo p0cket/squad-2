@@ -62,10 +62,10 @@ export const generateLevels = (numLevels) => {
       randomCreature.maxHealth = newHealth
       randomCreature.health = newHealth
       randomCreature.attack = scaleStat(randomCreature.attack, i)
-      randomCreature.defence = scaleStat(randomCreature.defence, i)
+      randomCreature.defense = scaleStat(randomCreature.defense, i)
 
       console.log(
-        `Scaled stats - Health: ${randomCreature.health}, Attack: ${randomCreature.attack}, Defence: ${randomCreature.defence}`
+        `Scaled stats - Health: ${randomCreature.health}, Attack: ${randomCreature.attack}, Defence: ${randomCreature.defense}`
       )
 
       // Apply thematic mods to creatures (auras, buffs, debuffs)

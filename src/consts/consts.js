@@ -14,7 +14,7 @@ export const statDescriptions = {
     maxHealth: "MAX_HP",
     attack: 20,
     trueDamage: 10,
-    defence: 5,
+    defense: 5,
     statusEffects: [],
   },
   runes: {
@@ -51,7 +51,7 @@ export const objShapeExamples = {
       maxHealth: 100,
       attack: 20,
       trueDamage: 10,
-      defence: 5,
+      defense: 5,
       statusEffects: [],
     },
   },
