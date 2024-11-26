@@ -1,14 +1,10 @@
-import {
-  moveAttacker,
-  returnAttacker,
-  shakeTarget,
-} from "../../components/animations/attackAnimations"
 import { effectFunctions, STATUS_EFFECTS } from "../../consts/statuses"
+import { Attack, AttackPayload, Creature, StatusEffect } from "../../consts/types"
 // import { effectFunctions } from "../turnUtils"
-import { newCalcDamage } from "./calcDamage"
+// import { newCalcDamage } from "./calcDamage"
 
 // Utility to get effects based on timing
-const getStatusesByPhase = (effects, timing) => {
+const getStatusesByPhase = (effects: StatusEffect[], timing: string) => {
   console.log(
     `#x 1b. effects`,
     effects,
@@ -29,7 +25,12 @@ const getStatusesByPhase = (effects, timing) => {
 }
 
 // Apply effects based on timing // weak, etc.
-const procStatuses = (attacker, target, attack, timing) => {
+const procStatuses = (
+  attacker: Creature,
+  target: Creature,
+  attack: Attack,
+  timing: string
+) => {
   let changes = null
   const relevantEffects = getStatusesByPhase(attack.effects, timing)
   console.log(`#x 2. relevantEffects to be applied`, relevantEffects)
@@ -52,8 +53,8 @@ export const findRelevantProcs = (
   // dispatch,
   // playerCreatures,
   // computerCreatures,
-  attackPayload,
-  timing
+  attackPayload: AttackPayload,
+  timing: string
 ) => {
   console.log(`findRelevantProcs: attackPayload, timing`, attackPayload, timing)
   const {
@@ -83,7 +84,11 @@ export const findRelevantProcs = (
   return { attacker, target, attack, changes }
 }
 
-export const calcAttack = (attacker, target, attack) => {
+export const calcAttack = (
+  attacker: Creature,
+  target: Creature,
+  attack: Attack
+) => {
   let statuses
   let damage
   statuses = calcStatuses(attacker, target, attack)
@@ -100,7 +105,11 @@ export const calcAttack = (attacker, target, attack) => {
   return { statuses, damage }
 }
 
-export const calcStatuses = (attacker, target, attack) => {
+export const calcStatuses = (
+  attacker: Creature,
+  target: Creature,
+  attack: Attack
+) => {
   const { effects } = attack
   let statuses = []
 
@@ -162,7 +171,7 @@ export const calcStatuses = (attacker, target, attack) => {
   return statuses
 }
 
-export const runEffect = (creature, effect) => {
+export const runEffect = (creature: Creature, effect) => {
   // Apply each mod's effect to the creature
   // Ensure the effect exists in STATUS_EFFECTS before applying it
   console.log(`#x 2. effectFunctions`, effectFunctions, effect, creature)
@@ -178,7 +187,7 @@ export const runEffect = (creature, effect) => {
   return creature
 }
 
-export const applyStatus = (creature, effect) => {
+export const applyStatus = (creature: Creature, effect) => {
   const newCreature = { ...creature }
   if (!newCreature.statuses) {
     newCreature.statuses = []
@@ -187,7 +196,7 @@ export const applyStatus = (creature, effect) => {
   return newCreature
 }
 
-export const removeStatus = (creature, effectName) => {
+export const removeStatus = (creature: Creature, effectName: string) => {
   const newCreature = { ...creature }
   if (newCreature.statuses) {
     newCreature.statuses = newCreature.statuses.filter(
@@ -197,7 +206,7 @@ export const removeStatus = (creature, effectName) => {
   return newCreature
 }
 
-export const clearStatuses = (creature) => {
+export const clearStatuses = (creature: Creature) => {
   const newCreature = { ...creature }
   newCreature.statuses = []
   return newCreature
@@ -229,8 +238,10 @@ export const clearStatuses = (creature) => {
 //   }
 // }
 
-
-export const updateCreatureInList = (creatures, updatedCreature) => {
+export const updateCreatureInList = (
+  creatures: Creature[],
+  updatedCreature: Creature
+) => {
   console.log("updateCreatureInList called with:", creatures, updatedCreature)
 
   if (!Array.isArray(creatures)) {
@@ -259,26 +270,22 @@ export const updateCreatureInList = (creatures, updatedCreature) => {
   return newCreatureArr
 }
 
-const isCreatureOfThisSet = (creature, creatureSetArr) => {
+const isCreatureOfThisSet = (
+  creature: Creature,
+  creatureSetArr: Creature[]
+) => {
   return creatureSetArr.some((set) => set.ID === creature.ID)
 }
 
-export const applyStatusEffects = (effect, creature) => {
-  const newCreature = { ...creature }
-  switch (effect) {
-    case effect === `stun`:
-      newCreature.effect = { name: "stun", duration: 2 }
-      // if it is more complicated, just send it there.
-      return { ...newCreature }
+// export const applyStatusEffects = (effect, creature: Creature) => {
+//   const newCreature = { ...creature }
+//   switch (effect) {
+//     case effect === `stun`:
+//       newCreature.effect = { name: "stun", duration: 2 }
+//       // if it is more complicated, just send it there.
+//       return { ...newCreature }
 
-    default:
-      console.log(`default applyStatusEffect hit,`, effect, newCreature)
-  }
-}
-
-
-
-
-
-
-
+//     default:
+//       console.log(`default applyStatusEffect hit,`, effect, newCreature)
+//   }
+// }

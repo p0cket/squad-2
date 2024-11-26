@@ -1,9 +1,9 @@
-import { Creature } from "../../consts/types"
+import { Creature, StatusEffect } from "../../consts/types"
 
 export const updateTargetState = (
   target: Creature,
   damage: number,
-  statuses
+  statuses: StatusEffect[]
 ) => {
   return {
     ...target,

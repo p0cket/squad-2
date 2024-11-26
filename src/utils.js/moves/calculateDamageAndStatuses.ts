@@ -1,3 +1,6 @@
+import { AttackPayload } from "../../consts/types"
+import { calcAttack, findRelevantProcs } from "./attackUtils"
+
 export const calculateDamageAndStatuses = (
     // attacker,
     // target,
@@ -8,7 +11,7 @@ export const calculateDamageAndStatuses = (
     // dispatch,
     // playerCreatures,
     // computerCreatures
-    attackPayload
+    attackPayload: AttackPayload
   ) => {
     console.log(`calculateDamageAndStatuses: attackPayload`, attackPayload)
     // const {

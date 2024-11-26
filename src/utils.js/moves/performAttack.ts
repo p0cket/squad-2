@@ -1,4 +1,4 @@
-import { Attack, Creature } from "../../consts/types"
+import { Attack, AttackPayload, Creature } from "../../consts/types"
 import { getControls } from "../anim/getControls"
 import { performAttackAnimation } from "../anim/performAttackAnimation"
 import { showDamageOnTarget } from "../anim/showDamageOnTarget"
@@ -15,19 +15,6 @@ import { calculateDamageAndStatuses } from "./calculateDamageAndStatuses"
 //   // updateTargetState,
 // } from "./attackUtils"
 
-export type AttackPayload = {
-  attacker: Creature
-  target: Creature
-  isPlayerAttack: boolean
-  // playerCreatureControlsRef: React.RefObject<CreatureControls>;
-  // enemyCreatureControlsRef: React.RefObject<CreatureControls>;
-  playerCreatureControlsRef: React.RefObject<any>
-  enemyCreatureControlsRef: React.RefObject<any>
-  attack: Attack
-  dispatch: React.Dispatch<any>
-  playerCreatures: Creature[]
-  computerCreatures: Creature[]
-}
 export const newPerformAttack = async (
   // attacker,
   // target,

@@ -1,3 +1,5 @@
+import { RefObject } from "react"
+
 export type Rune = {
   id: number
   name: string
@@ -13,8 +15,8 @@ export type AttackPayload = {
   attacker: Creature // Replace 'any' with the actual type
   target: Creature // Replace 'any' with the actual type
   isPlayerAttack: boolean
-  playerCreatureControlsRef: any // Replace 'any' with the actual type
-  enemyCreatureControlsRef: any // Replace 'any' with the actual type
+  playerCreatureControlsRef: RefObject<any> // Replace 'any' with the actual type
+  enemyCreatureControlsRef: RefObject<any> // Replace 'any' with the actual type
   attack: Attack // Replace 'any' with the actual type
   dispatch: React.Dispatch<any> // Replace 'any' with the actual action type
   playerCreatures: Creature[] // Replace 'any' with the actual creature type

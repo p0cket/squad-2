@@ -1,8 +1,9 @@
 import { attacks } from "../../consts/attacks"
-import { Creature } from "../../consts/types"
+import { AttackPayload, Creature } from "../../consts/types"
 import { processEndOfTurn } from "../turn/processEndOfTurn"
-// import { pocketLog } from "../../pocketLog/utils"
 import { newPerformAttack } from "./performAttack"
+// import { pocketLog } from "../../pocketLog/utils"
+// import { newPerformAttack } from "./performAttack"
 export const getAliveCreatures = (creatures: Creature[]) => {
   return creatures.filter((c) => c.health > 0)
 }
@@ -154,7 +155,7 @@ export const getAliveCreatures = (creatures: Creature[]) => {
 //   }
 // }
 // from chooseTargetsModal.js use when someone selects a target and runs the attack
-export const handleTargetedAttack = async (state, attackPayload) => {
+export const handleTargetedAttack = async (state: any, attackPayload: AttackPayload) => {
   if (!attackPayload) {
     console.error("No attackPayload provided for handleTargetedAttack")
     return
