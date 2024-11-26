@@ -1,6 +1,6 @@
 import { Creature, StatusEffect } from "./types"
 
-export const STATUS_EFFECTS = {
+export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
   POISON: {
     name: "Poison",
     type: "debuff",
@@ -84,7 +84,10 @@ export const applyRegeneration = (creature: Creature): Creature => ({
 })
 
 // Function to tick down the duration of a status effect
-export const tickDownEffectDuration = (creature: Creature, statusName: string): Creature => {
+export const tickDownEffectDuration = (
+  creature: Creature,
+  statusName: string
+): Creature => {
   if (creature.statuses) {
     creature.statuses = creature.statuses
       .map((status) => {
@@ -101,7 +104,9 @@ export const tickDownEffectDuration = (creature: Creature, statusName: string): 
   return creature
 }
 
-export const effectFunctions = {
+export const effectFunctions: {
+  [key: string]: (creature: Creature) => Creature
+} = {
   applyPoison,
   applyBuff,
   applyBurn,
@@ -110,7 +115,7 @@ export const effectFunctions = {
 }
 
 // Function to apply the effect to the creature
-export const runApplyEffect = (creature: Creature, effectObj: StatusEffect ) => {
+export const runApplyEffect = (creature: Creature, effectObj: StatusEffect) => {
   let updatedCreature = { ...creature }
   switch (effectObj.effectFuncName) {
     case "applyPoison":

@@ -10,7 +10,7 @@ import { useCreatureControls } from "../hooks/useCreatureControls";
 import { cardDataList } from "../consts/consts";
 import Hand from "./hand/Hand";
 import ClassicHand from "./hand/ClassicHand";
-import { handleAttack } from "../utils.js/moves/handleConfirmedAttack";
+import { handleAttack } from "../utils/moves/handleConfirmedAttack";
 // import { handleConfirmedAttack } from "../utils.js/moves/attackUtils";
 // import { useEndOfTurnEffects } from "../hooks/useEndOfTurnEffects"
 

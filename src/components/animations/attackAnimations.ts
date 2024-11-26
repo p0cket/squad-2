@@ -1,5 +1,7 @@
-// Helper function to move the attacker towards the target
-export const moveAttacker = async (attackerControls, direction, distance) => {
+import { AnimationControls } from "framer-motion";
+
+//Helper function to move the attacker towards the target
+export const moveAttacker = async (attackerControls: AnimationControls, direction: number, distance: number) => {
   console.group("Animation Step: Attacker Moving");
   console.log(
     "Attacker moving towards target... Direction:",
@@ -19,7 +21,7 @@ export const moveAttacker = async (attackerControls, direction, distance) => {
 };
 
 // Helper function to shake the target
-export const shakeTarget = async (targetControls) => {
+export const shakeTarget = async (targetControls: AnimationControls) => {
   console.group("Animation Step: Target Shake");
   console.log("Target shaking...");
   try {
@@ -34,7 +36,7 @@ export const shakeTarget = async (targetControls) => {
 };
 
 // Helper function to return the attacker to the original position
-export const returnAttacker = async (attackerControls) => {
+export const returnAttacker = async (attackerControls: AnimationControls) => {
   console.group("Animation Step: Attacker Returning");
   console.log("Attacker returning to original position...");
   try {

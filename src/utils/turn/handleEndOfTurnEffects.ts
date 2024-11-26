@@ -1,5 +1,5 @@
 import { runApplyEffect, STATUS_EFFECTS } from "../../consts/statuses"
-import { Creature } from "../../consts/types"
+import { Creature, StatusEffect } from "../../consts/types"
 
 export const handleEndOfTurnEffects = (creatures: Creature[]) => {
   //this should just be handlePhaseEffects (`endOfTurn`, creatures)
@@ -13,15 +13,14 @@ export const handleEndOfTurnEffects = (creatures: Creature[]) => {
     (creature) => {
       let updatedCreature = { ...creature }
       if (creature.statuses) {
-        // @ts-ignore
-        creature.statuses.forEach((status: string) => {
-          // @ts-ignore
-          if (STATUS_EFFECTS[status]) {
-            //appluEffect is a string, so we need to use the effectFunctions object to get the function
-            // @ts-ignore
-            const individualEffect = STATUS_EFFECTS[status].effectFuncName
-            updatedCreature = runApplyEffect(creature, individualEffect)
-          }
+        creature.statuses.forEach((status: StatusEffect) => {
+          // if (STATUS_EFFECTS[status]) {
+          //appluEffect is a string, so we need to use the effectFunctions object to get the function
+          // const individualEffect = STATUS_EFFECTS[status]
+          // updatedCreature = runApplyEffect(creature, individualEffect)
+          updatedCreature = runApplyEffect(creature, status)
+
+          // }
         })
       }
       return updatedCreature

@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useStateContext } from "../../GameContext";
-import { getAliveCreatures } from "../../utils.js/moves/handleConfirmedAttack";
+import { getAliveCreatures } from "../../utils/moves/handleConfirmedAttack";
 // import { getAliveCreatures } from "../../utils.js/battleUtils";
 
 const ReplaceCreatureModal = ({ open, onSelect }) => {

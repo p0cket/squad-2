@@ -1,13 +1,13 @@
 // GameContext.js
 import React, { createContext, useContext, useReducer } from "react"
-import { applyRuneEffects } from "./utils.js/runeUtils"
-import { resetCreatures } from "./utils.js/battleUtils"
-import { applyMod, applyTurnEnhancementEffects } from "./utils.js/modUtils"
+import { applyRuneEffects } from "./utils/runeUtils"
+import { resetCreatures } from "./utils/battleUtils"
+import { applyMod, applyTurnEnhancementEffects } from "./utils/modUtils"
 import { CREATURES } from "./consts/creatures"
 // import { BASE_RUNES } from "./consts/items"
-import { generateLevels, loadLevelData } from "./utils.js/levelGeneratorUtils"
-import { createUniqueParty } from "./utils.js/creatureUtils"
-import { updateCreatureInList } from "./utils.js/moves/attackUtils"
+import { generateLevels, loadLevelData } from "./utils/levelGeneratorUtils"
+import { createUniqueParty } from "./utils/creatureUtils"
+import { updateCreatureInList } from "./utils/moves/attackUtils"
 import { BASE_RUNES } from "./consts/items"
 
 // Constants

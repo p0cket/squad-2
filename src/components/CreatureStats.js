@@ -1,7 +1,7 @@
 // CreatureStats.js
 import React from "react"
 import { useStateContext } from "../GameContext"
-import { applyRuneEffects } from "../utils.js/runeUtils"
+import { applyRuneEffects } from "../utils/runeUtils"
 import { CREATURES } from "../consts/creatures"
 
 function CreatureStats() {

@@ -4,7 +4,7 @@ import CompactCreatureList from "../battle/CompactCreatureList";
 import { Box, Modal } from "@mui/material";
 import { modalStyle } from "../../consts/consts";
 import AttackDetails from "../battle/AttackDetails";
-import { handleTargetedAttack } from "../../utils.js/moves/handleConfirmedAttack";
+import { handleTargetedAttack } from "../../utils/moves/handleConfirmedAttack";
 
 export default function ChooseTargetsModal({
   attack,

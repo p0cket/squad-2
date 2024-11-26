@@ -1,5 +1,11 @@
 import { effectFunctions, STATUS_EFFECTS } from "../../consts/statuses"
-import { Attack, AttackPayload, Creature, StatusEffect } from "../../consts/types"
+import {
+  Attack,
+  AttackPayload,
+  Creature,
+  StatusEffect,
+} from "../../consts/types"
+import { newCalcDamage } from "./calcDamage"
 // import { effectFunctions } from "../turnUtils"
 // import { newCalcDamage } from "./calcDamage"
 
@@ -32,12 +38,15 @@ const procStatuses = (
   timing: string
 ) => {
   let changes = null
-  const relevantEffects = getStatusesByPhase(attack.effects, timing)
+  const allAttackEffects = attack.effects.map(
+    (effect) => STATUS_EFFECTS[effect]
+  )
+  const relevantEffects = getStatusesByPhase(allAttackEffects, timing)
   console.log(`#x 2. relevantEffects to be applied`, relevantEffects)
   relevantEffects.forEach((effect) => {
     const effectDef = STATUS_EFFECTS[effect.id]
     console.log(`#x 2. effectDef`, effectDef)
-    changes = runEffect(attacker, target, effect, effectDef)
+    changes = runEffect(target, effect)
   })
   console.log(`#x 3. changes`, changes)
   return changes
@@ -111,7 +120,7 @@ export const calcStatuses = (
   attack: Attack
 ) => {
   const { effects } = attack
-  let statuses = []
+  let statuses: StatusEffect[] = []
 
   // Log the received parameters
   console.log(
@@ -124,7 +133,7 @@ export const calcStatuses = (
 
   if (effects) {
     // Normalize `effects` to an array for consistent processing
-    const effectsArray = Array.isArray(effects) ? effects : [effects]
+    const effectsArray: string[] = Array.isArray(effects) ? effects : [effects]
 
     console.group(
       `calcStatuses: Calculating statuses for attack: ${attack.name}`,
@@ -147,19 +156,19 @@ export const calcStatuses = (
       console.log(
         `%cEffect (overridden to true) Roll: ${effectRoll}`,
         "color: blue; font-weight: bold;",
-        `%cEffect Chance: ${effect.chance || 0}`,
+        `%cEffect Chance: ${STATUS_EFFECTS[effect].chance || 0}`,
         "color: gray; font-weight: normal;"
       )
 
       if (didLand) {
         statuses.push(effect) // Add the effect to the list of applied statuses
         console.log(
-          `%cEffect ${effect.name} applied to ${target.name}`,
+          `%cEffect ${effect} applied to ${target.name}`,
           "color: green; font-weight: bold;"
         )
       } else {
         console.log(
-          `%cEffect ${effect.name} did not apply to ${target.name}`,
+          `%cEffect ${STATUS_EFFECTS[effect].name} did not apply to ${target.name}`,
           "color: red; font-weight: bold;"
         )
       }
@@ -171,23 +180,23 @@ export const calcStatuses = (
   return statuses
 }
 
-export const runEffect = (creature: Creature, effect) => {
+export const runEffect = (creature: Creature, effect: StatusEffect) => {
   // Apply each mod's effect to the creature
   // Ensure the effect exists in STATUS_EFFECTS before applying it
   console.log(`#x 2. effectFunctions`, effectFunctions, effect, creature)
-  if (effectFunctions[effect.applyEffect]) {
-    creature = effectFunctions[effect.applyEffect](creature, effect)
+  if (effectFunctions[effect.effectFuncName]) {
+    creature = effectFunctions[effect.effectFuncName](creature)
   } else {
     console.log(
-      `#x 3. effectFunctions[${effect.applyEffect}] not found`,
+      `#x 3. effectFunctions[${effect.effectFuncName}] not found`,
       effectFunctions,
-      effect.applyEffect
+      effect.effectFuncName
     )
   }
   return creature
 }
 
-export const applyStatus = (creature: Creature, effect) => {
+export const applyStatus = (creature: Creature, effect: StatusEffect) => {
   const newCreature = { ...creature }
   if (!newCreature.statuses) {
     newCreature.statuses = []
