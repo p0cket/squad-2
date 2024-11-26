@@ -1,7 +1,5 @@
 import { AttackPayload } from "../../consts/types"
 import { calcAttack, findRelevantProcs } from "./attackUtils"
-// import { calcAttack, findRelevantProcs } from "./attackUtils"
-// import { calcAttack, findRelevantProcs } from "./attackUtils"
 
 export const calculateDamageAndStatuses = (
     // attacker,
