@@ -1,18 +1,19 @@
 // Level Generator Configurations
 
-import { CREATURES, POWER_LEVELS } from "../consts/creatures"
+import { POWER_LEVELS } from "../consts/creatures"
 import { BASE_RUNES } from "../consts/items"
-import { auras, buffs, debuffs } from "../consts/mods"
+import { auras } from "../consts/mods"
+import { Level } from "../consts/types"
 
 // Combine auras, buffs, and debuffs into availableMods
 export const availableMods = [
   ...Object.values(auras),
-  ...Object.values(buffs),
-  ...Object.values(debuffs),
+  //   ...Object.values(buffs),
+  //   ...Object.values(debuffs),
 ]
 
 // Function to scale stats based on level
-const scaleStat = (baseValue, level, scaleFactor = 1.05) => {
+const scaleStat = (baseValue: number, level: number, scaleFactor = 1.05) => {
   return Math.floor(baseValue * Math.pow(scaleFactor, level))
 }
 
@@ -23,7 +24,7 @@ const levelEffects = [
 ]
 
 // Level Generator Function using the central `creatures` object
-export const generateLevels = (numLevels) => {
+export const generateLevels = (numLevels: number) : Level[] =>  {
   const levels = []
   console.groupCollapsed(
     "%c🗺️ Generating Levels",
@@ -73,19 +74,20 @@ export const generateLevels = (numLevels) => {
         Object.values(auras)[
           Math.floor(Math.random() * Object.values(auras).length)
         ]
-      const randomBuff =
-        Object.values(buffs)[
-          Math.floor(Math.random() * Object.values(buffs).length)
-        ]
-      const randomDebuff =
-        Object.values(debuffs)[
-          Math.floor(Math.random() * Object.values(debuffs).length)
-        ]
+      // const randomBuff =
+      //   Object.values(buffs)[
+      //     Math.floor(Math.random() * Object.values(buffs).length)
+      //   ]
+      // const randomDebuff =
+      //   Object.values(debuffs)[
+      //     Math.floor(Math.random() * Object.values(debuffs).length)
+      //   ]
 
-      randomCreature.mods = [randomAura, randomBuff, randomDebuff] // Assign random mods
+      // randomCreature.mods = [randomAura, randomBuff, randomDebuff] // Assign random mods
 
+      // aura should be applied to an area (not creature as well, right?)
       console.log(
-        `Assigned mods: Aura - ${randomAura?.name}, Buff - ${randomBuff?.name}, Debuff - ${randomDebuff?.name}`
+        `Assigned mods: Aura - ${randomAura?.name}, Buff - not implemented Debuff - not implemented`
       )
 
       opponentCreatures.push(randomCreature) // Add the configured creature to the opponent list
@@ -131,7 +133,7 @@ export const generateLevels = (numLevels) => {
 // const levels = generateLevels(10);
 // console.log(levels);
 
-export const loadLevelData = (levelNumber) => {
+export const loadLevelData = (levelNumber: number) => {
   console.group(`Loading data for Level ${levelNumber}`)
   const allLevels = generateLevels(10) // Generates 10 levels; adjust if needed
   const levelData = allLevels.find((level) => level.levelNumber === levelNumber)

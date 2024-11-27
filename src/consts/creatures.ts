@@ -1,5 +1,5 @@
 import { attacks } from "./attacks"
-import { BaseCreature, Creature } from "./types";
+import { BaseCreature, Creature } from "./types"
 
 export const MAX_HP = 100
 const BASE_HEALTH = 100
@@ -28,13 +28,12 @@ const baseStats = {
 // },
 // creatures.js
 
-
 export interface PowerLevels {
-  weak: BaseCreature[];
-  moderate: BaseCreature[];
-  strong: BaseCreature[];
-  powerful: BaseCreature[];
-  legendary: BaseCreature[];
+  weak: BaseCreature[]
+  moderate: BaseCreature[]
+  strong: BaseCreature[]
+  powerful: BaseCreature[]
+  legendary: BaseCreature[]
 }
 
 // Assuming Attack is defined in the attacks module
@@ -48,13 +47,15 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     attack: 20,
     trueDamage: 90,
     defense: 5,
-    mods: [],
+    mods: [], // add when generating the creature
+    statuses: [], // add when generating the creature,
+    //so it doesn't have to be in every template
     startingAttacks: [attacks.fireball, attacks.rend],
     possibleAttacks: [
       attacks.battle_cry,
       attacks.ultimate_blast,
-      attacks.inspire
-    ]
+      attacks.inspire,
+    ],
   },
   unicorn: {
     name: "Sparkle",
@@ -66,12 +67,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 10,
     defense: 5,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.heal, attacks.pierce],
-    possibleAttacks: [
-      attacks.haste,
-      attacks.arcane_blast,
-      attacks.fortify
-    ]
+    possibleAttacks: [attacks.haste, attacks.arcane_blast, attacks.fortify],
   },
   alien: {
     name: "Zorg",
@@ -83,12 +81,13 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 15,
     defense: 8,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.mana_leech, attacks.shockwave],
     possibleAttacks: [
       attacks.venom_strike,
       attacks.thunderbolt,
-      attacks.phase_shift
-    ]
+      attacks.phase_shift,
+    ],
   },
   fish: {
     name: "Octavia",
@@ -100,12 +99,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 5,
     defense: 5,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.camouflage, attacks.ice_shard],
-    possibleAttacks: [
-      attacks.quicksand,
-      attacks.rain_dance,
-      attacks.snipe
-    ]
+    possibleAttacks: [attacks.quicksand, attacks.rain_dance, attacks.snipe],
   },
   phoenix: {
     name: "Ash",
@@ -117,12 +113,13 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 20,
     defense: 8,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.fireball, attacks.heal],
     possibleAttacks: [
       attacks.battle_cry,
       attacks.elemental_burst,
-      attacks.inspire
-    ]
+      attacks.inspire,
+    ],
   },
   minotaur: {
     name: "Asterion",
@@ -134,12 +131,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 25,
     defense: 15,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.rend, attacks.twin_slash],
-    possibleAttacks: [
-      attacks.whirlwind,
-      attacks.battle_cry,
-      attacks.fortify
-    ]
+    possibleAttacks: [attacks.whirlwind, attacks.battle_cry, attacks.fortify],
   },
   werewolf: {
     name: "Fang",
@@ -151,12 +145,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 20,
     defense: 10,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.dizzying_blow, attacks.shadow_step],
-    possibleAttacks: [
-      attacks.sneak_attack,
-      attacks.volley,
-      attacks.vanish
-    ]
+    possibleAttacks: [attacks.sneak_attack, attacks.volley, attacks.vanish],
   },
   giant: {
     name: "Goliath",
@@ -168,12 +159,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 40,
     defense: 20,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.rock_slide, attacks.bash],
-    possibleAttacks: [
-      attacks.quicksand,
-      attacks.flurry,
-      attacks.fortify
-    ]
+    possibleAttacks: [attacks.quicksand, attacks.flurry, attacks.fortify],
   },
   golem: {
     name: "Rocky",
@@ -185,12 +173,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 10,
     defense: 50,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.protect, attacks.bash],
-    possibleAttacks: [
-      attacks.quicksand,
-      attacks.rend,
-      attacks.heal
-    ]
+    possibleAttacks: [attacks.quicksand, attacks.rend, attacks.heal],
   },
   vampire: {
     name: "Vlad",
@@ -202,12 +187,13 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 15,
     defense: 10,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.mana_leech, attacks.sneak_attack],
     possibleAttacks: [
       attacks.shadow_step,
       attacks.dizzying_blow,
-      attacks.venom_strike
-    ]
+      attacks.venom_strike,
+    ],
   },
   cyclops: {
     name: "Argus",
@@ -219,12 +205,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 35,
     defense: 25,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.shockwave, attacks.arcane_blast],
-    possibleAttacks: [
-      attacks.ultimate_blast,
-      attacks.bash,
-      attacks.flurry
-    ]
+    possibleAttacks: [attacks.ultimate_blast, attacks.bash, attacks.flurry],
   },
   gryphon: {
     name: "Griff",
@@ -236,12 +219,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 20,
     defense: 15,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.snipe, attacks.haste],
-    possibleAttacks: [
-      attacks.camouflage,
-      attacks.rend,
-      attacks.inspire
-    ]
+    possibleAttacks: [attacks.camouflage, attacks.rend, attacks.inspire],
   },
   kraken: {
     name: "Kraken",
@@ -253,12 +233,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 50,
     defense: 20,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.rend, attacks.quicksand],
-    possibleAttacks: [
-      attacks.snipe,
-      attacks.volley,
-      attacks.camouflage
-    ]
+    possibleAttacks: [attacks.snipe, attacks.volley, attacks.camouflage],
   },
   pegasus: {
     name: "Wings",
@@ -270,12 +247,13 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 10,
     defense: 20,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.haste, attacks.heal],
     possibleAttacks: [
       attacks.battle_cry,
       attacks.fortify,
-      attacks.arcane_blast
-    ]
+      attacks.arcane_blast,
+    ],
   },
   banshee: {
     name: "Wail",
@@ -287,12 +265,13 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 15,
     defense: 10,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.dizzying_blow, attacks.venom_strike],
     possibleAttacks: [
       attacks.shadow_step,
       attacks.lullaby,
-      attacks.sneak_attack
-    ]
+      attacks.sneak_attack,
+    ],
   },
   chimera: {
     name: "Chimmy",
@@ -304,12 +283,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 30,
     defense: 25,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.elemental_burst, attacks.flurry],
-    possibleAttacks: [
-      attacks.fireball,
-      attacks.rend,
-      attacks.battle_cry
-    ]
+    possibleAttacks: [attacks.fireball, attacks.rend, attacks.battle_cry],
   },
   basilisk: {
     name: "Slither",
@@ -321,12 +297,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 20,
     defense: 15,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.venom_strike, attacks.camouflage],
-    possibleAttacks: [
-      attacks.snipe,
-      attacks.quicksand,
-      attacks.shadow_step
-    ]
+    possibleAttacks: [attacks.snipe, attacks.quicksand, attacks.shadow_step],
   },
   centaur: {
     name: "Cento",
@@ -338,12 +311,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 15,
     defense: 20,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.pierce, attacks.heal],
-    possibleAttacks: [
-      attacks.battle_cry,
-      attacks.fortify,
-      attacks.rend
-    ]
+    possibleAttacks: [attacks.battle_cry, attacks.fortify, attacks.rend],
   },
   cerberus: {
     name: "Hades",
@@ -355,12 +325,13 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 40,
     defense: 25,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.twin_slash, attacks.flurry],
     possibleAttacks: [
       attacks.ultimate_blast,
       attacks.sneak_attack,
-      attacks.vanish
-    ]
+      attacks.vanish,
+    ],
   },
   hydra: {
     name: "Hydro",
@@ -372,12 +343,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 35,
     defense: 20,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.rend, attacks.quicksand],
-    possibleAttacks: [
-      attacks.arcane_blast,
-      attacks.volley,
-      attacks.fireball
-    ]
+    possibleAttacks: [attacks.arcane_blast, attacks.volley, attacks.fireball],
   },
   sphinx: {
     name: "Riddle",
@@ -389,12 +357,13 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 25,
     defense: 15,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.camouflage, attacks.heal],
     possibleAttacks: [
       attacks.battle_cry,
       attacks.arcane_blast,
-      attacks.fortify
-    ]
+      attacks.fortify,
+    ],
   },
   harpy: {
     name: "Harper",
@@ -406,12 +375,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 10,
     defense: 10,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.snipe, attacks.rain_dance],
-    possibleAttacks: [
-      attacks.flurry,
-      attacks.whirlwind,
-      attacks.inspire
-    ]
+    possibleAttacks: [attacks.flurry, attacks.whirlwind, attacks.inspire],
   },
   leviathan: {
     name: "Levi",
@@ -423,12 +389,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 60,
     defense: 30,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.quicksand, attacks.ultimate_blast],
-    possibleAttacks: [
-      attacks.volley,
-      attacks.fireball,
-      attacks.camouflage
-    ]
+    possibleAttacks: [attacks.volley, attacks.fireball, attacks.camouflage],
   },
   troll: {
     name: "Grump",
@@ -440,12 +403,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 20,
     defense: 15,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.bash, attacks.dizzying_blow],
-    possibleAttacks: [
-      attacks.flurry,
-      attacks.rock_slide,
-      attacks.fortify
-    ]
+    possibleAttacks: [attacks.flurry, attacks.rock_slide, attacks.fortify],
   },
   manticore: {
     name: "Manny",
@@ -457,12 +417,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 30,
     defense: 20,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.snipe, attacks.shadow_step],
-    possibleAttacks: [
-      attacks.elemental_burst,
-      attacks.rend,
-      attacks.flurry
-    ]
+    possibleAttacks: [attacks.elemental_burst, attacks.rend, attacks.flurry],
   },
   ghoul: {
     name: "Spooky",
@@ -474,12 +431,13 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 10,
     defense: 10,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.dizzying_blow, attacks.venom_strike],
     possibleAttacks: [
       attacks.shadow_step,
       attacks.sneak_attack,
-      attacks.lullaby
-    ]
+      attacks.lullaby,
+    ],
   },
   faun: {
     name: "Pan",
@@ -491,12 +449,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 5,
     defense: 15,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.heal, attacks.camouflage],
-    possibleAttacks: [
-      attacks.battle_cry,
-      attacks.fortify,
-      attacks.snipe
-    ]
+    possibleAttacks: [attacks.battle_cry, attacks.fortify, attacks.snipe],
   },
   satyr: {
     name: "Sylvan",
@@ -508,12 +463,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 10,
     defense: 20,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.heal, attacks.pierce],
-    possibleAttacks: [
-      attacks.inspire,
-      attacks.battle_cry,
-      attacks.fortify
-    ]
+    possibleAttacks: [attacks.inspire, attacks.battle_cry, attacks.fortify],
   },
   wendigo: {
     name: "Frost",
@@ -525,12 +477,9 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 50,
     defense: 25,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.quicksand, attacks.flurry],
-    possibleAttacks: [
-      attacks.ultimate_blast,
-      attacks.camouflage,
-      attacks.rend
-    ]
+    possibleAttacks: [attacks.ultimate_blast, attacks.camouflage, attacks.rend],
   },
   salamander: {
     name: "Lizard",
@@ -542,14 +491,13 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     trueDamage: 5,
     defense: 5,
     mods: [],
+    statuses: [],
     startingAttacks: [attacks.fireball, attacks.heal],
-    possibleAttacks: [
-      attacks.camouflage,
-      attacks.rain_dance,
-      attacks.volley
-    ]
-  }
-};
+    possibleAttacks: [attacks.camouflage, attacks.rain_dance, attacks.volley],
+  },
+}
+
+// export type Owner = keyof typeof CREATURES
 
 // Grouping of Creatures by Power Level
 export const POWER_LEVELS: PowerLevels = {
@@ -592,7 +540,7 @@ export const POWER_LEVELS: PowerLevels = {
     CREATURES.wendigo,
     CREATURES.leviathan,
   ],
-};
+}
 
 export const NEW_OBJ_FOR_CREATURES = {
   dragon: {
@@ -915,4 +863,3 @@ export const NEW_OBJ_FOR_CREATURES = {
     mods: [],
   },
 }
-export type Owner = keyof typeof CREATURES

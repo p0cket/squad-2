@@ -1,14 +1,14 @@
 // GameContext.js
-import React, { createContext, useContext, useReducer } from "react"
+import React, { createContext, ReactNode, useContext, useReducer } from "react"
 import { applyRuneEffects } from "./utils/runeUtils"
 import { resetCreatures } from "./utils/battleUtils"
 import { applyMod, applyTurnEnhancementEffects } from "./utils/modUtils"
 import { CREATURES } from "./consts/creatures"
-// import { BASE_RUNES } from "./consts/items"
 import { generateLevels, loadLevelData } from "./utils/levelGeneratorUtils"
 import { createUniqueParty } from "./utils/creatureUtils"
 import { updateCreatureInList } from "./utils/moves/attackUtils"
 import { BASE_RUNES } from "./consts/items"
+import { Creature, State } from "./consts/types"
 
 // Constants
 export const INITIAL_MAX_MP = 50
@@ -21,7 +21,7 @@ export const baseComputerCreatures = [fish, faun, harpy]
 // Initial State
 const generatedLevels = generateLevels(10) // Generate levels once here
 
-const initialState = {
+const initialState: State = {
   // Existing Game State
   playerCreatures: structuredClone(
     createUniqueParty(basePlayerCreatures, "player")
@@ -36,17 +36,9 @@ const initialState = {
   mpPerTurn: INITIAL_MP_PER_TURN,
   turn: 0,
   // Rune System State
-  gold: 1000,
   runes: [],
   availableRunes: structuredClone(BASE_RUNES),
-  baseStats: {
-    attack: 0,
-    health: 0,
-    speed: 0,
-    goldMultiplier: 1,
-    assassinDamage: 0,
-    dragonBreath: 0,
-  },
+  your: { gold: 1000 },
   battleStatus: null,
   screen: "intro",
   level: 1, // Start at level 1
@@ -56,7 +48,29 @@ const initialState = {
 }
 console.log("Initial State:", initialState)
 // Game Reducer
-const gameReducer = (state, action) => {
+
+type UpdateCreatePayload = {
+  creature: Creature
+}
+
+type UpdateMPPayload = {
+  mp: number
+}
+
+type AllPayloads = UpdateCreatePayload | UpdateMPPayload
+
+// type Action<P extends AllPayloads> = {
+//   type: string
+
+// } & P
+
+// Temporary type for actions 
+type GameAction = any;
+
+// const gameReducer = (state: State, action: Action) => {
+  const gameReducer: React.Reducer<State, GameAction> = (state, action) => {
+
+// const gameReducer = (state: State, action: GameAction) => {
   // console.log(
   //   `Action dispatched ${action.type}. Action and State:`,
   //   action,
@@ -69,7 +83,7 @@ const gameReducer = (state, action) => {
       // state.playerCreatures & state.computerCreatures
       // see if any match the ID for that creature.
       // if so, replace the creature with the new creature
-      const whichPartyOwnsCreature = (creature) => {
+      const whichPartyOwnsCreature = (creature: Creature) => {
         if (creature.owner === "player") return "playerCreatures"
         if (creature.owner === "computer") return "computerCreatures"
         console.error("Creature ownership invalid:", creature)
@@ -84,6 +98,10 @@ const gameReducer = (state, action) => {
       //   entireState: state,
       // })
 
+      if (!partySide) {
+        console.error(`Invalid partySide: ${partySide}`, state)
+        return state
+      }
       if (!Array.isArray(state[partySide])) {
         console.error(
           `Invalid partySide or partySide is not an array: ${partySide}`,
@@ -125,7 +143,13 @@ const gameReducer = (state, action) => {
         }),
       }
     case "MOVE_CREATURE_TO_BACK": {
-      const { side, creatureId } = action.payload
+      const {
+        side,
+        creatureId,
+      }: {
+        side: "playerCreatures" | "computerCreatures"
+        creatureId: number
+      } = action.payload
 
       // Get the creatures array (either player or computer)
       const creatures = [...state[side]]
@@ -157,7 +181,13 @@ const gameReducer = (state, action) => {
       }
     }
     case "SWAP_CREATURE_POSITION": {
-      const { side, newActiveCreatureId } = action.payload
+      const {
+        side,
+        newActiveCreatureId,
+      }: {
+        side: "playerCreatures" | "computerCreatures"
+        newActiveCreatureId: number
+      } = action.payload
 
       const creatures = [...state[side]]
       const activeIndex = creatures.findIndex(
@@ -175,15 +205,17 @@ const gameReducer = (state, action) => {
       }
     }
 
+    // Deprecated?
     case "ATTACK_CREATURE":
       // Handle creature attack, applying aura effect if it exists
       const attacker = state.playerCreatures.find(
         (creature) => creature.ID === action.attacker.ID
       )
-      if (attacker.aura && Math.random() < 0.75) {
-        // 75% chance to apply the aura's effect
-        //   applyAuraEffect(attacker.aura);
-      }
+      // attacker aura's dono't exist yet
+      // if (attacker && attacker.aura && Math.random() < 0.75) {
+      //   // 75% chance to apply the aura's effect
+      //   //   applyAuraEffect(attacker.aura);
+      // }
       return state
 
     case "APPLY_TURN_EFFECTS":
@@ -209,21 +241,27 @@ const gameReducer = (state, action) => {
         screen: "game_over",
       }
     case "NEXT_LEVEL":
-      const nextLevel = state.currentLevel + 1
+      const nextLevel = state.level + 1
 
       // Use the loadLevelData function to get the next level's configuration
       const nextLevelData = loadLevelData(nextLevel)
 
       // Reset player creatures and apply rune effects
       const newPlayerTeam = resetCreatures(
-        structuredClone(basePlayerCreatures).map((creature) =>
+        structuredClone(state.playerCreatures).map((creature) =>
           applyRuneEffects(creature, state.runes)
         )
       )
 
+      if (!nextLevelData) {
+        console.error(`Next level data not found for level ${nextLevel}`, state)
+        return state
+      }
       // Set up the new enemy team based on the next level's creatures
       const newComputerTeam = resetCreatures(
-        structuredClone(nextLevelData.opponentCreatures)
+        structuredClone(
+          createUniqueParty(nextLevelData.opponentCreatures, "computer")
+        )
       )
 
       return {
@@ -231,22 +269,37 @@ const gameReducer = (state, action) => {
         playerCreatures: newPlayerTeam, // Reset player creatures with runes applied
         computerCreatures: newComputerTeam, // Load new level enemies
         currentLevel: nextLevel, // Advance to the next level
-        levelEffects: nextLevelData.levelEffects, // Apply level-specific effects
+        levelEffects: nextLevelData?.levelEffects, // Apply level-specific effects
         mp: 0, // Reset MP
         turn: 0, // Reset turn
         battleStatus: null, // Clear battle status
       }
+    // if RESET is for resetting the game, cool.  createUniqueParty(basePlayerCreatures, "player")
+    // if RESET is for resetting the battle, cool.  resetCreatures(structuredClone(basePlayerCreatures))
     case "RESET_BATTLE":
       // Deep clone base player creatures and apply rune effects
+      // const updatedPlayerTeam = resetCreatures(
+      //   structuredClone(basePlayerCreatures).map((creature) =>
+      //     applyRuneEffects(creature, state.runes)
+      //   )
+      // )
+      // // Deep clone base computer creatures without rune effects
+      // const updatedComputerTeam = resetCreatures(
+      //   structuredClone(baseComputerCreatures)
+      // )
       const updatedPlayerTeam = resetCreatures(
-        structuredClone(basePlayerCreatures).map((creature) =>
+        structuredClone(state.playerCreatures).map((creature) =>
           applyRuneEffects(creature, state.runes)
         )
       )
       // Deep clone base computer creatures without rune effects
-      const updatedComputerTeam = resetCreatures(
-        structuredClone(baseComputerCreatures)
+      // which team is the computer team? base? currentLevel? Here is one:
+      const compParty = createUniqueParty(
+        generatedLevels[0].opponentCreatures,
+        "computer"
       )
+
+      const updatedComputerTeam = resetCreatures(structuredClone(compParty))
       return {
         ...state,
         playerCreatures: updatedPlayerTeam,
@@ -262,15 +315,15 @@ const gameReducer = (state, action) => {
         screen: action.payload.screen,
       }
     case "BUY_RUNE":
-      if (state.gold < action.rune.cost) return state
+      if (state.your.gold < action.rune.cost) return state
       const newRunes = [...state.runes, action.rune]
       // Recalculate player creatures with new rune list starting from base creatures
-      const updatedPlayerCreatures = structuredClone(basePlayerCreatures).map(
+      const updatedPlayerCreatures = structuredClone(state.playerCreatures).map(
         (creature) => applyRuneEffects(creature, newRunes)
       )
       return {
         ...state,
-        gold: state.gold - action.rune.cost,
+        gold: state.your.gold - action.rune.cost,
         runes: newRunes,
         playerCreatures: updatedPlayerCreatures,
         availableRunes: state.availableRunes.map((rune) =>
@@ -284,11 +337,11 @@ const gameReducer = (state, action) => {
       )
       // Recalculate player creatures with remaining runes starting from base creatures
       const recalculatedPlayerCreatures = structuredClone(
-        basePlayerCreatures
-      ).map((creature) => applyRuneEffects(creature, remainingRunes))
+        state.playerCreatures
+      ).map((creature) => applyRuneEffects(creature, remainingRunes)) as any
       return {
         ...state,
-        gold: state.gold + Math.floor(action.rune.cost / 2),
+        gold: state.your.gold + Math.floor(action.rune.cost / 2),
         runes: remainingRunes,
         playerCreatures: recalculatedPlayerCreatures,
         availableRunes: state.availableRunes.map((rune) =>
@@ -298,7 +351,7 @@ const gameReducer = (state, action) => {
     case "ADD_GOLD":
       return {
         ...state,
-        gold: state.gold + action.amount,
+        gold: state.your.gold + action.amount,
       }
     case "RESET_GAME":
       return initialState
@@ -308,23 +361,24 @@ const gameReducer = (state, action) => {
 }
 
 // Create Contexts
-const StateContext = createContext()
+const StateContext = createContext<State | undefined>(undefined)
 // const DispatchContext = createContext<React.DispatchWithoutAction>()
-const DispatchContext = createContext()
+const DispatchContext = createContext<React.Dispatch<any>>(() => {})
 
 // Custom Hooks for Using Context
 export const useStateContext = () => useContext(StateContext)
 export const useDispatchContext = () => useContext(DispatchContext)
 
 // Context Provider Component
-export const GameProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(gameReducer, initialState)
-
+export const GameProvider = ({ children }: { children: ReactNode }) => {
+  const [state, dispatch] = useReducer<React.Reducer<State, GameAction>>(
+    gameReducer,
+    initialState
+  )
+  // const [state, dispatch] = useReducer(gameReducer, initialState)
   return (
     <StateContext.Provider value={state}>
-      <DispatchContext.Provider value={dispatch}>
-        {children}
-      </DispatchContext.Provider>
+      <DispatchContext.Provider value={dispatch}></DispatchContext.Provider>
     </StateContext.Provider>
   )
 }

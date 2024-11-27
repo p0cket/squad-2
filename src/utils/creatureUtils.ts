@@ -1,5 +1,4 @@
-import { BaseCreature } from "../consts/types"
-import { Owner } from "../consts/creatures"
+import { BaseCreature, Creature, Owner } from "../consts/types"
 
 let creatureIdCounter = 0
 
@@ -7,7 +6,7 @@ export const generateUniqueId = () => {
   return creatureIdCounter++
 }
 
-export const creatureUniqueCreature = (creatureTemplate: BaseCreature, owner: Owner | null = null) => {
+export const creatureUniqueCreature = (creatureTemplate: BaseCreature, owner: Owner | null = null): Creature => {
   return {
     ...creatureTemplate,
     ID: generateUniqueId(),

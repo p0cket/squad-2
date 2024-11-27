@@ -1,8 +1,13 @@
+import React from "react";
 import { motion } from "framer-motion";
 import { STATUS_EFFECTS } from "../../consts/statuses";
+import { Attack } from "../../consts/types";
 
 // Define color classes for each attack type
-const typeColors = {
+
+export type TypeColor = { [key: string]: string };
+
+const typeColors: TypeColor = {
   Physical: "bg-gray-500 text-gray-100",
   Elemental: "bg-red-500 text-red-100",
   Support: "bg-green-500 text-green-100",
@@ -14,7 +19,19 @@ const typeColors = {
   Stealth: "bg-indigo-500 text-indigo-100",
 };
 
-const AttackCard = ({ attack, onUse, showUseButton = true, onClick }) => (
+interface AttackCardProps {
+  attack: Attack;
+  onUse: () => void;
+  showUseButton?: boolean;
+  onClick: () => void;
+}
+
+const AttackCard: React.FC<AttackCardProps> = ({
+  attack,
+  onUse,
+  showUseButton = true,
+  onClick,
+}) => (
   <motion.div
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
@@ -39,10 +56,10 @@ const AttackCard = ({ attack, onUse, showUseButton = true, onClick }) => (
             {/* Type with Color */}
             <span
               className={`${
-                typeColors[attack.type]
+                typeColors[attack.attackType]
               } px-1 py-0.5 text-xs rounded`}
             >
-              {attack.type}
+              {attack.attackType}
             </span>
 
             {/* Additional Info (Effects, Damage, Cooldown) */}
@@ -54,7 +71,7 @@ const AttackCard = ({ attack, onUse, showUseButton = true, onClick }) => (
                   .join(", ")}
               </span>
               <span>DMG: {attack?.damage}</span>
-              <span>CD: {attack?.cooldown}s</span>
+              <span>CoolDown: {attack?.cooldown}s</span>
             </div>
           </div>
         </div>

@@ -9,8 +9,13 @@
 //         damagePerTurn: 5,
 //       },
 //     },
+
+import { STATUS_EFFECTS } from "../consts/statuses"
+import { Creature, Enhancement, Mod } from "../consts/types"
+import { applyStatus } from "./moves/attackUtils"
+
 //   });
-export const applyMod = (creature, mod) => {
+export const applyMod = (creature: Creature, mod: Mod) => {
   // Clone the creature to avoid direct mutation
   let updatedCreature = { ...creature }
 
@@ -26,7 +31,7 @@ export const applyMod = (creature, mod) => {
   return updatedCreature
 }
 
-export const applyTurnModEffects = (creature) => {
+export const applyTurnModEffects = (creature: Creature) => {
   let updatedCreature = { ...creature }
 
   updatedCreature.mods = updatedCreature.mods.map((mod) => {
@@ -34,9 +39,11 @@ export const applyTurnModEffects = (creature) => {
       switch (mod.type) {
         case "statusEffect":
           if (mod.name === "Burn") {
-            updatedCreature.health -= mod.damagePerTurn
+            // updatedCreature.health -= mod.damagePerTurn
+            updatedCreature.health += mod.amount
           } else if (mod.name === "Regeneration") {
-            updatedCreature.health += mod.healPerTurn
+            // updatedCreature.health += mod.healPerTurn
+            updatedCreature.health += mod.amount
             if (updatedCreature.health > updatedCreature.maxHealth) {
               updatedCreature.health = updatedCreature.maxHealth // Prevent overhealing
             }
@@ -66,51 +73,49 @@ export const applyTurnModEffects = (creature) => {
   return updatedCreature
 }
 
-export const applyEnhancement = (creature, enhancement) => {
+// Todo:  More like global enchantments?
+export const applyEnhancement = (
+  creature: Creature,
+  enhancement: Enhancement
+) => {
   // Clone the creature to avoid direct mutation
   let updatedCreature = { ...creature }
 
   // Add the enhancement to the creature's statusEffects array
-  updatedCreature.statusEffects = [
-    ...updatedCreature.statusEffects,
-    {
-      ...enhancement,
-      remainingDuration: enhancement.duration, // Track how long it should last
-    },
-  ]
-
   return updatedCreature
 }
 
-export const applyTurnEnhancementEffects = (creature) => {
+// Maybe get rid of this function and just use others
+export const applyTurnEnhancementEffects = (creature: Creature) => {
   let updatedCreature = { ...creature }
-
-  updatedCreature.statusEffects = updatedCreature.statusEffects.map(
-    (effect) => {
-      if (effect.remainingDuration > 0) {
-        // Apply burn damage
-        if (effect.name === "Burn") {
-          updatedCreature.health -= effect.damagePerTurn
-        }
-
-        // Apply regeneration
-        if (effect.name === "Regeneration") {
-          updatedCreature.health += effect.healPerTurn
-          if (updatedCreature.health > updatedCreature.maxHealth) {
-            updatedCreature.health = updatedCreature.maxHealth // Prevent overhealing
-          }
-        }
-
-        // Reduce remaining duration
-        effect.remainingDuration -= 1
+  updatedCreature.statuses = updatedCreature.statuses.map((effect) => {
+    if (effect.duration > 0) {
+      // Apply burn damage
+      if (effect.name === "Burn") {
+        // This is applying the status effect, which is done through a function.
+        // StatuseEffect's effectFuncName key is a string that
+        // matches a function name to be ran by effectFunctions
+        //
+        //effectFunctions[effect.effectFuncName](creature)
+        // updatedCreature.health -= STATUS_EFFECTS[effect].amount
       }
-      return effect
+      // Apply regeneration
+      if (effect.name === "Regeneration") {
+        //effectFunctions[effect.effectFuncName](creature)
+        if (updatedCreature.health > updatedCreature.maxHealth) {
+          updatedCreature.health = updatedCreature.maxHealth // Prevent overhealing
+        }
+      }
+
+      // Reduce remaining duration
+      effect.duration -= 1
     }
-  )
+    return effect
+  })
 
   // Filter out effects that have expired
-  updatedCreature.statusEffects = updatedCreature.statusEffects.filter(
-    (effect) => effect.remainingDuration > 0
+  updatedCreature.statuses = updatedCreature.statuses.filter(
+    (effect) => effect.duration > 0
   )
 
   return updatedCreature

@@ -1,4 +1,3 @@
-import { STATUS_EFFECTS } from "./statuses"
 import { Attack } from "./types"
 
 export const attacks: { [key: string]: Attack } = {
@@ -6,13 +5,13 @@ export const attacks: { [key: string]: Attack } = {
     template: "slash",
     name: "Slash",
     attackType: "Physical",
-    // effects: [STATUS_EFFECTS.BUFF],
     effects: ["BUFF"],
     chanceToLand: 0.95,
     damage: 10,
     trueDamage: 0,
     icon: "sword_icon",
     notes: "Basic physical attack with a chance for a critical hit.",
+    cooldown: 1,
   },
   pierce: {
     template: "pierce",
@@ -24,6 +23,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "spear_icon",
     notes: "Attack that penetrates enemy armor.",
+    cooldown: 2,
   },
   rend: {
     template: "rend",
@@ -35,6 +35,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 2,
     icon: "axe_icon",
     notes: "Attack that causes bleeding over time.",
+    cooldown: 3,
   },
   bash: {
     template: "bash",
@@ -46,6 +47,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "hammer_icon",
     notes: "A strong attack that may stun the enemy.",
+    cooldown: 2,
   },
   fireball: {
     template: "fireball",
@@ -57,6 +59,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 5,
     icon: "fireball_icon",
     notes: "Deals fire damage with a chance to burn the target.",
+    cooldown: 3,
   },
   thunderbolt: {
     template: "thunderbolt",
@@ -68,6 +71,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 4,
     icon: "lightning_icon",
     notes: "Deals electric damage with a chance to paralyze.",
+    cooldown: 3,
   },
   ice_shard: {
     template: "ice_shard",
@@ -79,6 +83,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "ice_icon",
     notes: "Basic ice attack with high accuracy.",
+    cooldown: 1,
   },
   shockwave: {
     template: "shockwave",
@@ -90,6 +95,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 2,
     icon: "shockwave_icon",
     notes: "Earth attack that may shock the enemy.",
+    cooldown: 2,
   },
   venom_strike: {
     template: "venom_strike",
@@ -101,6 +107,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 3,
     icon: "poison_icon",
     notes: "Inflicts poison on the enemy.",
+    cooldown: 3,
   },
   lullaby: {
     template: "lullaby",
@@ -112,6 +119,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "sleep_icon",
     notes: "Puts the enemy to sleep.",
+    cooldown: 4,
   },
   dizzying_blow: {
     template: "dizzying_blow",
@@ -123,6 +131,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 1,
     icon: "confusion_icon",
     notes: "May confuse the enemy.",
+    cooldown: 2,
   },
   weakening_touch: {
     template: "weakening_touch",
@@ -134,6 +143,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "weakness_icon",
     notes: "Reduces enemy's attack power.",
+    cooldown: 3,
   },
   heal: {
     template: "heal",
@@ -145,6 +155,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "heal_icon",
     notes: "Restores health to an ally over time.",
+    cooldown: 2,
   },
   protect: {
     template: "protect",
@@ -156,6 +167,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "shield_icon",
     notes: "Shields an ally, reducing incoming damage.",
+    cooldown: 3,
   },
   purify: {
     template: "purify",
@@ -167,6 +179,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "cure_icon",
     notes: "Removes negative status effects from an ally.",
+    cooldown: 2,
   },
   revitalize: {
     template: "revitalize",
@@ -178,6 +191,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "revitalize_icon",
     notes: "Restores a moderate amount of health instantly.",
+    cooldown: 3,
   },
   arcane_blast: {
     template: "arcane_blast",
@@ -189,6 +203,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "arcane_icon",
     notes: "Deals magical damage to an enemy.",
+    cooldown: 2,
   },
   mana_leech: {
     template: "mana_leech",
@@ -200,6 +215,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 2,
     icon: "mana_icon",
     notes: "Drains mana from the enemy.",
+    cooldown: 3,
   },
   spell_boost: {
     template: "spell_boost",
@@ -211,6 +227,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "magic_boost_icon",
     notes: "Increases caster's magic power.",
+    cooldown: 4,
   },
   reflective_shield: {
     template: "reflective_shield",
@@ -222,6 +239,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "reflect_icon",
     notes: "Reflects enemy spells back at them.",
+    cooldown: 5,
   },
   arrow_shot: {
     template: "arrow_shot",
@@ -233,6 +251,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "arrow_icon",
     notes: "Basic ranged attack.",
+    cooldown: 1,
   },
   snipe: {
     template: "snipe",
@@ -244,6 +263,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 5,
     icon: "long_arrow_icon",
     notes: "High damage at a distance.",
+    cooldown: 3,
   },
   volley: {
     template: "volley",
@@ -255,6 +275,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "multiple_arrows_icon",
     notes: "Attacks multiple enemies.",
+    cooldown: 2,
   },
   penetrating_shot: {
     template: "penetrating_shot",
@@ -266,39 +287,43 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "piercing_arrow_icon",
     notes: "Ignores enemy defenses.",
+    cooldown: 3,
   },
   battle_cry: {
     template: "battle_cry",
     name: "Battle Cry",
     attackType: "Support",
-    effects: ["BUFF"], // Strength approximated as a buff
+    effects: ["BUFF"],
     chanceToLand: 1.0,
     damage: 0,
     trueDamage: 0,
     icon: "strength_icon",
     notes: "Boosts allies' attack power.",
+    cooldown: 4,
   },
   fortify: {
     template: "fortify",
     name: "Fortify",
     attackType: "Support",
-    effects: ["BUFF"], // Defense approximated as a buff
+    effects: ["BUFF"],
     chanceToLand: 1.0,
     damage: 0,
     trueDamage: 0,
     icon: "defense_icon",
     notes: "Boosts allies' defense.",
+    cooldown: 4,
   },
   haste: {
     template: "haste",
     name: "Haste",
     attackType: "Support",
-    effects: ["BUFF"], // Speed approximated as a buff
+    effects: ["BUFF"],
     chanceToLand: 1.0,
     damage: 0,
     trueDamage: 0,
     icon: "speed_icon",
     notes: "Boosts allies' speed.",
+    cooldown: 3,
   },
   inspire: {
     template: "inspire",
@@ -310,17 +335,19 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "inspire_icon",
     notes: "Boosts allies' morale.",
+    cooldown: 5,
   },
   quicksand: {
     template: "quicksand",
     name: "Quicksand",
     attackType: "Trap",
-    effects: ["STUN"], // Trap approximated as a stun effect
+    effects: ["STUN"],
     chanceToLand: 0.9,
     damage: 5,
     trueDamage: 0,
     icon: "quicksand_icon",
     notes: "Sets a trap that slows enemies.",
+    cooldown: 3,
   },
   rain_dance: {
     template: "rain_dance",
@@ -332,6 +359,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "rain_icon",
     notes: "Changes weather to rain.",
+    cooldown: 4,
   },
   rock_slide: {
     template: "rock_slide",
@@ -343,6 +371,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "rock_icon",
     notes: "Deals damage using the environment.",
+    cooldown: 3,
   },
   camouflage: {
     template: "camouflage",
@@ -354,6 +383,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "camouflage_icon",
     notes: "Uses terrain to hide and gain advantage.",
+    cooldown: 5,
   },
   chrono_break: {
     template: "chrono_break",
@@ -365,6 +395,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "time_icon",
     notes: "Attempts to stop time for enemies.",
+    cooldown: 6,
   },
   phase_shift: {
     template: "phase_shift",
@@ -376,6 +407,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "teleport_icon",
     notes: "Evades attacks by teleporting.",
+    cooldown: 4,
   },
   mirror_image: {
     template: "mirror_image",
@@ -387,6 +419,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "clone_icon",
     notes: "Creates clones to confuse enemies.",
+    cooldown: 5,
   },
   ultimate_blast: {
     template: "ultimate_blast",
@@ -398,6 +431,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 5,
     icon: "blast_icon",
     notes: "A powerful attack with high damage.",
+    cooldown: 6,
   },
   twin_slash: {
     template: "twin_slash",
@@ -409,6 +443,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "double_sword_icon",
     notes: "Attacks twice in quick succession.",
+    cooldown: 2,
   },
   whirlwind: {
     template: "whirlwind",
@@ -420,6 +455,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 2,
     icon: "whirlwind_icon",
     notes: "Attacks multiple enemies in succession.",
+    cooldown: 3,
   },
   elemental_burst: {
     template: "elemental_burst",
@@ -431,6 +467,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 5,
     icon: "fusion_icon",
     notes: "Combines elements for massive damage.",
+    cooldown: 4,
   },
   flurry: {
     template: "flurry",
@@ -442,6 +479,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "flurry_icon",
     notes: "Rapidly attacks the enemy multiple times.",
+    cooldown: 2,
   },
   sneak_attack: {
     template: "sneak_attack",
@@ -453,6 +491,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 5,
     icon: "dagger_icon",
     notes: "Deals high damage when undetected.",
+    cooldown: 3,
   },
   vanish: {
     template: "vanish",
@@ -464,6 +503,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "invisibility_icon",
     notes: "Becomes invisible to enemies.",
+    cooldown: 5,
   },
   silent_strike: {
     template: "silent_strike",
@@ -475,6 +515,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 10,
     icon: "silent_kill_icon",
     notes: "Chance to instantly defeat an enemy.",
+    cooldown: 6,
   },
   shadow_step: {
     template: "shadow_step",
@@ -486,6 +527,7 @@ export const attacks: { [key: string]: Attack } = {
     trueDamage: 0,
     icon: "shadow_icon",
     notes: "Moves swiftly, increasing evasion.",
+    cooldown: 4,
   },
 }
 

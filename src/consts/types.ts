@@ -12,6 +12,15 @@ export type Rune = {
   icon: string
 }
 
+export type Mod = {
+  name: string
+  duration: number
+  remainingDuration: number
+  type: string
+  amount: number
+  // icon: string
+}
+
 export type AttackPayload = {
   attacker: Creature // Replace 'any' with the actual type
   target: Creature // Replace 'any' with the actual type
@@ -34,6 +43,7 @@ export type Attack = {
   trueDamage: number
   icon: string
   notes: string
+  cooldown: number
 }
 
 export type BaseCreature = {
@@ -45,16 +55,17 @@ export type BaseCreature = {
   attack: number
   trueDamage: number
   defense: number
-  mods?: any[]
+  mods: Mod[]
   startingAttacks: Attack[]
   possibleAttacks: Attack[]
-  statuses?: StatusEffect[]
+  statuses: StatusEffect[]
 }
 
+export type Owner = "player" | "computer" | null
+
 export type Creature = BaseCreature & {
-  ID: number 
-  owner?: string
-  // id?: number //why?
+  ID: number
+  owner: Owner
 }
 
 export type StatusEffect = {
@@ -78,7 +89,60 @@ export type Effect = {
   notes: string
 }
 
+// If we have this, create a better type.
+// I think this is more like a global enchanting system
+export type Enhancement = {
+  name: string
+  duration: number
+  remainingDuration: number
+  type: string
+  amount: number
+  statusEffect: StatusEffect
+  // icon: string
+}
 
-export type GameState = {
+export type Aura = {
+  name: string
+  effect: string // StatusEffect
+  type: string // typeof Status or something
+  duration: number
+  description: string
+}
 
+export type GameState = {}
+
+export type State = {
+  playerCreatures: Creature[]
+  computerCreatures: Creature[]
+  mp: number
+  maxMp: number
+  mpPerTurn: number
+  turn: number
+  runes: Rune[]
+  availableRunes: Rune[]
+  your: {
+    // health: number
+    gold: number
+    // items: any[] // Replace 'any' with the actual type if available
+  }
+  battleStatus: string | null
+  screen: string
+  level: number
+  levels: Level[] // Replace 'any' with the actual type if available
+  levelEffects: LevelEffect[] // Replace 'any' with the actual type if available
+  modals: {
+    replaceCreatureModal: any | null // Replace 'any' with the actual type if available
+  }
+}
+
+export type Level = {
+  levelNumber: number
+  opponentCreatures: BaseCreature[]
+  opponentRunes: Rune[]
+  levelEffects: LevelEffect[]
+}
+
+export type LevelEffect = {
+  name: string
+  effect: string
 }

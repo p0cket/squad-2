@@ -52,7 +52,7 @@ const ClassicHand = ({
   const drawNewHand = (currentDeck = deck) => {
     let newDeck = [...currentDeck];
     let newHand = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       if (newDeck.length > 0) {
         const result = drawCard(newDeck, newHand);
         newDeck = result.newDeck;
@@ -139,7 +139,7 @@ const ClassicHand = ({
       </div>
 
       <motion.div
-        className="grid sm:grid-cols-3 gap-2"
+        className="grid sm:grid-cols-2 gap-2"
         initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, staggerChildren: 0.1 }}

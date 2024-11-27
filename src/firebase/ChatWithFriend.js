@@ -21,24 +21,23 @@ function ChatWithFriend({ currentUserId, friendId }) {
   // Check if users are friends
   useEffect(() => {
     const checkFriendship = async () => {
-        try {
-            const userRef = doc(db, "users", currentUserId);
-            const userDoc = await getDoc(userRef);
-    
-            if (userDoc.exists()) {
-                // Provide a default empty array if friends field is missing
-                const userFriends = userDoc.data().friends || [];
-                setIsFriend(userFriends.includes(friendId)); // Check if friendId is in the user's friends list
-            } else {
-                console.log("User document does not exist.");
-            }
-        } catch (error) {
-          console.error("Error checking friendship: fix later"); // Log any errors encountered
+      try {
+        //uncomment if you want to fix
+        // const userRef = doc(db, "users", currentUserId);
+        // const userDoc = await getDoc(userRef);
+        // if (userDoc.exists()) {
+        //     // Provide a default empty array if friends field is missing
+        //     const userFriends = userDoc.data().friends || [];
+        //     setIsFriend(userFriends.includes(friendId)); // Check if friendId is in the user's friends list
+        // } else {
+        //     console.log("User document does not exist.");
+        // }
+      } catch (error) {
+        console.error("Error checking friendship: fix later") // Log any errors encountered
 
-            // console.error("Error checking friendship:", error); // Log any errors encountered
-        }
-    };
-    
+        // console.error("Error checking friendship:", error); // Log any errors encountered
+      }
+    }
 
     checkFriendship()
   }, [currentUserId, friendId])
@@ -105,7 +104,6 @@ function ChatWithFriend({ currentUserId, friendId }) {
           </div>
         ))}
       </div>
-
       {/* Input Field and Send Button */}
       <div className="flex space-x-2">
         <input

@@ -186,19 +186,23 @@ function Login() {
     <>
       {userLoggedIn ? (
         <div className="text-center">
-          <Typography variant="h6" color="green" gutterBottom>
+          <Button
+            onClick={() => doSignOut()}
+            variant="contained"
+            color="error"
+            size="small"
+            sx={{ minWidth: "auto", padding: "4px 8px" }}
+          >
             Hi{" "}
             {currentUser.displayName
               ? currentUser.displayName
               : currentUser.email}
-            , you are logged in!
-          </Typography>
-          <Button onClick={() => doSignOut()} variant="contained" color="error">
-            Log Out
+            ! LogOut?
           </Button>
           {/* <FireInput /> */}
           {/* <Chat /> */}
-          <ChatWithFriend />
+          {/* Uncomment when working on ChatWithFriend Firebase nonsense */}
+          {/* <ChatWithFriend /> */}
         </div>
       ) : (
         <>
@@ -206,7 +210,8 @@ function Login() {
             onClick={() => setIsLoginModalOpen(true)}
             variant="contained"
             color="primary"
-            sx={{ mb: 2 }}
+            size="small"
+            sx={{ mb: 2, minWidth: "auto", padding: "4px 8px" }}
           >
             Login
           </Button>
@@ -214,6 +219,8 @@ function Login() {
             onClick={() => setIsSignUpModalOpen(true)}
             variant="contained"
             color="success"
+            size="small"
+            sx={{ minWidth: "auto", padding: "4px 8px" }}
           >
             Sign Up
           </Button>

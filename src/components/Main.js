@@ -46,7 +46,7 @@ function Main() {
   const { screen } = state;
   return (
     <>
-      {<Login />}
+    
       {/* <Results /> */}
       {screen === "battle" && <Battle />}
       {screen === "results" && <Results />}

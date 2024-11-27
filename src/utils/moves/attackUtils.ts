@@ -6,7 +6,6 @@ import {
   StatusEffect,
 } from "../../consts/types"
 import { newCalcDamage } from "./calcDamage"
-// import { effectFunctions } from "../turnUtils"
 // import { newCalcDamage } from "./calcDamage"
 
 // Utility to get effects based on timing
@@ -52,6 +51,54 @@ const procStatuses = (
   return changes
 }
 
+export const newFindRelevantProcs = (
+  // attacker,
+  // target,
+  // isPlayerAttack,
+  // playerCreatureControlsRef,
+  // enemyCreatureControlsRef,
+  // attack,
+  // dispatch,
+  // playerCreatures,
+  // computerCreatures,
+  attackPayload: AttackPayload,
+  timing: string
+) => {
+  console.log(`d`)
+  const { playerCreatures, computerCreatures } = attackPayload
+
+  const procCreatures = (creatures: Creature[]) => {
+    const newCreatures = creatures.forEach((creature) => {
+      if (creature.statuses && creature.statuses.length > 0) {
+        console.log(`${creature.name} has statuses:`, creature.statuses)
+        creature.statuses.map((status) => {
+          // Handle each status effect
+          console.log(`Handling status: ${status.name}`)
+          // Add your processing logic here
+          console.log(`run : ${status.name}`)
+          // give whatever is needed to do effect. lifesteal, etc.
+          // pass in both parties, attacker, the attack, and the target
+          // {creature, , , , } = effectFunctions[status.effectFuncName](creature)
+        })
+      }
+    })
+    return newCreatures
+  }
+
+  procCreatures(playerCreatures)
+  procCreatures(computerCreatures)
+
+  // const logStatuses = (creatures: Creature[]) => {
+  //   creatures.forEach(creature => {
+  //     if (creature.statuses && creature.statuses.length > 0) {
+  //       console.log(`${creature.name} has statuses:`, creature.statuses);
+  //     }
+  //   });
+  // };
+
+  // logStatuses(playerCreatures);
+  // logStatuses(computerCreatures);
+}
 export const findRelevantProcs = (
   // attacker,
   // target,

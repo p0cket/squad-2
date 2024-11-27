@@ -1,8 +1,9 @@
-import {  AttackPayload } from "../../consts/types"
+import { AttackPayload } from "../../consts/types"
 import { getControls } from "../anim/getControls"
 import { performAttackAnimation } from "../anim/performAttackAnimation"
 import { showDamageOnTarget } from "../anim/showDamageOnTarget"
 import { updateTargetState } from "../party/updateTargetState"
+import { findRelevantProcs, newFindRelevantProcs } from "./attackUtils"
 import { calculateDamageAndStatuses } from "./calculateDamageAndStatuses"
 
 export const newPerformAttack = async (attackPayload: AttackPayload) => {
@@ -41,8 +42,9 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
 
   if (!attackerControls || !targetControls || !targetShowDamage) {
     // this shouldn't happen but theoritecial could happen if the ref wasn't instantiated
-    throw new Error('ref wasn\'t instantiated');
+    throw new Error("ref wasn't instantiated")
   }
+
   // Execute animations
   await performAttackAnimation(attackerControls, targetControls, isPlayerAttack)
 
@@ -56,8 +58,8 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   // if there are any statuses on the creature that are applied before the attack,
   // apply them
   const { statuses, damage } = calculateDamageAndStatuses(attackPayload)
-//
-//now apply that damage
+  //
+  //now apply that damage
 
   console.log(
     "%cTarget's health after damage:",
@@ -68,21 +70,24 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
 
   // Show damage on target
   showDamageOnTarget(targetShowDamage, damage, target.ID)
-
   // Update target's health and statuses
   const updatedCreatureObj = updateTargetState(target, damage, statuses)
-
   console.log(
     `updatedCreatureObj (with status) after attack`,
     updatedCreatureObj
   )
-
   // Dispatch the update
   dispatch({
     type: "UPDATE_CREATURE",
     side: isPlayerAttack ? "computerCreatures" : "playerCreatures",
     creature: updatedCreatureObj,
   })
+  // ----- ----- ----- -----
+  // The attack is done, do the postAttack proc's
+  const objAfterPostAttackProcs = newFindRelevantProcs(
+    attackPayload,
+    "beforeAttack"
+  )
 
   console.groupEnd()
 }
