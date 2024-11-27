@@ -1,6 +1,14 @@
 import React from "react";
+import { Attack, Effect } from "../../consts/types";
+import { STATUS_EFFECTS } from "../../consts/statuses";
+// import { Attack, Effect } from "../../types";
 
-export default function AttackDetails({ attack }) {
+/**
+ * Displays the details of an attack.
+ *
+ * @param attack - The attack object of type Attack.
+ */
+const AttackDetails: React.FC<{ attack: Attack }> = ({ attack }) => {
   if (!attack) return null;
 
   return (
@@ -11,7 +19,6 @@ export default function AttackDetails({ attack }) {
       <p className="text-sm italic text-gray-400 mb-4">{attack.notes}</p>
 
       <div className="space-y-2">
-        {/* Attack Details */}
         <div className="flex justify-between">
           <span className="font-semibold">Type:</span>
           <span>{attack.attackType}</span>
@@ -25,29 +32,35 @@ export default function AttackDetails({ attack }) {
           <span>{(attack.chanceToLand * 100).toFixed(0)}%</span>
         </div>
 
-        {/* Effects */}
         {attack.effects && attack.effects.length > 0 && (
           <div className="mt-4">
             <h3 className="font-semibold">Effects:</h3>
             <ul className="list-disc list-inside ml-4 space-y-1">
-              {attack.effects.map((effect, index) => (
-                <li key={index}>
-                  <div className="flex justify-between">
-                    <span>{effect.name}</span>
-                    <span className="italic text-gray-400">
-                      {effect.effectChance * 100}% chance
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-400">{effect.notes}</div>
-                  <div className="text-sm text-gray-400">
-                    Duration: {effect.durationRange}
-                  </div>
-                </li>
-              ))}
+              {attack.effects.map((effectKey: string, index) => {
+                const statusEffect = STATUS_EFFECTS[effectKey];
+                return (
+                  <li key={index}>
+                    <div className="flex justify-between">
+                      <span>{statusEffect.name}</span>
+                      <span className="italic text-gray-400">
+                        {(statusEffect.chance * 100).toFixed(0)}% chance
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      {statusEffect.notes}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      Duration: {statusEffect.duration}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
       </div>
     </div>
   );
-}
+};
+
+export default AttackDetails;

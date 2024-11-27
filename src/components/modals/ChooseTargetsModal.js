@@ -82,7 +82,9 @@ export default function ChooseTargetsModal({
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-yellow-500">
               Choose Target for{" "}
-              <span className="text-green-400">{attacker?.name || "Unknown"}</span>{" "}
+              <span className="text-green-400">
+                {attacker?.name || "Unknown"}
+              </span>{" "}
               to use <span className="text-white">{attack?.name}</span>
             </h2>
           </div>

@@ -40,7 +40,8 @@ export const BASE_RUNES: Rune[] = [
     effect: "Increases the Speed stat of all creatures by 5.",
     cost: 100,
     count: 0,
-    statEffect: { stat: "speed", value: 5 },
+    // statEffect: { stat: "speed", value: 5 },
+    statEffect: { stat: "health", value: 5 },
     icon: "⚡",
   },
   {
@@ -50,7 +51,8 @@ export const BASE_RUNES: Rune[] = [
     effect: "Gain 50% more gold after each battle.",
     cost: 150,
     count: 0,
-    statEffect: { stat: "goldMultiplier", value: 0.5 },
+    // statEffect: { stat: "goldMultiplier", value: 0.5 },
+    statEffect: { stat: "health", value: 0.5 },
     icon: "💰",
   },
   {
@@ -61,7 +63,8 @@ export const BASE_RUNES: Rune[] = [
       "Increases damage dealt to creatures with higher health than the user by 20%.",
     cost: 250,
     count: 0,
-    statEffect: { stat: "assassinDamage", value: 0.2 },
+    // statEffect: { stat: "assassinDamage", value: 0.2 },
+    statEffect: { stat: "health", value: 0.2 },
     icon: "🗡️",
   },
   {
@@ -72,11 +75,12 @@ export const BASE_RUNES: Rune[] = [
       "Grants the ability to breathe fire, dealing 30 damage to all enemies.",
     cost: 500,
     count: 0,
-    statEffect: { stat: "dragonBreath", value: 30 },
+    // statEffect: { stat: "dragonBreath", value: 30 },
+    statEffect: { stat: "attack", value: 30 },
     icon: "🐉",
   },
 ]
 
-//   potions act like cards where they can do anything
+// potions act like cards where they can do anything
 // add, subtract, buff, complex
 export const BASE_POTIONS = []

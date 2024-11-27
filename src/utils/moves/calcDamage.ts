@@ -75,9 +75,9 @@ export const newCalcDamage = (
   // const randomFactor = 1; // Random factor between 0.9 and 1.1
   // const randomFactor = Math.random() * 0.2 + 0.9; // Random factor between 0.9 and 1.1
   // const damage = totalDamage * randomFactor;
-  const damage = totalDamage
+  // just adding bonus damage of 50
+  const damage = totalDamage + 50
   console.log("Total Damage:", damage)
   console.groupEnd()
-
   return Math.floor(damage)
 }

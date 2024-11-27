@@ -7,6 +7,7 @@ export type Rune = {
   effect: string
   cost: number
   count: number
+  // statEffect: { stat: keyof Creature; value: number }
   statEffect: { stat: keyof Creature; value: number }
   icon: string
 }
@@ -65,6 +66,7 @@ export type StatusEffect = {
   chance: number
   icon: string
   id: string
+  notes?: string
 }
 
 export type Effect = {

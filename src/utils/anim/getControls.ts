@@ -24,16 +24,16 @@ export const getControls = (
     }`,
     "color: yellow; background-color: black;"
   )
-  console.log(
-    `%c[getControls] playerCreatureControlsRef.current: %o`,
-    "color: yellow; background-color: black;",
-    playerCreatureControlsRef.current
-  )
-  console.log(
-    `%c[getControls] enemyCreatureControlsRef.current: %o`,
-    "color: yellow; background-color: black;",
-    enemyCreatureControlsRef.current
-  )
+  // console.log(
+  //   `%c[getControls] playerCreatureControlsRef.current: %o`,
+  //   "color: yellow; background-color: black;",
+  //   playerCreatureControlsRef.current
+  // )
+  // console.log(
+  //   `%c[getControls] enemyCreatureControlsRef.current: %o`,
+  //   "color: yellow; background-color: black;",
+  //   enemyCreatureControlsRef.current
+  // )
 
   const attackerControls =
     controlsRef.current?.[attacker.ID]?.controls
@@ -49,21 +49,21 @@ export const getControls = (
     enemyCreatureControlsRef
   )?.showDamage
 
-  console.log(
-    `%c[getControls] attackerControls: %o`,
-    "color: yellow; background-color: black;",
-    attackerControls
-  )
-  console.log(
-    `%c[getControls] targetControls: %o`,
-    "color: yellow; background-color: black;",
-    targetControls
-  )
-  console.log(
-    `%c[getControls] targetShowDamage: %o`,
-    "color: yellow; background-color: black;",
-    targetShowDamage
-  )
+  // console.log(
+  //   `%c[getControls] attackerControls: %o`,
+  //   "color: yellow; background-color: black;",
+  //   attackerControls
+  // )
+  // console.log(
+  //   `%c[getControls] targetControls: %o`,
+  //   "color: yellow; background-color: black;",
+  //   targetControls
+  // )
+  // console.log(
+  //   `%c[getControls] targetShowDamage: %o`,
+  //   "color: yellow; background-color: black;",
+  //   targetShowDamage
+  // )
 
   if (!attackerControls || !targetControls) {
     console.warn(
@@ -85,34 +85,34 @@ function getCreatureControlsById(
   playerCreatureControlsRef: RefObject<ControlRef>,
   enemyCreatureControlsRef: RefObject<ControlRef>
 ) {
-  console.log(
-    `%c[getCreatureControlsById] Searching for ID: ${ID}`,
-    "color: yellow; background-color: black;"
-  )
-  console.log(
-    `%c[getCreatureControlsById] playerCreatureControlsRef.current: %o`,
-    "color: yellow; background-color: black;",
-    playerCreatureControlsRef.current
-  )
-  console.log(
-    `%c[getCreatureControlsById] enemyCreatureControlsRef.current: %o`,
-    "color: yellow; background-color: black;",
-    enemyCreatureControlsRef.current
-  )
+  // console.log(
+  //   `%c[getCreatureControlsById] Searching for ID: ${ID}`,
+  //   "color: yellow; background-color: black;"
+  // )
+  // console.log(
+  //   `%c[getCreatureControlsById] playerCreatureControlsRef.current: %o`,
+  //   "color: yellow; background-color: black;",
+  //   playerCreatureControlsRef.current
+  // )
+  // console.log(
+  //   `%c[getCreatureControlsById] enemyCreatureControlsRef.current: %o`,
+  //   "color: yellow; background-color: black;",
+  //   enemyCreatureControlsRef.current
+  // )
 
   const playerControl = playerCreatureControlsRef.current?.[ID]
   const enemyControl = enemyCreatureControlsRef.current?.[ID]
 
-  console.log(
-    `%c[getCreatureControlsById] playerControl for ID ${ID}: %o`,
-    "color: yellow; background-color: black;",
-    playerControl
-  )
-  console.log(
-    `%c[getCreatureControlsById] enemyControl for ID ${ID}: %o`,
-    "color: yellow; background-color: black;",
-    enemyControl
-  )
+  // console.log(
+  //   `%c[getCreatureControlsById] playerControl for ID ${ID}: %o`,
+  //   "color: yellow; background-color: black;",
+  //   playerControl
+  // )
+  // console.log(
+  //   `%c[getCreatureControlsById] enemyControl for ID ${ID}: %o`,
+  //   "color: yellow; background-color: black;",
+  //   enemyControl
+  // )
 
   if (playerControl) {
     console.log(

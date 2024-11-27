@@ -67,7 +67,7 @@ const AttackCard = ({ attack, onUse, showUseButton = true, onClick }) => (
         </div>
         {showUseButton && (
           <button
-            onClick={() => onUse(attack)}
+            // onClick={() => onUse(attack)}
             className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-2 rounded text-sm"
           >
             Use Attack

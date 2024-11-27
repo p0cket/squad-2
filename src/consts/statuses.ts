@@ -10,6 +10,7 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     chance: 1,
     icon: "🧪",
     id: `POISON`,
+    notes: "Deals damage over time.",
   },
   BUFF: {
     name: "Buff",
@@ -20,6 +21,7 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     chance: 1,
     icon: "✨",
     id: `BUFF`,
+    notes: "Increases attack power.",
   },
   BURN: {
     name: "Burn",
@@ -30,6 +32,7 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     chance: 1,
     icon: "🔥",
     id: `BURN`,
+    notes: "Deals fire damage over time.",
   },
   STUN: {
     name: "Stun",
@@ -40,6 +43,7 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     chance: 1,
     icon: "⚡",
     id: `STUN`,
+    notes: "Prevents enemy from acting.",
   },
   REGENERATION: {
     name: "Regeneration",
@@ -50,6 +54,7 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     chance: 1,
     icon: "💚",
     id: `REGENERATION`,
+    notes: "Restores health over time.",
   },
 }
 
