@@ -1,5 +1,6 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { STATUS_EFFECTS } from "../../consts/statuses";
+
 // Define color classes for each attack type
 const typeColors = {
   Physical: "bg-gray-500 text-gray-100",
@@ -38,13 +39,13 @@ const AttackCard = ({ attack, onUse, showUseButton = true, onClick }) => (
             {/* Type with Color */}
             <span
               className={`${
-                typeColors[attack.attackType]
+                typeColors[attack.type]
               } px-1 py-0.5 text-xs rounded`}
             >
-              {attack.attackType}
+              {attack.type}
             </span>
 
-            {/* Additional Info (Effects, Damage) */}
+            {/* Additional Info (Effects, Damage, Cooldown) */}
             <div className="flex items-center space-x-2 text-xs text-gray-400">
               <span>
                 Effects:{" "}
@@ -53,6 +54,7 @@ const AttackCard = ({ attack, onUse, showUseButton = true, onClick }) => (
                   .join(", ")}
               </span>
               <span>DMG: {attack?.damage}</span>
+              <span>CD: {attack?.cooldown}s</span>
             </div>
           </div>
         </div>
@@ -65,7 +67,7 @@ const AttackCard = ({ attack, onUse, showUseButton = true, onClick }) => (
         </div>
         {showUseButton && (
           <button
-            // onClick={() => onUse(attack)}
+            onClick={() => onUse(attack)}
             className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-2 rounded text-sm"
           >
             Use Attack

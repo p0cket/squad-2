@@ -915,3 +915,4 @@ export const NEW_OBJ_FOR_CREATURES = {
     mods: [],
   },
 }
+export type Owner = keyof typeof CREATURES

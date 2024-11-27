@@ -70,14 +70,11 @@ const gameReducer = (state, action) => {
       // see if any match the ID for that creature.
       // if so, replace the creature with the new creature
       const whichPartyOwnsCreature = (creature) => {
-        let ownedBy = "unowned"
-       if(creature.owner === "player") {
-          ownedBy = "playerCreatures"
-       } else if(creature.owner === "computer") {
-          ownedBy = "computerCreatures"
-       }
-       return ownedBy
-      }
+        if (creature.owner === "player") return "playerCreatures";
+        if (creature.owner === "computer") return "computerCreatures";
+        console.error("Creature ownership invalid:", creature);
+        return null;
+      };
       const partySide = whichPartyOwnsCreature(action.creature)
       // side is only the side that attacked.
       // const side = action.side
@@ -309,6 +306,7 @@ const gameReducer = (state, action) => {
 
 // Create Contexts
 const StateContext = createContext()
+// const DispatchContext = createContext<React.DispatchWithoutAction>()
 const DispatchContext = createContext()
 
 // Custom Hooks for Using Context

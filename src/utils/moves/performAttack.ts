@@ -1,32 +1,11 @@
-import { Attack, AttackPayload, Creature } from "../../consts/types"
+import {  AttackPayload } from "../../consts/types"
 import { getControls } from "../anim/getControls"
 import { performAttackAnimation } from "../anim/performAttackAnimation"
 import { showDamageOnTarget } from "../anim/showDamageOnTarget"
 import { updateTargetState } from "../party/updateTargetState"
 import { calculateDamageAndStatuses } from "./calculateDamageAndStatuses"
-// import {
-//   //   applyEffects,
-//   // applyPhaseStatuses,
-  
-//   // getControls,
-//   // calculateDamageAndStatuses,
-//   // performAttackAnimation,
-//   // showDamageOnTarget,
-//   // updateTargetState,
-// } from "./attackUtils"
 
-export const newPerformAttack = async (
-  // attacker,
-  // target,
-  // isPlayerAttack,
-  // playerCreatureControlsRef,
-  // enemyCreatureControlsRef,
-  // attack,
-  // dispatch,
-  // playerCreatures,
-  // computerCreatures
-  attackPayload: AttackPayload
-) => {
+export const newPerformAttack = async (attackPayload: AttackPayload) => {
   const {
     attacker,
     target,
@@ -60,6 +39,10 @@ export const newPerformAttack = async (
     enemyCreatureControlsRef
   )
 
+  if (!attackerControls || !targetControls || !targetShowDamage) {
+    // this shouldn't happen but theoritecial could happen if the ref wasn't instantiated
+    throw new Error('ref wasn\'t instantiated');
+  }
   // Execute animations
   await performAttackAnimation(attackerControls, targetControls, isPlayerAttack)
 
@@ -72,18 +55,9 @@ export const newPerformAttack = async (
   // if the attack has a status, add it to the creature it
   // if there are any statuses on the creature that are applied before the attack,
   // apply them
-  const { statuses, damage } = calculateDamageAndStatuses(
-    // attacker,
-    // target,
-    // isPlayerAttack,
-    // playerCreatureControlsRef,
-    // enemyCreatureControlsRef,
-    // attack,
-    // dispatch,
-    // playerCreatures,
-    // computerCreatures
-    attackPayload
-  )
+  const { statuses, damage } = calculateDamageAndStatuses(attackPayload)
+//
+//now apply that damage
 
   console.log(
     "%cTarget's health after damage:",

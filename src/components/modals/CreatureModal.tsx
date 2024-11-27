@@ -1,6 +1,7 @@
 // replaceCreatureModal.js
 import React from "react"
 import { Modal, Box, Typography, Card, CardContent } from "@mui/material"
+import { Creature } from "../../consts/types"
 
 const style = {
   position: "absolute",
@@ -22,14 +23,14 @@ type ReplaceCreatureModalProps = {
   creature: Creature;
 }
 
-const ReplaceCreatureModal = ({ open, handleClose, creature, creatureData }) => {
+const ReplaceCreatureModal: React.FC<ReplaceCreatureModalProps> = ({ open, handleClose, creature }) => {
   if (!creature) return null
 
   // Define properties to exclude or handle specially
-  const excludedProperties = ["image", "name", "maxHealth"] // Add any properties you don't want to display
+  const excludedProperties: Array<keyof Creature> = ["name", "maxHealth"] // Add any properties you don't want to display
   const creatureProperties = Object.keys(creature).filter(
-    (prop) => !excludedProperties.includes(prop)
-  )
+    (prop) => !excludedProperties.includes(prop as keyof Creature)
+  ) as Array<keyof Creature>;
 
   return (
     <Modal

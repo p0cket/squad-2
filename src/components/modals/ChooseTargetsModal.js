@@ -19,84 +19,70 @@ export default function ChooseTargetsModal({
   const { computerCreatures, playerCreatures } = state;
   const [selectedTarget, setSelectedTarget] = useState(null);
 
-  // console.log(`attack`, attack);
-
-  // Determine the attacker based on attack.attackerId or default to the first creature
+  // Find attacker based on attack.attackerId or default to the first player creature
   const attacker = attack?.attackerId
     ? playerCreatures.find((creature) => creature.ID === attack.attackerId)
     : playerCreatures[0];
 
-  // Handler for selecting a creature as the target
   const handleSelectTarget = (creature) => {
     setSelectedTarget(creature);
     console.log(
-      `Target selected: ${creature.name} with ID: ${creature.ID}`,
+      `Target selected: ${creature.name} (ID: ${creature.ID})`,
       creature
     );
   };
 
   const handleConfirmTarget = () => {
-    // Check if the attacker is a player creature.
-    // Not sure if this is needed, but it's here for now.
+    if (!selectedTarget || !attacker) {
+      console.error("Attacker or target is missing.");
+      return;
+    }
+
+    // Determine if the attack is from the player
     const isPlayerAttack = playerCreatures.some(
       (creature) => creature.ID === attacker.ID
     );
 
-    toggleChooseTargetsModal();
-    console.log(
-      `Target confirmed: ${selectedTarget.name}, ID: ${selectedTarget.ID}. Performing Atk:  attacker,
-      selectedTarget,
-      isPlayerAttack,
-      playerCreatureControlsRef,
-      enemyCreatureControlsRef,
-      attack`,
-      attacker,
-      selectedTarget, //target
-      isPlayerAttack,
-      playerCreatureControlsRef,
-      enemyCreatureControlsRef,
-      attack
-    );
+    const target =
+      playerCreatures.find((creature) => creature.ID === selectedTarget.ID) ||
+      computerCreatures.find((creature) => creature.ID === selectedTarget.ID);
 
-    // const attackPayload = {
-    //   attacker,
-    //   selectedTarget,
-    //   isPlayerAttack,
-    //   attack,
-    // };
+    if (!target) {
+      console.error("Target could not be found in state.");
+      return;
+    }
+
     const attackPayload = {
       attacker,
-      target: selectedTarget, //these should rly be indexes
-      isPlayerAttack: true, //isPlayer: tru -> so player
+      target,
+      isPlayerAttack,
       playerCreatureControlsRef,
       enemyCreatureControlsRef,
-      attack, // attack. make a comp select a random attack they have
+      attack,
       dispatch,
-      playerCreatures: state.playerCreatures,
-      computerCreatures: state.computerCreatures,
+      playerCreatures,
+      computerCreatures,
     };
 
-    handleTargetedAttack(
-      state,
-      attackPayload
-    );
+    console.log("Executing attack with payload:", attackPayload);
+
+    toggleChooseTargetsModal();
+    handleTargetedAttack(state, attackPayload);
   };
 
   return (
     <Modal
       open={showChooseTargetsModal}
       onClose={toggleChooseTargetsModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
     >
       <Box sx={modalStyle}>
         <div className="container mx-auto p-4 bg-gray-900 text-gray-200">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-yellow-500">
-              Choose Target For{" "}
-              <span className="text-green-400">
-                <strong>{attacker.name}</strong>
-              </span>{" "}
+              Choose Target for{" "}
+              <span className="text-green-400">{attacker?.name || "Unknown"}</span>{" "}
               to use <span className="text-white">{attack?.name}</span>
             </h2>
           </div>
@@ -144,7 +130,7 @@ export default function ChooseTargetsModal({
                 onClick={handleConfirmTarget}
                 className="bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded"
               >
-                Confirm Target: Run Attack
+                Confirm Target
               </button>
             )}
           </div>

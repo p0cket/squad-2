@@ -1,10 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, FC } from "react";
 import { motion, useAnimationControls } from "framer-motion";
 import CreatureModal from "./modals/CreatureModal";
 import { useDispatchContext } from "../GameContext";
 import ReplaceCreatureModal from "./modals/ReplaceCreatureModal";
+import { Creature as CreatureType } from "../consts/types";
+import { ControlDetails } from "../hooks/useCreatureControls";
 
-const Creature = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
+type CreatureProps = {
+  position: unknown;
+  isPlayer: boolean;
+  setCreatureControls: (controls: ControlDetails) => void;
+  creatureObj: CreatureType
+}
+
+const Creature: FC<CreatureProps> = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
   const { ID, icon, health, maxHealth, statuses } = creatureObj;
   const dispatch = useDispatchContext();
   const controls = useAnimationControls();

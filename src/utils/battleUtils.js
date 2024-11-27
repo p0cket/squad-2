@@ -1,5 +1,6 @@
 // import { moveDeadCreaturesToBack } from "./creatureUtils"
 
+
 export const resetCreatures = (creatures) => {
   return creatures.map((creature) => {
     const clonedCreature = structuredClone(creature)

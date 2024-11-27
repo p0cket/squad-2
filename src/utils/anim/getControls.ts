@@ -1,19 +1,23 @@
 import { RefObject } from "react"
 import { Creature } from "../../consts/types"
+import { ControlRef } from '../../hooks/useCreatureControls'
+
 
 export const getControls = (
   attacker: Creature,
   target: Creature,
   isPlayerAttack: boolean,
-  playerCreatureControlsRef: React.RefObject<any>,
-  enemyCreatureControlsRef: React.RefObject<any>
+  playerCreatureControlsRef: RefObject<ControlRef>,
+  enemyCreatureControlsRef: RefObject<ControlRef>
 ) => {
   const controlsRef = isPlayerAttack
     ? playerCreatureControlsRef
     : enemyCreatureControlsRef
 
   console.log(
-    `%c[getControls] Attacker ID: ${attacker.ID}, Target ID: ${target.ID}, isPlayerAttack: ${isPlayerAttack}, controlsRef: ${
+    `%c[getControls] Attacker ID: ${attacker.ID}, Target ID: ${
+      target.ID
+    }, isPlayerAttack: ${isPlayerAttack}, controlsRef: ${
       controlsRef === playerCreatureControlsRef
         ? "playerCreatureControlsRef"
         : "enemyCreatureControlsRef"
@@ -31,7 +35,9 @@ export const getControls = (
     enemyCreatureControlsRef.current
   )
 
-  const attackerControls = controlsRef.current[attacker.ID]?.controls
+  const attackerControls =
+    controlsRef.current?.[attacker.ID]?.controls
+
   const targetControls = getCreatureControlsById(
     target.ID,
     playerCreatureControlsRef,
@@ -76,8 +82,8 @@ export const getControls = (
 
 function getCreatureControlsById(
   ID: number,
-  playerCreatureControlsRef: RefObject<any>,
-  enemyCreatureControlsRef: RefObject<any>
+  playerCreatureControlsRef: RefObject<ControlRef>,
+  enemyCreatureControlsRef: RefObject<ControlRef>
 ) {
   console.log(
     `%c[getCreatureControlsById] Searching for ID: ${ID}`,
@@ -94,8 +100,8 @@ function getCreatureControlsById(
     enemyCreatureControlsRef.current
   )
 
-  const playerControl = playerCreatureControlsRef.current[ID]
-  const enemyControl = enemyCreatureControlsRef.current[ID]
+  const playerControl = playerCreatureControlsRef.current?.[ID]
+  const enemyControl = enemyCreatureControlsRef.current?.[ID]
 
   console.log(
     `%c[getCreatureControlsById] playerControl for ID ${ID}: %o`,

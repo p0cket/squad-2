@@ -133,20 +133,21 @@ export const calcStatuses = (
 
   if (effects) {
     // Normalize `effects` to an array for consistent processing
-    const effectsArray: string[] = Array.isArray(effects) ? effects : [effects]
+    // const effectsArray: string[] = Array.isArray(effects) ? effects : [effects]
 
     console.group(
       `calcStatuses: Calculating statuses for attack: ${attack.name}`,
       target,
-      effectsArray
+      effects
     )
 
-    effectsArray.forEach((effect) => {
+    // effect should be a an array of strings
+    effects.forEach((effect) => {
       // Handle cases where `effect` might be malformed
-      if (!effect || typeof effect !== "object") {
-        console.warn(`Invalid effect encountered:`, effect)
-        return
-      }
+      // if (!effect || typeof effect !== "object") {
+      //   console.warn(`Invalid effect encountered:`, effect)
+      //   return
+      // }
 
       // Simulate a roll to determine if the effect lands
       const effectRoll = Math.random()
@@ -161,7 +162,7 @@ export const calcStatuses = (
       )
 
       if (didLand) {
-        statuses.push(effect) // Add the effect to the list of applied statuses
+        statuses.push(STATUS_EFFECTS[effect]) // Add the effect to the list of applied statuses
         console.log(
           `%cEffect ${effect} applied to ${target.name}`,
           "color: green; font-weight: bold;"
