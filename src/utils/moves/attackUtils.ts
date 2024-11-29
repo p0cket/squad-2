@@ -50,65 +50,86 @@ const procStatuses = (
   console.log(`#x 3. changes`, changes)
   return changes
 }
+// attacker,
+// target,
+// isPlayerAttack,
+// playerCreatureControlsRef,
+// enemyCreatureControlsRef,
+// attack,
+// dispatch,
+// playerCreatures,
+// computerCreatures,
+const handleStatusEffect = (
+  creature: Creature,
+  status: StatusEffect,
+  attackPayload: AttackPayload
+): void => {
+  console.log(`handleStatusEffect: lets run ${status.name} with ${status.effectFuncName}`)
+  effectFunctions[status.effectFuncName](creature, status, attackPayload)
+  // return newPayload
+}
+
+const updateCreatureArrWithProc = (
+  creatures: Creature[],
+  attackPayload: AttackPayload
+): void => {
+  console.log(
+    `%cupdateCreatureArrWithProc`,
+    "color: pink; background-color: darkgray; font-family: Arial, sans-serif;",
+    creatures,
+    attackPayload
+  )
+  creatures.forEach((creature) => {
+    if (creature.statuses && creature.statuses.length > 0) {
+      console.log(`${creature.name} has statuses. lets handleStatusEffect:`, creature.statuses)
+      creature.statuses.forEach((status) => {
+        handleStatusEffect(creature, status, attackPayload)
+      })
+    }
+    return creature
+  })
+  // return newCreatures
+}
+const procBothParties = (attackPayload: AttackPayload) => {
+  const { playerCreatures, computerCreatures } = attackPayload
+  console.log(`procBothParties`)
+  updateCreatureArrWithProc(playerCreatures, attackPayload)
+  updateCreatureArrWithProc(computerCreatures, attackPayload)
+  // const payloadAfterProc: AttackPayload = {
+  //   ...attackPayload,
+  //   playerCreatures: procdPlayerCreatures,
+  //   computerCreatures: procdComputerCreatures,
+  // }
+  // return payloadAfterProc
+}
 
 export const newFindRelevantProcs = (
-  // attacker,
-  // target,
-  // isPlayerAttack,
-  // playerCreatureControlsRef,
-  // enemyCreatureControlsRef,
-  // attack,
-  // dispatch,
-  // playerCreatures,
-  // computerCreatures,
   attackPayload: AttackPayload,
   timing: string
-) => {
-  console.log(`d`)
-  const { playerCreatures, computerCreatures } = attackPayload
-
-  const procCreatures = (creatures: Creature[]) => {
-    const newCreatures = creatures.forEach((creature) => {
-      if (creature.statuses && creature.statuses.length > 0) {
-        console.log(`${creature.name} has statuses:`, creature.statuses)
-        creature.statuses.map((status) => {
-          // Handle each status effect
-          console.log(`Handling status: ${status.name}`)
-          // Add your processing logic here
-          console.log(`run : ${status.name}`)
-          // give whatever is needed to do effect. lifesteal, etc.
-          // pass in both parties, attacker, the attack, and the target
-          // {creature, , , , } = effectFunctions[status.effectFuncName](creature)
-        })
-      }
-    })
-    return newCreatures
-  }
-
-  procCreatures(playerCreatures)
-  procCreatures(computerCreatures)
-
-  // const logStatuses = (creatures: Creature[]) => {
-  //   creatures.forEach(creature => {
-  //     if (creature.statuses && creature.statuses.length > 0) {
-  //       console.log(`${creature.name} has statuses:`, creature.statuses);
-  //     }
-  //   });
-  // };
-
-  // logStatuses(playerCreatures);
-  // logStatuses(computerCreatures);
+): void => {
+  console.group(
+    `%cnewFindRelevantProcs: attackPayload, ?timing?`,
+    "color: pink; background-color: white; font-family: Arial, sans-serif;",
+    attackPayload,
+    timing
+  )
+  procBothParties(attackPayload)
+  console.groupEnd()
+  // const procdPayload = procBothParties(attackPayload)
+  // return procdPayload
 }
+
+// const logStatuses = (creatures: Creature[]) => {
+//   creatures.forEach(creature => {
+//     if (creature.statuses && creature.statuses.length > 0) {
+//       console.log(`${creature.name} has statuses:`, creature.statuses);
+//     }
+//   });
+// };
+// logStatuses(playerCreatures);
+// logStatuses(computerCreatures);
+
 export const findRelevantProcs = (
-  // attacker,
-  // target,
-  // isPlayerAttack,
-  // playerCreatureControlsRef,
-  // enemyCreatureControlsRef,
-  // attack,
-  // dispatch,
-  // playerCreatures,
-  // computerCreatures,
   attackPayload: AttackPayload,
   timing: string
 ) => {
@@ -177,17 +198,14 @@ export const calcStatuses = (
     attack,
     effects
   )
-
   if (effects) {
     // Normalize `effects` to an array for consistent processing
     // const effectsArray: string[] = Array.isArray(effects) ? effects : [effects]
-
     console.group(
       `calcStatuses: Calculating statuses for attack: ${attack.name}`,
       target,
       effects
     )
-
     // effect should be a an array of strings
     effects.forEach((effect) => {
       // Handle cases where `effect` might be malformed
@@ -195,19 +213,16 @@ export const calcStatuses = (
       //   console.warn(`Invalid effect encountered:`, effect)
       //   return
       // }
-
       // Simulate a roll to determine if the effect lands
       const effectRoll = Math.random()
       // const didLand = effect.chance ? effectRoll <= effect.chance : false;
       const didLand = true
-
       console.log(
         `%cEffect (overridden to true) Roll: ${effectRoll}`,
         "color: blue; font-weight: bold;",
         `%cEffect Chance: ${STATUS_EFFECTS[effect].chance || 0}`,
         "color: gray; font-weight: normal;"
       )
-
       if (didLand) {
         statuses.push(STATUS_EFFECTS[effect]) // Add the effect to the list of applied statuses
         console.log(
@@ -233,7 +248,8 @@ export const runEffect = (creature: Creature, effect: StatusEffect) => {
   // Ensure the effect exists in STATUS_EFFECTS before applying it
   console.log(`#x 2. effectFunctions`, effectFunctions, effect, creature)
   if (effectFunctions[effect.effectFuncName]) {
-    creature = effectFunctions[effect.effectFuncName](creature)
+    console.log(`#x 3. effectFunctions[${effect.effectFuncName}] found`)
+    // creature = effectFunctions[effect.effectFuncName](creature, effect)
   } else {
     console.log(
       `#x 3. effectFunctions[${effect.effectFuncName}] not found`,

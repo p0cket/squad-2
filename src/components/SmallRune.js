@@ -3,8 +3,24 @@ import React from "react";
 function SmallRune({ rune, onAction, actionLabel, isShop, isConcise }) {
   return (
     <div className="relative group bg-gray-700 p-4 rounded-lg shadow-lg border border-gray-600">
+      <div className="flex flex-row items-center justify-between">
+        <span className="text-sm font-bold">{rune.name}</span>
+        <span className="text-xl mt-1">{rune.icon || "🔮"}</span>
+      </div>
+      <div className="flex flex-row text-xs mt-1">
+        {rune.statEffect.stat.toUpperCase()} +{rune.statEffect.value}{" "}
+        <div className="flex justify-center mx-1">
+          <button
+            onClick={onAction}
+            className="bg-red-500 text-whit px-2 rounded-full hover:bg-red-600 transition-colors duration-200"
+          >
+            sell
+          </button>
+        </div>
+      </div>
+      {/* A nice square version, but still too big */}
       {/* Concise view */}
-      <div className={`${isConcise ? "block" : "hidden"} group-hover:hidden`}>
+      {/* <div className={`${isConcise ? "block" : "hidden"} `}>
         <div className="flex flex-col items-center justify-between">
           <span className="text-lg font-bold">{rune.name}</span>
           <div className="text-3xl mt-2">{rune.icon || "🔮"}</div>
@@ -12,13 +28,12 @@ function SmallRune({ rune, onAction, actionLabel, isShop, isConcise }) {
         <div className="text-sm mt-2">
           {rune.statEffect.stat.toUpperCase()} +{rune.statEffect.value}
         </div>
-      </div>
-
+      </div> */}
       {/* Detailed view on hover - fix */}
-      <div
+      {/* <div
         className={`${
           isConcise ? "hidden" : "block"
-        } group-hover:block absolute inset-0 bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col justify-between`}
+        } absolute inset-0 bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col justify-between`}
       >
         <div>
           <div className="flex flex-col items-center mb-4">
@@ -36,7 +51,7 @@ function SmallRune({ rune, onAction, actionLabel, isShop, isConcise }) {
             {actionLabel}
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

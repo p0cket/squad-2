@@ -7,7 +7,10 @@ export const getAliveCreatures = (creatures: Creature[]) => {
   return creatures.filter((c) => c.health > 0)
 }
 // from chooseTargetsModal.js use when someone selects a target and runs the attack
-export const handleTargetedAttack = async (state: any, attackPayload: AttackPayload) => {
+export const handleTargetedAttack = async (
+  state: any,
+  attackPayload: AttackPayload
+) => {
   if (!attackPayload) {
     console.error("No attackPayload provided for handleTargetedAttack")
     return
@@ -29,9 +32,7 @@ export const handleTargetedAttack = async (state: any, attackPayload: AttackPayl
   )
   // PLAYER ATTACK:
   try {
-    await newPerformAttack(
-      attackPayload
-    )
+    await newPerformAttack(attackPayload)
   } catch (error) {
     console.error("Error in performAttack:", error)
   }
@@ -47,7 +48,7 @@ export const handleTargetedAttack = async (state: any, attackPayload: AttackPayl
   const bothTeamsAlive = alivePlayers.length > 0 && aliveComputers.length > 0
   if (bothTeamsAlive) {
     const computerAttacker = aliveComputers[0] //{ comp: 0 }
-    const computersTarget = alivePlayers[0]//{ user: 0 }
+    const computersTarget = alivePlayers[0] //{ user: 0 }
     console.log(
       "Computer attacking player: Computer Attacker details & Player Target details before attack:",
       computerAttacker,
@@ -66,9 +67,7 @@ export const handleTargetedAttack = async (state: any, attackPayload: AttackPayl
     }
 
     try {
-      await newPerformAttack(
-        computerAttackPayload
-      )
+      await newPerformAttack(computerAttackPayload)
     } catch (error) {
       console.error("Error in performAttack:", error)
       // Set damage to zero if there's an error to prevent NaN issues

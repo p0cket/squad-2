@@ -99,25 +99,23 @@ const ClassicHand = ({
 
   return (
     <div className="container mx-auto px-1 py-1 bg-gray-900 text-gray-200">
-      <h1 className="text-2xl font-bold text-yellow-500 mb-1">
+      {/* <h1 className="text-2xl font-bold text-yellow-500 mb-1">
         Attack Selector
-      </h1>
-      <div className="flex justify-between mb-1">
-        <div
-          className="text-blue-400 cursor-pointer"
+      </h1> */}
+      {/* <div className="flex justify-between mb-1"> */}
+      <div className="p-2">
+        <span
+          className="text-blue-400 cursor-pointer px-1"
           onClick={() => setShowDeckModal(true)}
         >
           Deck: {deck.length} 🎴
-        </div>
-        <div
-          className="text-red-400 cursor-pointer"
+        </span>
+        <span
+          className="text-red-400 cursor-pointer px-1"
           onClick={() => setShowDiscardModal(true)}
         >
           Discard: {discardPile.length} 🗑️
-        </div>
-      </div>
-
-      <div className="flex space-x-2 mb-1">
+        </span>
         <button
           onClick={drawOneCard}
           className="bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded"

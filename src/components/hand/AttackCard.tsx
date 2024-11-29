@@ -61,7 +61,6 @@ const AttackCard: React.FC<AttackCardProps> = ({
             >
               {attack.attackType}
             </span>
-
             {/* Additional Info (Effects, Damage, Cooldown) */}
             <div className="flex items-center space-x-2 text-xs text-gray-400">
               <span>

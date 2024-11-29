@@ -29,8 +29,6 @@ const initialState = {
   computerCreatures: structuredClone(
     createUniqueParty(generatedLevels[0].opponentCreatures, "computer")
   ), // Load level 1's creatures. When level 2 happens, we'll need to
-  //createUniqueParty(generatedLevels[1].opponentCreatures, "computer")
-  //and so on
   mp: 0,
   maxMp: INITIAL_MAX_MP,
   mpPerTurn: INITIAL_MP_PER_TURN,
@@ -57,12 +55,10 @@ const initialState = {
 console.log("Initial State:", initialState)
 // Game Reducer
 const gameReducer = (state, action) => {
-  // console.log(
-  //   `Action dispatched ${action.type}. Action and State:`,
-  //   action,
-  //   state
-  // )
   switch (action.type) {
+    case "UPDATE_TEAM":
+      console.log(`UPDATE_TEAM Here:`, action)
+      return state
     case "UPDATE_CREATURE":
       console.log(`UPDATE_CREATURE Here:`, action)
       // Check action.creature.ID against

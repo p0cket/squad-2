@@ -1,4 +1,4 @@
-import { Creature, StatusEffect } from "./types"
+import { AttackPayload, Creature, StatusEffect } from "./types"
 
 export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
   POISON: {
@@ -57,37 +57,120 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     notes: "Restores health over time.",
   },
 }
+// Function to log and apply poison effect, reducing health by 10
+export const applyPoison = (
+  creature: Creature,
+  statusEffectObj: StatusEffect,
+  attackPayload?: AttackPayload
+): void => {
+  const { dispatch } = attackPayload ?? {}
+  console.log(
+    `Applying ${statusEffectObj.name} to ${creature.name}, reducing health by 10`
+  )
+  let updatedCreature = { ...creature }
+  updatedCreature.health = Math.max(0, creature.health - 10)
+  if (!dispatch) {
+    console.log("applyPoison: No dispatch", attackPayload)
+    return
+  }
+  dispatch({
+    type: "UPDATE_CREATURE",
+    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+    creature: updatedCreature,
+  })
+}
 
-// Function to apply poison effect, reducing health by 10
-export const applyPoison = (creature: Creature): Creature => ({
-  ...creature,
-  health: Math.max(0, creature.health - 10),
-})
+// Function to log and apply buff effect, increasing attack by 5
+export const applyBuff = (
+  creature: Creature,
+  statusEffectObj: StatusEffect,
+  attackPayload?: AttackPayload
+): void => {
+  const { dispatch } = attackPayload ?? {}
+  console.log(
+    `Applying ${statusEffectObj.name} to ${creature.name}, increasing attack by 5`
+  )
+  let updatedCreature = { ...creature }
+  updatedCreature.attack = creature.attack + 5
+  if (!dispatch) {
+    console.log("applyBuff: No dispatch", attackPayload)
+    return
+  }
+  dispatch({
+    type: "UPDATE_CREATURE",
+    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+    creature: updatedCreature,
+  })
+}
 
-// Function to apply buff effect, increasing attack by 5
-export const applyBuff = (creature: Creature): Creature => ({
-  ...creature,
-  attack: creature.attack + 5,
-})
+// Function to log and apply burn effect, reducing health by 5
+export const applyBurn = (
+  creature: Creature,
+  statusEffectObj: StatusEffect,
+  attackPayload?: AttackPayload
+): void => {
+  const { dispatch } = attackPayload ?? {}
+  console.log(
+    `Applying ${statusEffectObj.name} to ${creature.name}, reducing health by 5`
+  )
+  let updatedCreature = { ...creature }
+  updatedCreature.health = Math.max(0, creature.health - 5)
+  if (!dispatch) {
+    console.log("applyBurn: No dispatch", attackPayload)
+    return
+  }
+  dispatch({
+    type: "UPDATE_CREATURE",
+    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+    creature: updatedCreature,
+  })
+}
 
-// Function to apply burn effect, reducing health by 5
-export const applyBurn = (creature: Creature): Creature => ({
-  ...creature,
-  health: Math.max(0, creature.health - 5),
-})
+// Function to log and apply stun effect, setting stunned to true
+export const applyStun = (
+  creature: Creature,
+  statusEffectObj: StatusEffect,
+  attackPayload?: AttackPayload
+): void => {
+  const { dispatch } = attackPayload ?? {}
+  console.log(
+    `Applying ${statusEffectObj.name} to ${creature.name}, setting stunned to true`
+  )
+  let updatedCreature = { ...creature }
+  // updatedCreature.stunned = true // Ensure 'stunned' property exists in the Creature type
+  if (!dispatch) {
+    console.log("applyStun: No dispatch", attackPayload)
+    return
+  }
+  dispatch({
+    type: "UPDATE_CREATURE",
+    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+    creature: updatedCreature,
+  })
+}
 
-// Function to apply stun effect, setting stunned to true
-export const applyStun = (creature: Creature): Creature => ({
-  ...creature,
-  // stunned: true, // Uncomment this line when you have a 'stunned' property in the Creature type
-})
-
-// Function to apply regeneration effect, increasing health by 5 up to maxHealth
-export const applyRegeneration = (creature: Creature): Creature => ({
-  ...creature,
-  health: Math.min(creature.maxHealth, creature.health + 5),
-})
-
+// Function to log and apply regeneration effect, increasing health by 5 up to maxHealth
+export const applyRegeneration = (
+  creature: Creature,
+  statusEffectObj: StatusEffect,
+  attackPayload?: AttackPayload
+): void => {
+  const { dispatch } = attackPayload ?? {}
+  console.log(
+    `Applying ${statusEffectObj.name} to ${creature.name}, increasing health by 5`
+  )
+  let updatedCreature = { ...creature }
+  updatedCreature.health = Math.min(creature.maxHealth, creature.health + 5)
+  if (!dispatch) {
+    console.log("applyRegeneration: No dispatch", attackPayload)
+    return
+  }
+  dispatch({
+    type: "UPDATE_CREATURE",
+    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+    creature: updatedCreature,
+  })
+}
 // Function to tick down the duration of a status effect
 export const tickDownEffectDuration = (
   creature: Creature,
@@ -109,9 +192,15 @@ export const tickDownEffectDuration = (
   return creature
 }
 
-export const effectFunctions: {
-  [key: string]: (creature: Creature) => Creature
-} = {
+export type EffectFunctionsType = {
+  [key: string]: (
+    creature: Creature,
+    status: StatusEffect,
+    attackPayload?: AttackPayload
+  ) => void
+}
+
+export const effectFunctions: EffectFunctionsType = {
   applyPoison,
   applyBuff,
   applyBurn,
@@ -120,23 +209,27 @@ export const effectFunctions: {
 }
 
 // Function to apply the effect to the creature
-export const runApplyEffect = (creature: Creature, effectObj: StatusEffect) => {
+export const runApplyEffect = (
+  creature: Creature,
+  effectObj: StatusEffect,
+  attackPayload?: AttackPayload
+) => {
   let updatedCreature = { ...creature }
   switch (effectObj.effectFuncName) {
     case "applyPoison":
-      updatedCreature = applyPoison(updatedCreature)
+      applyPoison(updatedCreature, effectObj, attackPayload)
       break
     case "applyBuff":
-      updatedCreature = applyBuff(updatedCreature)
+      applyBuff(updatedCreature, effectObj, attackPayload)
       break
     case "applyBurn":
-      updatedCreature = applyBurn(updatedCreature)
+      applyBurn(updatedCreature, effectObj, attackPayload)
       break
     case "applyStun":
-      updatedCreature = applyStun(updatedCreature)
+      applyStun(updatedCreature, effectObj, attackPayload)
       break
     case "applyRegeneration":
-      updatedCreature = applyRegeneration(updatedCreature)
+      applyRegeneration(updatedCreature, effectObj, attackPayload)
       break
     default:
       break

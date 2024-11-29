@@ -61,19 +61,18 @@ const Battle = () => {
         enemyCreatureControlsRef={enemyCreatureControlsRef}
       />
       {/* <Hand cards={cardDataList} />  */}
-      <ActionButtons
-      // handleConfirmedAttack={() =>
-      //   handleAttack(
-      //     state,
-      //     dispatch,
-      //     playerCreatureControlsRef,
-      //     enemyCreatureControlsRef
-      //   )
-      // }
-      />
+      {/* <ActionButtons/> */}
       <CreatureStats />
     </div>
   );
 };
 
 export default Battle;
+// handleConfirmedAttack={() =>
+//   handleAttack(
+//     state,
+//     dispatch,
+//     playerCreatureControlsRef,
+//     enemyCreatureControlsRef
+//   )
+// }

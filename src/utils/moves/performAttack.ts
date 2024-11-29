@@ -84,7 +84,7 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   })
   // ----- ----- ----- -----
   // The attack is done, do the postAttack proc's
-  const objAfterPostAttackProcs = newFindRelevantProcs(
+  newFindRelevantProcs(
     attackPayload,
     "beforeAttack"
   )
