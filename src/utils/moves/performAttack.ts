@@ -18,7 +18,7 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     playerCreatures,
     computerCreatures,
   } = attackPayload
-  console.group("%cnewPerformAttack", "color: blue; font-weight: bold;")
+  console.group("%c⚔️newPerformAttack", "color: blue; font-weight: bold;")
   console.log(
     "%cPerforming attack from:",
     "color: green;",
@@ -44,13 +44,12 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     // this shouldn't happen but theoritecial could happen if the ref wasn't instantiated
     throw new Error("ref wasn't instantiated")
   }
-
   // Execute animations
   await performAttackAnimation(attackerControls, targetControls, isPlayerAttack)
 
   // Calculate damage and apply new statuses
   console.group(
-    "%cDamage Calculation & Show Damage",
+    "%c🧮💻Damage Calculation & Show Damage",
     "color: purple; font-weight: bold;"
   )
   // new statuses
@@ -62,7 +61,7 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   //now apply that damage
 
   console.log(
-    "%cTarget's health after damage:",
+    "%c🏥Target's health after damage:",
     "color: red;",
     target.health - damage
   )
@@ -84,10 +83,7 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   })
   // ----- ----- ----- -----
   // The attack is done, do the postAttack proc's
-  newFindRelevantProcs(
-    attackPayload,
-    "beforeAttack"
-  )
+  newFindRelevantProcs(attackPayload, "beforeAttack")
 
   console.groupEnd()
 }

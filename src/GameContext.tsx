@@ -48,38 +48,7 @@ const initialState: State = {
 }
 console.log("Initial State:", initialState)
 // Game Reducer
-
-// type State = {
-//   mp: number;
-//   characters: Character[],
-//   status: string
-// }
-
-// const updateMpAction: UpdateMPAction = {
-//   type: "UPDATE_MP",
-//   mp: 34,
-// }
-// const reducer: React.Reducer<null, Actions> = (state, action) => {
-//   switch (action.type) {
-//     case "UPDATE_MP": {
-//       const { mp } = action
-//     }
-//     default:
-//       return state
-//   }
-// }
-// type UpdateCharacterPayload = {
-//   newCharacters: Character[]
-// }
-// type UpdateMPPayload = {
-//   mp: number
-// }
-
-// type UpdateStatusPayload = {
-//   status: string
-// }
 type Action<Type extends string, Payload> = { type: Type } & Payload
-
 type UpdateMPAction = Action<
   "UPDATE_MP",
   {
@@ -504,14 +473,10 @@ export const useDispatchContext = () => useContext(DispatchContext)
 
 // Context Provider Component
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-  // const [state, dispatch] = useReducer<React.Reducer<State, Actions>>(
-  //   gameReducer,
-  //   initialState
-  // )
+
   const [state, dispatch] = useReducer(gameReducer, initialState)
   return (
     <StateContext.Provider value={state}>
-      {/* <DispatchContext.Provider value={dispatch}></DispatchContext.Provider> */}
       <DispatchContext.Provider value={dispatch}>{children}</DispatchContext.Provider>
     </StateContext.Provider>
   )

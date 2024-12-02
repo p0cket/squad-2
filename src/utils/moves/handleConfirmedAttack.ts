@@ -27,7 +27,7 @@ export const handleTargetedAttack = async (
     computerCreatures,
   } = attackPayload
   console.group(
-    `running attack: ${attacker?.name} uses ${attack?.name} on ${target?.name}. AttackPayload:`,
+    `⚔️ running attack: ${attacker?.name} uses ${attack?.name} on ${target?.name}. AttackPayload:`,
     attackPayload
   )
   // PLAYER ATTACK:
@@ -37,7 +37,7 @@ export const handleTargetedAttack = async (
     console.error("Error in performAttack:", error)
   }
   console.log(
-    `after newPerformAttack: state.playerCreatures, state.computerCreatures`,
+    `🔚 after newPerformAttack: state.playerCreatures, state.computerCreatures`,
     playerCreatures,
     computerCreatures
   )

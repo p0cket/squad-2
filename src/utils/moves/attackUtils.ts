@@ -64,7 +64,9 @@ const handleStatusEffect = (
   status: StatusEffect,
   attackPayload: AttackPayload
 ): void => {
-  console.log(`handleStatusEffect: lets run ${status.name} with ${status.effectFuncName}`)
+  console.log(
+    `handleStatusEffect: lets run ${status.name} with ${status.effectFuncName}`
+  )
   effectFunctions[status.effectFuncName](creature, status, attackPayload)
   // return newPayload
 }
@@ -81,7 +83,10 @@ const updateCreatureArrWithProc = (
   )
   creatures.forEach((creature) => {
     if (creature.statuses && creature.statuses.length > 0) {
-      console.log(`${creature.name} has statuses. lets handleStatusEffect:`, creature.statuses)
+      console.log(
+        `${creature.name} has statuses. lets handleStatusEffect:`,
+        creature.statuses
+      )
       creature.statuses.forEach((status) => {
         handleStatusEffect(creature, status, attackPayload)
       })
@@ -171,14 +176,13 @@ export const calcAttack = (
   statuses = calcStatuses(attacker, target, attack)
   damage = newCalcDamage(attacker, target, attack)
   console.log(
-    `calcAttack: attacker, target, attack, statuses, damage`,
+    `in calcAttack. calculated & returning {statuses , damage}: attacker, target, attack, statuses, damage`,
     attacker,
     target,
     attack,
     statuses,
     damage
   )
-
   return { statuses, damage }
 }
 
@@ -236,10 +240,8 @@ export const calcStatuses = (
         )
       }
     })
-
     console.groupEnd()
   }
-
   return statuses
 }
 
@@ -328,7 +330,7 @@ export const updateCreatureInList = (
       "(",
       typeof creature.ID,
       ")",
-      
+
       "with",
       updatedCreature.ID,
       "(",
