@@ -328,6 +328,7 @@ export const updateCreatureInList = (
       "(",
       typeof creature.ID,
       ")",
+      
       "with",
       updatedCreature.ID,
       "(",

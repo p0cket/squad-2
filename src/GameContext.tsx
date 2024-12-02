@@ -49,28 +49,161 @@ const initialState: State = {
 console.log("Initial State:", initialState)
 // Game Reducer
 
-type UpdateCreatePayload = {
-  creature: Creature
-}
+// type State = {
+//   mp: number;
+//   characters: Character[],
+//   status: string
+// }
 
-type UpdateMPPayload = {
-  mp: number
-}
+// const updateMpAction: UpdateMPAction = {
+//   type: "UPDATE_MP",
+//   mp: 34,
+// }
+// const reducer: React.Reducer<null, Actions> = (state, action) => {
+//   switch (action.type) {
+//     case "UPDATE_MP": {
+//       const { mp } = action
+//     }
+//     default:
+//       return state
+//   }
+// }
+// type UpdateCharacterPayload = {
+//   newCharacters: Character[]
+// }
+// type UpdateMPPayload = {
+//   mp: number
+// }
 
-type AllPayloads = UpdateCreatePayload | UpdateMPPayload
+// type UpdateStatusPayload = {
+//   status: string
+// }
+type Action<Type extends string, Payload> = { type: Type } & Payload
 
-// type Action<P extends AllPayloads> = {
-//   type: string
+type UpdateMPAction = Action<
+  "UPDATE_MP",
+  {
+    mp: number
+  }
+>
+type UpdateCreatureAction = Action<
+  "UPDATE_CREATURE",
+  {
+    creature: Creature
+  }
+>
+type UpdateMaxMPAction = Action<
+  "UPDATE_MAX_MP",
+  {
+    maxMp: number
+  }
+>
+type UpdateMPTurnAction = Action<
+  "UPDATE_MP_PER_TURN",
+  {
+    mpPerTurn: number
+  }
+>
+type IncrementTurnAction = Action<"INCREMENT_TURN", {}>
+type ApplyModAction = Action<
+  "APPLY_MOD",
+  {
+    payload: {
+      creature: Creature
+      mod: any
+    }
+  }
+>
+type MoveCreatureToBackAction = Action<
+  "MOVE_CREATURE_TO_BACK",
+  {
+    payload: {
+      side: "playerCreatures" | "computerCreatures"
+      creatureId: number
+    }
+  }
+>
+type ToggleSelectReplacementCreatureAction = Action<
+  "TOGGLE_SELECT_REPLACEMENT_CREATURE",
+  {}
+>
+type SwapCreaturePositionAction = Action<
+  "SWAP_CREATURE_POSITION",
+  {
+    payload: {
+      side: "playerCreatures" | "computerCreatures"
+      newActiveCreatureId: number
+    }
+  }
+>
+type AttackCreatureAction = Action<
+  "ATTACK_CREATURE",
+  {
+    attacker: Creature
+  }
+>
+type ApplyTurnEffectsAction = Action<"APPLY_TURN_EFFECTS", {}>
+type WinGameAction = Action<"WIN_GAME", {}>
+type LoseGameAction = Action<"LOSE_GAME", {}>
+type NextLevelAction = Action<"NEXT_LEVEL", {}>
+type ResetBattleAction = Action<"RESET_BATTLE", {}>
+type ChangeScreenAction = Action<
+  "CHANGE_SCREEN",
+  {
+    payload: {
+      screen: string
+    }
+  }
+>
+type BuyRuneAction = Action<
+  "BUY_RUNE",
+  {
+    rune: any
+  }
+>
+type SellRuneAction = Action<
+  "SELL_RUNE",
+  {
+    rune: any
+    index: number
+  }
+>
+type AddGoldAction = Action<
+  "ADD_GOLD",
+  {
+    amount: number
+  }
+>
+type ResetGameAction = Action<"RESET_GAME", {}>
 
-// } & P
+type Actions =
+  | UpdateMPAction
+  | UpdateCreatureAction
+  | UpdateMaxMPAction
+  | UpdateMPTurnAction
+  | IncrementTurnAction
+  | ApplyModAction
+  | MoveCreatureToBackAction
+  | ToggleSelectReplacementCreatureAction
+  | SwapCreaturePositionAction
+  | AttackCreatureAction
+  | ApplyTurnEffectsAction
+  | WinGameAction
+  | LoseGameAction
+  | NextLevelAction
+  | ResetBattleAction
+  | ChangeScreenAction
+  | BuyRuneAction
+  | SellRuneAction
+  | AddGoldAction
+  | ResetGameAction
 
-// Temporary type for actions 
-type GameAction = any;
+// (function () {
+//   console.log('this is an iife')
+// })()
 
-// const gameReducer = (state: State, action: Action) => {
-  const gameReducer: React.Reducer<State, GameAction> = (state, action) => {
-
-// const gameReducer = (state: State, action: GameAction) => {
+const gameReducer: React.Reducer<State, Actions> = (state, action) => {
+  // const gameReducer = (state: State, action: GameAction) => {
   // console.log(
   //   `Action dispatched ${action.type}. Action and State:`,
   //   action,
@@ -361,9 +494,9 @@ type GameAction = any;
 }
 
 // Create Contexts
-const StateContext = createContext<State | undefined>(undefined)
+const StateContext = createContext<State>(initialState)
 // const DispatchContext = createContext<React.DispatchWithoutAction>()
-const DispatchContext = createContext<React.Dispatch<any>>(() => {})
+const DispatchContext = createContext<React.Dispatch<Actions>>(() => {})
 
 // Custom Hooks for Using Context
 export const useStateContext = () => useContext(StateContext)
@@ -371,14 +504,15 @@ export const useDispatchContext = () => useContext(DispatchContext)
 
 // Context Provider Component
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer<React.Reducer<State, GameAction>>(
-    gameReducer,
-    initialState
-  )
-  // const [state, dispatch] = useReducer(gameReducer, initialState)
+  // const [state, dispatch] = useReducer<React.Reducer<State, Actions>>(
+  //   gameReducer,
+  //   initialState
+  // )
+  const [state, dispatch] = useReducer(gameReducer, initialState)
   return (
     <StateContext.Provider value={state}>
-      <DispatchContext.Provider value={dispatch}></DispatchContext.Provider>
+      {/* <DispatchContext.Provider value={dispatch}></DispatchContext.Provider> */}
+      <DispatchContext.Provider value={dispatch}>{children}</DispatchContext.Provider>
     </StateContext.Provider>
   )
 }
