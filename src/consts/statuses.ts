@@ -1,3 +1,5 @@
+import { shakeTarget } from "../components/animations/attackAnimations"
+import { getCreatureControlsById } from "../utils/anim/getControls"
 import { AttackPayload, Creature, StatusEffect } from "./types"
 
 export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
@@ -104,11 +106,11 @@ export const applyBuff = (
 }
 
 // Function to log and apply burn effect, reducing health by 5
-export const applyBurn = (
+export const applyBurn = async (
   creature: Creature,
   statusEffectObj: StatusEffect,
   attackPayload?: AttackPayload
-): void => {
+): Promise<void> => {
   const { dispatch } = attackPayload ?? {}
   console.log(
     `Applying ${statusEffectObj.name} to ${creature.name}, reducing health by 5`
@@ -118,6 +120,20 @@ export const applyBurn = (
   if (!dispatch) {
     console.log("applyBurn: No dispatch", attackPayload)
     return
+  }
+
+  // find creature controls
+  if (!attackPayload) {
+    return
+  }
+  const { playerCreatureControlsRef, enemyCreatureControlsRef } = attackPayload
+  const targetControls = await getCreatureControlsById(
+    creature.ID,
+    playerCreatureControlsRef,
+    enemyCreatureControlsRef
+  )
+  if (targetControls) {
+    // await shakeTarget(targetControls)
   }
   dispatch({
     type: "UPDATE_CREATURE",

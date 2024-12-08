@@ -45,10 +45,65 @@ const initialState: State = {
   levels: generatedLevels, // Store the generated levels here
   levelEffects: generatedLevels[0].levelEffects, // Load level 1's effects
   modals: { replaceCreatureModal: null },
+  debugObj: {
+    steps: [{
+      number: 1,
+      title: "1. Attack Initialization",
+      objs: [
+        // attack
+        // creature
+        // creature
+        structuredClone(
+          createUniqueParty(basePlayerCreatures, "player")
+        ),
+        {
+          name: "Poison",
+          type: "debuff",
+          timing: "afterAttack",
+          duration: 3,
+          effectFuncName: "applyPoison",
+          chance: 1,
+          icon: "🧪",
+          id: `POISON`,
+          notes: "Deals damage over time.",
+        },
+      ], details: {
+
+      }
+    },
+    {
+      number: 2,
+      title: "2. Attack Initialization again",
+      objs: [
+        // attack
+        // creature
+        // creature
+        structuredClone(
+          createUniqueParty(basePlayerCreatures, "player")
+        ),
+        {
+          name: "Poison",
+          type: "debuff",
+          timing: "afterAttack",
+          duration: 3,
+          effectFuncName: "applyPoison",
+          chance: 1,
+          icon: "🧪",
+          id: `POISON`,
+          notes: "Deals damage over time.",
+        },
+      ]
+    }
+  ],
+  },
 }
 console.log("Initial State:", initialState)
 // Game Reducer
 type Action<Type extends string, Payload> = { type: Type } & Payload
+type ClassicAction<Type extends string, Payload> = {
+  type: Type
+  payload: Payload
+}
 type UpdateMPAction = Action<
   "UPDATE_MP",
   {
@@ -145,6 +200,10 @@ type AddGoldAction = Action<
 >
 type ResetGameAction = Action<"RESET_GAME", {}>
 
+export type MoveCreatureToBackPayload = {
+  side: "playerCreatures" | "computerCreatures"
+  creatureId: number
+}
 type Actions =
   | UpdateMPAction
   | UpdateCreatureAction
@@ -245,14 +304,7 @@ const gameReducer: React.Reducer<State, Actions> = (state, action) => {
         }),
       }
     case "MOVE_CREATURE_TO_BACK": {
-      const {
-        side,
-        creatureId,
-      }: {
-        side: "playerCreatures" | "computerCreatures"
-        creatureId: number
-      } = action.payload
-
+      const { side, creatureId }: MoveCreatureToBackPayload = action.payload
       // Get the creatures array (either player or computer)
       const creatures = [...state[side]]
 
@@ -461,10 +513,10 @@ const gameReducer: React.Reducer<State, Actions> = (state, action) => {
       return state
   }
 }
+// const DispatchContext = createContext<React.DispatchWithoutAction>()
 
 // Create Contexts
 const StateContext = createContext<State>(initialState)
-// const DispatchContext = createContext<React.DispatchWithoutAction>()
 const DispatchContext = createContext<React.Dispatch<Actions>>(() => {})
 
 // Custom Hooks for Using Context
@@ -473,11 +525,12 @@ export const useDispatchContext = () => useContext(DispatchContext)
 
 // Context Provider Component
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-
   const [state, dispatch] = useReducer(gameReducer, initialState)
   return (
     <StateContext.Provider value={state}>
-      <DispatchContext.Provider value={dispatch}>{children}</DispatchContext.Provider>
+      <DispatchContext.Provider value={dispatch}>
+        {children}
+      </DispatchContext.Provider>
     </StateContext.Provider>
   )
 }

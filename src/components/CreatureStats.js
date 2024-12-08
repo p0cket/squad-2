@@ -28,32 +28,30 @@ function CreatureStats() {
           // Apply rune effects to the base creature to get current stats
           const enhancedStats = applyRuneEffects(baseCreature, state.runes);
           // const filteredStats = removeValues(enhancedStats, [0, "", `icon`]);
-          return (
+            return (
             <div key={index}>
               <h3 className="text-xl font-bold">{`${creature.name} ${creature.icon}`}</h3>
               {Object.entries(enhancedStats).map(([stat, value]) => {
-                if (stat === "startingAttacks" || stat === "possibleAttacks") {
-                  return <AttacksDisplay attacks={value} />;
-                }
-                // if stat is startingAttacks or possibleAttacks,
-                //map through that arr of objs and display them differently
-                const baseValue = baseCreature[stat] || 0; // Use the base creature stat
-                const runeContribution = value - baseValue;
-                return (
-                  <p key={stat} className="text-white">
-                    <span className="text-blue-400">{`${stat}: ${value}`}</span>{" "}
-                    <span className="text-gray-400">
-                      {runeContribution > 0 && (
-                        <span>
-                          <span className="text-yellow-400">{baseValue}</span> +{" "}
-                          <span className="text-green-400">
-                            {runeContribution}
-                          </span>
-                        </span>
-                      )}
+              if (stat === "startingAttacks" || stat === "possibleAttacks") {
+                return <AttacksDisplay key={`${index}-${stat}`} attacks={value} />;
+              }
+              const baseValue = baseCreature[stat] || 0;
+              const runeContribution = value - baseValue;
+              return (
+                <p key={`${index}-${stat}`} className="text-white">
+                <span className="text-blue-400">{`${stat}: ${value}`}</span>{" "}
+                <span className="text-gray-400">
+                  {runeContribution > 0 && (
+                  <span>
+                    <span className="text-yellow-400">{baseValue}</span> +{" "}
+                    <span className="text-green-400">
+                    {runeContribution}
                     </span>
-                  </p>
-                );
+                  </span>
+                  )}
+                </span>
+                </p>
+              );
               })}
             </div>
           );

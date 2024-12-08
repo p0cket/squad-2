@@ -6578,7 +6578,7 @@ const procStatuses = (
   return changes
 }
 
-export const findRelevantProcs = (
+export const findRelevantStatusesToGive = (
   // attacker,
   // target,
   // isPlayerAttack,
@@ -6591,7 +6591,7 @@ export const findRelevantProcs = (
   attackPayload: AttackPayload,
   timing: string
 ) => {
-  console.log(`findRelevantProcs: attackPayload, timing`, attackPayload, timing)
+  console.log(`findRelevantStatusesToGive: attackPayload, timing`, attackPayload, timing)
   const {
     attacker,
     target,
@@ -6918,14 +6918,14 @@ export const newCalcDamage = (
 File: src/utils/moves/calculateDamageAndStatuses.ts
 ================
 import { AttackPayload } from "../../consts/types"
-import { calcAttack, findRelevantProcs } from "./attackUtils"
+import { calcAttack, findRelevantStatusesToGive } from "./attackUtils"
 
 export const calculateDamageAndStatuses = (
     attackPayload: AttackPayload
   ) => {
     console.log(`calculateDamageAndStatuses: attackPayload`, attackPayload)
-    // findRelevantProcs
-    const objAfterImmediateStatuses = findRelevantProcs(
+    // findRelevantStatusesToGive
+    const objAfterImmediateStatuses = findRelevantStatusesToGive(
       attackPayload,
       "beforeAttack"
     )
@@ -7238,7 +7238,7 @@ export const newPerformAttack = async (
 //   // we should prob have more for `heal` or `stun` or `poison` etc
 //   // that occur before the attack)
 //   // so applyEffects(state, timing)
-//   const objAfterImmediateStatuses = findRelevantProcs(
+//   const objAfterImmediateStatuses = findRelevantStatusesToGive(
 //     attacker,
 //     target,
 //     attack,

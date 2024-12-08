@@ -8,7 +8,10 @@ export const performAttackAnimation = async (
   ) => {
     const direction = isPlayerAttack ? -1 : 1
     const distance = 150
+    console.groupCollapsed("Animation Step: Perform Attack")
     await moveAttacker(attackerControls, direction, distance)
     await shakeTarget(targetControls)
     await returnAttacker(attackerControls)
-  }
+    console.groupEnd()
+}
+

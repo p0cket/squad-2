@@ -3,7 +3,7 @@ import { getControls } from "../anim/getControls"
 import { performAttackAnimation } from "../anim/performAttackAnimation"
 import { showDamageOnTarget } from "../anim/showDamageOnTarget"
 import { updateTargetState } from "../party/updateTargetState"
-import { findRelevantProcs, newFindRelevantProcs } from "./attackUtils"
+import { newFindRelevantProcs } from "./attackUtils"
 import { calculateDamageAndStatuses } from "./calculateDamageAndStatuses"
 
 export const newPerformAttack = async (attackPayload: AttackPayload) => {
@@ -152,7 +152,7 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
 //   // we should prob have more for `heal` or `stun` or `poison` etc
 //   // that occur before the attack)
 //   // so applyEffects(state, timing)
-//   const objAfterImmediateStatuses = findRelevantProcs(
+//   const objAfterImmediateStatuses = findRelevantStatusesToGive(
 //     attacker,
 //     target,
 //     attack,

@@ -4,19 +4,25 @@ import { useStateContext } from "../GameContext";
 import Results from "./screens/Results";
 import Death from "./screens/GameOver";
 import Login from "./Login";
+import AttackDebugConsole from "./../debug/AttackDebugConsole";
 
 function Main() {
-  
-  
-
   const flog = (emoji, details) => {
     const { messageParts, styles, objects } = details;
-  
+
     // Generate the message string with `%c` placeholders and proper spacing
-    const logMessage = [`%c${emoji}`, ...messageParts.map(() => "%c")].join(" ") + " " + messageParts.join(" ");
-  
+    const logMessage =
+      [`%c${emoji}`, ...messageParts.map(() => "%c")].join(" ") +
+      " " +
+      messageParts.join(" ");
+
     // Combine the message, styles, and objects
-    const logArgs = [logMessage, ...styles, ...objects, JSON.stringify(logMessage, ...styles, ...objects)];
+    const logArgs = [
+      logMessage,
+      ...styles,
+      ...objects,
+      JSON.stringify(logMessage, ...styles, ...objects),
+    ];
     return logArgs;
   };
   useEffect(() => {
@@ -41,12 +47,11 @@ function Main() {
     console.log(...flog("💥", attackDetails));
     // console.log(...flog(logArgs) )
   }, []);
-  
+
   const state = useStateContext();
-  const { screen } = state;
+  const { screen, debugObj } = state;
   return (
     <>
-    
       {/* <Results /> */}
       {screen === "battle" && <Battle />}
       {screen === "results" && <Results />}
@@ -54,6 +59,7 @@ function Main() {
 
       {screen === "intro" && <Battle />}
       {screen === "shop" && <Battle />}
+      <AttackDebugConsole debugObj={debugObj} />
     </>
   );
 }

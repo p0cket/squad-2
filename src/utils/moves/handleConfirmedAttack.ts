@@ -27,9 +27,39 @@ export const handleTargetedAttack = async (
     computerCreatures,
   } = attackPayload
   console.group(
-    `⚔️ running attack: ${attacker?.name} uses ${attack?.name} on ${target?.name}. AttackPayload:`,
+    `⚔️⚔️⚔️running attack: ${attacker?.name} uses ${attack?.name} on ${target?.name}. AttackPayload:`,
     attackPayload
   )
+  //   const imageUrl = "https://picsum.photos/150" // Replace the dimensions as needed
+  //   console.log(
+  //     "%c ",
+  //     `font-size: 0; padding: 75px; background: url(${imageUrl}) no-repeat center/contain;`
+  //   )
+  //   // Fetch the image as a Blob and convert it to a Base64 data URI
+  //   fetch("https://picsum.photos/150")
+  //     .then((response) => response.blob())
+  //     .then((blob) => {
+  //       const reader = new FileReader()
+  //       reader.onloadend = function () {
+  //         const base64Image = reader.result
+  //         console.log(
+  //           "%c ",
+  //           `font-size: 0; padding: 75px; background: url(${base64Image}) no-repeat center/contain;`
+  //         )
+  //       }
+  //       reader.readAsDataURL(blob)
+  //     })
+  //     .catch((error) => console.error("Error loading image:", error))
+  //   const imageUrl2 = "https://picsum.photos/150"
+  //   console.log(
+  //     "%c ",
+  //     `font-size: 0; background: url(${imageUrl2}) no-repeat center/contain; width: 150px; height: 150px;`
+  //   )
+  //   const imageUrl3 = 'https://picsum.photos/150';
+  // console.log(
+  //   '%c ',
+  //   `font-size: 0; padding: 0; margin: 0; line-height: 0; background: url(${imageUrl3}) no-repeat center/contain; width: 150px; height: 150px; display: block;`
+  // );
   // PLAYER ATTACK:
   try {
     await newPerformAttack(attackPayload)

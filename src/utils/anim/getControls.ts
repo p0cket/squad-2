@@ -1,7 +1,6 @@
 import { RefObject } from "react"
 import { Creature } from "../../consts/types"
-import { ControlRef } from '../../hooks/useCreatureControls'
-
+import { ControlRef } from "../../hooks/useCreatureControls"
 
 export const getControls = (
   attacker: Creature,
@@ -14,7 +13,7 @@ export const getControls = (
     ? playerCreatureControlsRef
     : enemyCreatureControlsRef
 
-  console.log(
+  console.groupCollapsed(
     `%c[getControls] Attacker ID: ${attacker.ID}, Target ID: ${
       target.ID
     }, isPlayerAttack: ${isPlayerAttack}, controlsRef: ${
@@ -25,8 +24,7 @@ export const getControls = (
     "color: yellow; background-color: black;"
   )
 
-  const attackerControls =
-    controlsRef.current?.[attacker.ID]?.controls
+  const attackerControls = controlsRef.current?.[attacker.ID]?.controls
 
   const targetControls = getCreatureControlsById(
     target.ID,
@@ -38,7 +36,7 @@ export const getControls = (
     playerCreatureControlsRef,
     enemyCreatureControlsRef
   )?.showDamage
-
+  console.groupEnd()
   if (!attackerControls || !targetControls) {
     console.warn(
       `%c⚠️ Animation controls not found for attacker ID: ${attacker.ID} or target ID: ${target.ID}, skipping attack animation.`,
@@ -54,7 +52,7 @@ export const getControls = (
   return { attackerControls, targetControls, targetShowDamage }
 }
 
-function getCreatureControlsById(
+export function getCreatureControlsById(
   ID: number,
   playerCreatureControlsRef: RefObject<ControlRef>,
   enemyCreatureControlsRef: RefObject<ControlRef>
@@ -64,14 +62,16 @@ function getCreatureControlsById(
 
   if (playerControl) {
     console.log(
-      `%c[getCreatureControlsById] Found in playerCreatureControlsRef for ID: ${ID}`,
-      "color: yellow; background-color: black;"
+      `%c[getCreatureControlsById] playerControl ${playerControl} Found in playerCreatureControlsRef for ID: ${ID}`,
+      "color: yellow; background-color: black;",
+      playerControl
     )
     return playerControl
   } else if (enemyControl) {
     console.log(
-      `%c[getCreatureControlsById] Found in enemyCreatureControlsRef for ID: ${ID}`,
-      "color: yellow; background-color: black;"
+      `%c[getCreatureControlsById] enemyControl ${enemyControl} Found in enemyCreatureControlsRef for ID: ${ID}`,
+      "color: yellow; background-color: black;",
+      enemyControl
     )
     return enemyControl
   } else {

@@ -10,19 +10,25 @@ import { newCalcDamage } from "./calcDamage"
 
 // Utility to get effects based on timing
 const getStatusesByPhase = (effects: StatusEffect[], timing: string) => {
+  console.groupCollapsed(`getStatusesByPhase: effects, timing`, effects, timing)
   console.log(
-    `#x 1b. effects`,
+    `getStatusesByPhase: effects, timing,
+    STATUS_EFFECTS,
+    STATUS_EFFECTS[effects[0].id]`,
     effects,
     timing,
     STATUS_EFFECTS,
     STATUS_EFFECTS[effects[0].id]
   )
   console.log(
-    `#x 1c. effectDef && effectDef.timing === timing`,
+    `getStatusesByPhase: STATUS_EFFECTS[effects[0].id],
+    timing,
+    STATUS_EFFECTS[effects[0].id].timing === timing`,
     STATUS_EFFECTS[effects[0].id],
     timing,
     STATUS_EFFECTS[effects[0].id].timing === timing
   )
+  console.groupEnd()
   return effects.filter((effect) => {
     const effectDef = STATUS_EFFECTS[effect.id]
     return effectDef && effectDef.timing === timing
@@ -41,13 +47,13 @@ const procStatuses = (
     (effect) => STATUS_EFFECTS[effect]
   )
   const relevantEffects = getStatusesByPhase(allAttackEffects, timing)
-  console.log(`#x 2. relevantEffects to be applied`, relevantEffects)
+  console.log(`procStatuses: 2. relevantEffects to be applied`, relevantEffects)
   relevantEffects.forEach((effect) => {
     const effectDef = STATUS_EFFECTS[effect.id]
-    console.log(`#x 2. effectDef`, effectDef)
+    console.log(`procStatuses: 2b. effectDef`, effectDef)
     changes = runEffect(target, effect)
   })
-  console.log(`#x 3. changes`, changes)
+  console.log(`procStatuses: 3. changes`, changes)
   return changes
 }
 // attacker,
@@ -93,13 +99,13 @@ const updateCreatureArrWithProc = (
     }
     return creature
   })
-  // return newCreatures
 }
 const procBothParties = (attackPayload: AttackPayload) => {
   const { playerCreatures, computerCreatures } = attackPayload
-  console.log(`procBothParties`)
+  console.group(`procBothParties`)
   updateCreatureArrWithProc(playerCreatures, attackPayload)
   updateCreatureArrWithProc(computerCreatures, attackPayload)
+  console.groupEnd()
   // const payloadAfterProc: AttackPayload = {
   //   ...attackPayload,
   //   playerCreatures: procdPlayerCreatures,
@@ -134,11 +140,16 @@ export const newFindRelevantProcs = (
 // logStatuses(playerCreatures);
 // logStatuses(computerCreatures);
 
-export const findRelevantProcs = (
+// finds relevant procs to apply from the attack
+export const findRelevantStatusesToGive = (
   attackPayload: AttackPayload,
   timing: string
 ) => {
-  console.log(`findRelevantProcs: attackPayload, timing`, attackPayload, timing)
+  console.group(
+    `🎬findRelevantProcs: attackPayload, timing`,
+    attackPayload,
+    timing
+  )
   const {
     attacker,
     target,
@@ -153,7 +164,7 @@ export const findRelevantProcs = (
   let changes = null
   const hasEffects = attack.effects && attack.effects.length > 0
   console.log(
-    `#x 0. hasEffects:${hasEffects} attacker, target, attack, timing`,
+    ` findRelevantStatusesToGive 0. hasEffects:${hasEffects} attacker, target, attack, timing`,
     attacker,
     target,
     attack,
@@ -162,10 +173,10 @@ export const findRelevantProcs = (
   if (hasEffects) {
     changes = procStatuses(attacker, target, attack, timing)
   }
-  console.log(`#x 1. changes`, changes)
+  console.log(`findRelevantStatusesToGive 1. changes`, changes)
+  console.groupEnd()
   return { attacker, target, attack, changes }
 }
-
 export const calcAttack = (
   attacker: Creature,
   target: Creature,
@@ -185,7 +196,6 @@ export const calcAttack = (
   )
   return { statuses, damage }
 }
-
 export const calcStatuses = (
   attacker: Creature,
   target: Creature,

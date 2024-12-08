@@ -133,6 +133,7 @@ export type State = {
   modals: {
     replaceCreatureModal: any | null // Replace 'any' with the actual type if available
   }
+  debugObj: any
 }
 
 export type Level = {
