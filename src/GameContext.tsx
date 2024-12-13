@@ -8,7 +8,8 @@ import { generateLevels, loadLevelData } from "./utils/levelGeneratorUtils"
 import { createUniqueParty } from "./utils/creatureUtils"
 import { updateCreatureInList } from "./utils/moves/attackUtils"
 import { BASE_RUNES } from "./consts/items"
-import { Creature, State } from "./consts/types"
+import { Creature, State, Thunk } from "./consts/types/types"
+import { Actions, MoveCreatureToBackPayload } from "./consts/types/actionTypes"
 
 // Constants
 export const INITIAL_MAX_MP = 50
@@ -46,189 +47,48 @@ const initialState: State = {
   levelEffects: generatedLevels[0].levelEffects, // Load level 1's effects
   modals: { replaceCreatureModal: null },
   debugObj: {
-    steps: [{
-      number: 1,
-      title: "1. Attack Initialization",
-      objs: [
-        // attack
-        // creature
-        // creature
-        structuredClone(
-          createUniqueParty(basePlayerCreatures, "player")
-        ),
-        {
-          name: "Poison",
-          type: "debuff",
-          timing: "afterAttack",
-          duration: 3,
-          effectFuncName: "applyPoison",
-          chance: 1,
-          icon: "🧪",
-          id: `POISON`,
-          notes: "Deals damage over time.",
-        },
-      ], details: {
-
-      }
-    },
-    {
-      number: 2,
-      title: "2. Attack Initialization again",
-      objs: [
-        // attack
-        // creature
-        // creature
-        structuredClone(
-          createUniqueParty(basePlayerCreatures, "player")
-        ),
-        {
-          name: "Poison",
-          type: "debuff",
-          timing: "afterAttack",
-          duration: 3,
-          effectFuncName: "applyPoison",
-          chance: 1,
-          icon: "🧪",
-          id: `POISON`,
-          notes: "Deals damage over time.",
-        },
-      ]
-    }
-  ],
+    steps: [
+      {
+        title: "1. Attack Initialization",
+        objs: [
+          ...structuredClone(createUniqueParty(basePlayerCreatures, "player")),
+          {
+            name: "Poison",
+            type: "debuff",
+            timing: "afterAttack",
+            duration: 3,
+            effectFuncName: "applyPoison",
+            chance: 1,
+            icon: "🧪",
+            id: `POISON`,
+            notes: "Deals damage over time.",
+          },
+        ],
+        details: {},
+      },
+      {
+        title: "2. Attack Initialization again",
+        objs: [
+          ...structuredClone(createUniqueParty(basePlayerCreatures, "player")),
+          {
+            name: "Poison",
+            type: "debuff",
+            timing: "afterAttack",
+            duration: 3,
+            effectFuncName: "applyPoison",
+            chance: 1,
+            icon: "🧪",
+            id: `POISON`,
+            notes: "Deals damage over time.",
+          },
+        ],
+        details: {},
+      },
+    ],
   },
 }
 console.log("Initial State:", initialState)
 // Game Reducer
-type Action<Type extends string, Payload> = { type: Type } & Payload
-type ClassicAction<Type extends string, Payload> = {
-  type: Type
-  payload: Payload
-}
-type UpdateMPAction = Action<
-  "UPDATE_MP",
-  {
-    mp: number
-  }
->
-type UpdateCreatureAction = Action<
-  "UPDATE_CREATURE",
-  {
-    creature: Creature
-  }
->
-type UpdateMaxMPAction = Action<
-  "UPDATE_MAX_MP",
-  {
-    maxMp: number
-  }
->
-type UpdateMPTurnAction = Action<
-  "UPDATE_MP_PER_TURN",
-  {
-    mpPerTurn: number
-  }
->
-type IncrementTurnAction = Action<"INCREMENT_TURN", {}>
-type ApplyModAction = Action<
-  "APPLY_MOD",
-  {
-    payload: {
-      creature: Creature
-      mod: any
-    }
-  }
->
-type MoveCreatureToBackAction = Action<
-  "MOVE_CREATURE_TO_BACK",
-  {
-    payload: {
-      side: "playerCreatures" | "computerCreatures"
-      creatureId: number
-    }
-  }
->
-type ToggleSelectReplacementCreatureAction = Action<
-  "TOGGLE_SELECT_REPLACEMENT_CREATURE",
-  {}
->
-type SwapCreaturePositionAction = Action<
-  "SWAP_CREATURE_POSITION",
-  {
-    payload: {
-      side: "playerCreatures" | "computerCreatures"
-      newActiveCreatureId: number
-    }
-  }
->
-type AttackCreatureAction = Action<
-  "ATTACK_CREATURE",
-  {
-    attacker: Creature
-  }
->
-type ApplyTurnEffectsAction = Action<"APPLY_TURN_EFFECTS", {}>
-type WinGameAction = Action<"WIN_GAME", {}>
-type LoseGameAction = Action<"LOSE_GAME", {}>
-type NextLevelAction = Action<"NEXT_LEVEL", {}>
-type ResetBattleAction = Action<"RESET_BATTLE", {}>
-type ChangeScreenAction = Action<
-  "CHANGE_SCREEN",
-  {
-    payload: {
-      screen: string
-    }
-  }
->
-type BuyRuneAction = Action<
-  "BUY_RUNE",
-  {
-    rune: any
-  }
->
-type SellRuneAction = Action<
-  "SELL_RUNE",
-  {
-    rune: any
-    index: number
-  }
->
-type AddGoldAction = Action<
-  "ADD_GOLD",
-  {
-    amount: number
-  }
->
-type ResetGameAction = Action<"RESET_GAME", {}>
-
-export type MoveCreatureToBackPayload = {
-  side: "playerCreatures" | "computerCreatures"
-  creatureId: number
-}
-type Actions =
-  | UpdateMPAction
-  | UpdateCreatureAction
-  | UpdateMaxMPAction
-  | UpdateMPTurnAction
-  | IncrementTurnAction
-  | ApplyModAction
-  | MoveCreatureToBackAction
-  | ToggleSelectReplacementCreatureAction
-  | SwapCreaturePositionAction
-  | AttackCreatureAction
-  | ApplyTurnEffectsAction
-  | WinGameAction
-  | LoseGameAction
-  | NextLevelAction
-  | ResetBattleAction
-  | ChangeScreenAction
-  | BuyRuneAction
-  | SellRuneAction
-  | AddGoldAction
-  | ResetGameAction
-
-// (function () {
-//   console.log('this is an iife')
-// })()
 
 const gameReducer: React.Reducer<State, Actions> = (state, action) => {
   // const gameReducer = (state: State, action: GameAction) => {
@@ -509,6 +369,32 @@ const gameReducer: React.Reducer<State, Actions> = (state, action) => {
       }
     case "RESET_GAME":
       return initialState
+    case "ADD_OBJ_TO_DEBUG_STEP": {
+      const { stepIndex, obj } = action.payload
+      console.log("ADD_OBJ_TO_DEBUG_STEP stepIndex:", stepIndex, obj)
+
+      const updatedSteps = state.debugObj.steps.map((step, index) => {
+        if (index === action.payload.stepIndex) {
+          console.log("ADD_OBJ_TO_DEBUG_STEP stepIndex matched:")
+          return {
+        ...step,
+        objs: Array.isArray(action.payload.obj)
+          ? [...step.objs, ...action.payload.obj]
+          : [...step.objs, action.payload.obj],
+          }
+        }
+        return step
+      })
+      const newState = {
+        ...state,
+        debugObj: {
+          ...state.debugObj,
+          steps: updatedSteps,
+        },
+      }
+      console.log("ADD_OBJ_TO_DEBUG_STEP returning newState:", newState)
+      return {...newState}
+    }
     default:
       return state
   }
@@ -523,7 +409,7 @@ const DispatchContext = createContext<React.Dispatch<Actions>>(() => {})
 export const useStateContext = () => useContext(StateContext)
 export const useDispatchContext = () => useContext(DispatchContext)
 
-// Context Provider Component
+// // Context Provider Component
 export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState)
   return (
@@ -534,6 +420,38 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     </StateContext.Provider>
   )
 }
+
+
+// export const GameProvider = ({ children }: { children: ReactNode }) => {
+//   const [state, dispatch] = useReducer(gameReducer, initialState)
+
+//   // ENHANCEMENT: Wrap dispatch so we can handle thunks
+//   // const enhancedDispatch = (actionOrFunction: Actions | Thunk<State, React.Dispatch<Actions>>) => {
+//     // console.log("enhancedDispatch called with:", actionOrFunction)
+//     // if (typeof actionOrFunction === "function") {
+//     //   // If it's a thunk function, call it with (enhancedDispatch, getState)
+//     //   console.log("Calling a thunk function with dispatch and getState...")
+//     //   return actionOrFunction(dispatch, () => state)
+//     // }
+//     // // It's a normal action
+//     // console.log("Dispatching a normal action:", actionOrFunction)
+//     // return dispatch(actionOrFunction as Actions)
+//   // }
+//   const stableDispatch = (action: Actions | Thunk<State, React.Dispatch<Actions>>) => {
+//     if (typeof action === 'function') {
+//       action(dispatch, () => state)
+//     } else {
+//       dispatch(action)
+//     }
+//   }
+//   return (
+//     <StateContext.Provider value={state}>
+//       <DispatchContext.Provider value={stableDispatch}>
+//         {children}
+//       </DispatchContext.Provider>
+//     </StateContext.Provider>
+//   )
+// }
 
 // Auras and Enhancements are under MODS
 // case "APPLY_AURA":

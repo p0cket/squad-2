@@ -4,7 +4,7 @@ import {
   AttackPayload,
   Creature,
   StatusEffect,
-} from "../../consts/types"
+} from "../../consts/types/types"
 import { newCalcDamage } from "./calcDamage"
 // import { newCalcDamage } from "./calcDamage"
 
@@ -65,70 +65,213 @@ const procStatuses = (
 // dispatch,
 // playerCreatures,
 // computerCreatures,
+// const handleStatusEffect = (
+//   creature: Creature,
+//   status: StatusEffect,
+//   attackPayload: AttackPayload
+// ): void => {
+//   console.log(
+//     `handleStatusEffect: lets run ${status.name} with ${status.effectFuncName}`
+//   )
+//   effectFunctions[status.effectFuncName](creature, status, attackPayload)
+//   // return newPayload
+// }
+// const handleStatusEffect = (
+//   creature: Creature,
+//   status: StatusEffect,
+//   attackPayload: AttackPayload
+// ): Creature => {
+//   console.log(
+//     `handleStatusEffect: running ${status.name} with ${status.effectFuncName}`
+//   );
+//   //@ts-ignore //get rid of voids
+//   return effectFunctions[status.effectFuncName](creature, status, attackPayload);
+// };
 const handleStatusEffect = (
   creature: Creature,
   status: StatusEffect,
   attackPayload: AttackPayload
-): void => {
+): Creature => {
   console.log(
-    `handleStatusEffect: lets run ${status.name} with ${status.effectFuncName}`
+    `handleStatusEffect: running ${status.name} with ${status.effectFuncName}`
   )
-  effectFunctions[status.effectFuncName](creature, status, attackPayload)
-  // return newPayload
+  const result = effectFunctions[status.effectFuncName](
+    creature,
+    status,
+    attackPayload
+  )
+  if (result instanceof Promise) {
+    //@ts-ignore
+    return result.then((resolvedCreature) => resolvedCreature)
+  }
+  return result
 }
 
+// const updateCreatureArrWithProc = (
+//   creatures: Creature[],
+//   attackPayload: AttackPayload
+// ): void => {
+//   console.log(
+//     `%cupdateCreatureArrWithProc`,
+//     "color: pink; background-color: darkgray; font-family: Arial, sans-serif;",
+//     creatures,
+//     attackPayload
+//   )
+//   creatures.forEach((creature) => {
+//     if (creature.statuses && creature.statuses.length > 0) {
+//       console.log(
+//         `${creature.name} has statuses. lets handleStatusEffect:`,
+//         creature.statuses
+//       )
+//       creature.statuses.forEach((status) => {
+//         handleStatusEffect(creature, status, attackPayload)
+//       })
+//     }
+//     return creature
+//   })
+// }
+// const updateCreatureArrWithProc = (
+//   creatures: Creature[],
+//   attackPayload: AttackPayload
+// ): Creature[] => {
+//   return creatures.map((creature) => {
+//     let updatedCreature = { ...creature }; // Create a copy
+
+//     if (creature.statuses && creature.statuses.length > 0) {
+//       console.log(`${creature.name} has statuses:`, creature.statuses);
+//       creature.statuses.forEach((status) => {
+//         handleStatusEffect(updatedCreature, status, attackPayload);
+//       });
+//     }
+
+//     return updatedCreature; // Return the updated creature
+//   });
+// };
+// const updateCreatureArrWithProc = (
+//   creatures: Creature[],
+//   attackPayload: AttackPayload
+// ): Creature[] => {
+//   return creatures.map((creature) => {
+//     let updatedCreature = { ...creature };
+//     if (creature.statuses && creature.statuses.length > 0) {
+//       console.log(`${creature.name} has statuses:`, creature.statuses);
+//       creature.statuses.forEach((status) => {
+//         updatedCreature = handleStatusEffect(updatedCreature, status, attackPayload);
+//       });
+//     }
+//     return updatedCreature;
+//   });
+// };
 const updateCreatureArrWithProc = (
   creatures: Creature[],
   attackPayload: AttackPayload
-): void => {
-  console.log(
-    `%cupdateCreatureArrWithProc`,
-    "color: pink; background-color: darkgray; font-family: Arial, sans-serif;",
-    creatures,
-    attackPayload
-  )
-  creatures.forEach((creature) => {
+): Creature[] => {
+  return creatures.map((creature) => {
+    let updatedCreature = { ...creature }
     if (creature.statuses && creature.statuses.length > 0) {
-      console.log(
-        `${creature.name} has statuses. lets handleStatusEffect:`,
-        creature.statuses
-      )
+      console.log(`${creature.name} has statuses:`, creature.statuses)
       creature.statuses.forEach((status) => {
-        handleStatusEffect(creature, status, attackPayload)
+        const result = handleStatusEffect(
+          updatedCreature,
+          status,
+          attackPayload
+        )
+        if (result instanceof Promise) {
+          result.then((resolvedCreature) => {
+            updatedCreature = resolvedCreature
+          })
+        } else {
+          updatedCreature = result
+        }
       })
     }
-    return creature
+    return updatedCreature
   })
 }
-const procBothParties = (attackPayload: AttackPayload) => {
-  const { playerCreatures, computerCreatures } = attackPayload
-  console.group(`procBothParties`)
-  updateCreatureArrWithProc(playerCreatures, attackPayload)
-  updateCreatureArrWithProc(computerCreatures, attackPayload)
-  console.groupEnd()
-  // const payloadAfterProc: AttackPayload = {
-  //   ...attackPayload,
-  //   playerCreatures: procdPlayerCreatures,
-  //   computerCreatures: procdComputerCreatures,
-  // }
-  // return payloadAfterProc
+// const procBothParties = (attackPayload: AttackPayload) => {
+//   const { playerCreatures, computerCreatures } = attackPayload
+//   console.group(`procBothParties`)
+//   updateCreatureArrWithProc(playerCreatures, attackPayload)
+//   updateCreatureArrWithProc(computerCreatures, attackPayload)
+//   console.groupEnd()
+//   // const payloadAfterProc: AttackPayload = {
+//   //   ...attackPayload,
+//   //   playerCreatures: procdPlayerCreatures,
+//   //   computerCreatures: procdComputerCreatures,
+//   // }
+//   // return payloadAfterProc
+// }
+// const procBothParties = (attackPayload: AttackPayload): AttackPayload => {
+//   const { playerCreatures, computerCreatures } = attackPayload;
+//   console.group(`procBothParties`)
+//   const updatedPlayerCreatures = updateCreatureArrWithProc(playerCreatures, attackPayload);
+//   const updatedComputerCreatures = updateCreatureArrWithProc(computerCreatures, attackPayload);
+//   console.groupEnd()
+//   return {
+//     ...attackPayload,
+//     playerCreatures: updatedPlayerCreatures,
+//     computerCreatures: updatedComputerCreatures,
+//   };
+// };
+const procBothParties = (attackPayload: AttackPayload): AttackPayload => {
+  const updatedPlayerCreatures = updateCreatureArrWithProc(
+    attackPayload.playerCreatures,
+    attackPayload
+  )
+  const updatedComputerCreatures = updateCreatureArrWithProc(
+    attackPayload.computerCreatures,
+    attackPayload
+  )
+  return {
+    ...attackPayload,
+    playerCreatures: updatedPlayerCreatures,
+    computerCreatures: updatedComputerCreatures,
+  }
 }
 
+// export const newFindRelevantProcs = (
+//   attackPayload: AttackPayload,
+//   timing: string
+// ): AttackPayload => {
+//   console.group(
+//     `%cnewFindRelevantProcs: attackPayload, ?timing?`,
+//     "color: pink; background-color: white; font-family: Arial, sans-serif;",
+//     attackPayload,
+//     timing
+//   );
+//   const updatedPayload = procBothParties(attackPayload);
+//   console.groupEnd();
+//   return updatedPayload;
+// };
 export const newFindRelevantProcs = (
   attackPayload: AttackPayload,
   timing: string
-): void => {
+): AttackPayload => {
   console.group(
-    `%cnewFindRelevantProcs: attackPayload, ?timing?`,
+    `%cnewFindRelevantProcs: attackPayload, timing`,
     "color: pink; background-color: white; font-family: Arial, sans-serif;",
     attackPayload,
     timing
   )
-  procBothParties(attackPayload)
+  const updatedPayload = procBothParties(attackPayload)
   console.groupEnd()
-  // const procdPayload = procBothParties(attackPayload)
-  // return procdPayload
+  return updatedPayload
 }
+// export const newFindRelevantProcs = (
+//   attackPayload: AttackPayload,
+//   timing: string
+// ): void => {
+//   console.group(
+//     `%cnewFindRelevantProcs: attackPayload, ?timing?`,
+//     "color: pink; background-color: white; font-family: Arial, sans-serif;",
+//     attackPayload,
+//     timing
+//   )
+//   procBothParties(attackPayload)
+//   console.groupEnd()
+//   // const procdPayload = procBothParties(attackPayload)
+//   // return procdPayload
+// }
 
 // const logStatuses = (creatures: Creature[]) => {
 //   creatures.forEach(creature => {

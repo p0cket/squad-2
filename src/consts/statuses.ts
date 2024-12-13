@@ -1,6 +1,6 @@
 import { shakeTarget } from "../components/animations/attackAnimations"
 import { getCreatureControlsById } from "../utils/anim/getControls"
-import { AttackPayload, Creature, StatusEffect } from "./types"
+import { AttackPayload, Creature, LogType, StatusEffect } from "./types/types"
 
 export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
   POISON: {
@@ -60,26 +60,47 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
   },
 }
 // Function to log and apply poison effect, reducing health by 10
+// export const applyPoison = (
+//   creature: Creature,
+//   statusEffectObj: StatusEffect,
+//   attackPayload?: AttackPayload
+// ): void => {
+//   const { dispatch } = attackPayload ?? {}
+//   console.log(
+//     `Applying ${statusEffectObj.name} to ${creature.name}, reducing health by 10`
+//   )
+//   let updatedCreature = { ...creature }
+//   updatedCreature.health = Math.max(0, creature.health - 10)
+//   if (!dispatch) {
+//     console.log("applyPoison: No dispatch", attackPayload)
+//     return
+//   }
+//   dispatch({
+//     type: "UPDATE_CREATURE",
+//     side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+//     creature: updatedCreature,
+//   })
+// }
 export const applyPoison = (
   creature: Creature,
   statusEffectObj: StatusEffect,
   attackPayload?: AttackPayload
-): void => {
+): Creature => {
   const { dispatch } = attackPayload ?? {}
   console.log(
     `Applying ${statusEffectObj.name} to ${creature.name}, reducing health by 10`
   )
-  let updatedCreature = { ...creature }
+  const updatedCreature = { ...creature }
   updatedCreature.health = Math.max(0, creature.health - 10)
-  if (!dispatch) {
-    console.log("applyPoison: No dispatch", attackPayload)
-    return
+  if (dispatch) {
+    dispatch({
+      type: "UPDATE_CREATURE",
+      // side:
+      //   creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+      creature: updatedCreature,
+    })
   }
-  dispatch({
-    type: "UPDATE_CREATURE",
-    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
-    creature: updatedCreature,
-  })
+  return updatedCreature
 }
 
 // Function to log and apply buff effect, increasing attack by 5
@@ -87,22 +108,22 @@ export const applyBuff = (
   creature: Creature,
   statusEffectObj: StatusEffect,
   attackPayload?: AttackPayload
-): void => {
+): Creature => {
   const { dispatch } = attackPayload ?? {}
   console.log(
     `Applying ${statusEffectObj.name} to ${creature.name}, increasing attack by 5`
   )
-  let updatedCreature = { ...creature }
+  const updatedCreature = { ...creature }
   updatedCreature.attack = creature.attack + 5
-  if (!dispatch) {
-    console.log("applyBuff: No dispatch", attackPayload)
-    return
+  if (dispatch) {
+    dispatch({
+      type: "UPDATE_CREATURE",
+      // side:
+      //   creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+      creature: updatedCreature,
+    })
   }
-  dispatch({
-    type: "UPDATE_CREATURE",
-    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
-    creature: updatedCreature,
-  })
+  return updatedCreature
 }
 
 // Function to log and apply burn effect, reducing health by 5
@@ -110,7 +131,7 @@ export const applyBurn = async (
   creature: Creature,
   statusEffectObj: StatusEffect,
   attackPayload?: AttackPayload
-): Promise<void> => {
+): Promise<Creature> => {
   const { dispatch } = attackPayload ?? {}
   console.log(
     `Applying ${statusEffectObj.name} to ${creature.name}, reducing health by 5`
@@ -119,13 +140,14 @@ export const applyBurn = async (
   updatedCreature.health = Math.max(0, creature.health - 5)
   if (!dispatch) {
     console.log("applyBurn: No dispatch", attackPayload)
-    return
+    return updatedCreature
   }
-
   // find creature controls
   if (!attackPayload) {
-    return
+    return updatedCreature
   }
+  // Queue of these events. pop. The specific UI updates need to happen.
+  // a queue of promises
   const { playerCreatureControlsRef, enemyCreatureControlsRef } = attackPayload
   const targetControls = await getCreatureControlsById(
     creature.ID,
@@ -135,11 +157,29 @@ export const applyBurn = async (
   if (targetControls) {
     // await shakeTarget(targetControls)
   }
+  const logEntry: LogType = {
+    message: `dispatching burn stuff ☄️. ${attackPayload.attacker?.name} on ${creature.name}`,
+    timestamp: new Date().toISOString(),
+    details: `Here we're expecting to see the attackPayload:`,
+    source: "handleTargetedAttack",
+    // details: `Attack details: ${JSON.stringify(attackPayload)}`,
+  }
+  dispatch({
+    type: "ADD_OBJ_TO_DEBUG_STEP",
+    payload: {
+      stepIndex: 0,
+      obj: logEntry,
+    },
+  })
+
+  // have something that updates both the state, 
+  // and dispatches at the same time.
   dispatch({
     type: "UPDATE_CREATURE",
-    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+    // side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
     creature: updatedCreature,
   })
+  return updatedCreature
 }
 
 // Function to log and apply stun effect, setting stunned to true
@@ -147,7 +187,7 @@ export const applyStun = (
   creature: Creature,
   statusEffectObj: StatusEffect,
   attackPayload?: AttackPayload
-): void => {
+): Creature => {
   const { dispatch } = attackPayload ?? {}
   console.log(
     `Applying ${statusEffectObj.name} to ${creature.name}, setting stunned to true`
@@ -156,13 +196,14 @@ export const applyStun = (
   // updatedCreature.stunned = true // Ensure 'stunned' property exists in the Creature type
   if (!dispatch) {
     console.log("applyStun: No dispatch", attackPayload)
-    return
+    return updatedCreature
   }
   dispatch({
     type: "UPDATE_CREATURE",
-    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+    // side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
     creature: updatedCreature,
   })
+  return updatedCreature
 }
 
 // Function to log and apply regeneration effect, increasing health by 5 up to maxHealth
@@ -170,7 +211,7 @@ export const applyRegeneration = (
   creature: Creature,
   statusEffectObj: StatusEffect,
   attackPayload?: AttackPayload
-): void => {
+): Creature => {
   const { dispatch } = attackPayload ?? {}
   console.log(
     `Applying ${statusEffectObj.name} to ${creature.name}, increasing health by 5`
@@ -179,13 +220,14 @@ export const applyRegeneration = (
   updatedCreature.health = Math.min(creature.maxHealth, creature.health + 5)
   if (!dispatch) {
     console.log("applyRegeneration: No dispatch", attackPayload)
-    return
+    return updatedCreature
   }
   dispatch({
     type: "UPDATE_CREATURE",
-    side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
+    // side: creature.owner === "player" ? "playerCreatures" : "computerCreatures",
     creature: updatedCreature,
   })
+  return updatedCreature
 }
 // Function to tick down the duration of a status effect
 export const tickDownEffectDuration = (
@@ -213,7 +255,7 @@ export type EffectFunctionsType = {
     creature: Creature,
     status: StatusEffect,
     attackPayload?: AttackPayload
-  ) => void
+  ) => Creature | Promise<Creature>
 }
 
 export const effectFunctions: EffectFunctionsType = {

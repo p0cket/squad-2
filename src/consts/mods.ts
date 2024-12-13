@@ -28,7 +28,7 @@
 //     },
 //   ]
 
-import { Aura } from "./types"
+import { Aura } from "./types/types"
 
 // Auras (passive effects that apply automatically or enhance the creature's abilities)
 // export const auras: {[key: string] : Aura} = { // or the one below

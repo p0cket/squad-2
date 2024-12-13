@@ -1,7 +1,7 @@
 // replaceCreatureModal.js
 import React from "react"
 import { Modal, Box, Typography, Card, CardContent } from "@mui/material"
-import { Creature } from "../../consts/types"
+import { Creature } from "../../consts/types/types"
 
 const style = {
   position: "absolute",

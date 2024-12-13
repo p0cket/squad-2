@@ -1,5 +1,5 @@
 import { runApplyEffect, STATUS_EFFECTS } from "../../consts/statuses"
-import { Creature, StatusEffect } from "../../consts/types"
+import { Creature, StatusEffect } from "../../consts/types/types"
 
 export const handleEndOfTurnEffects = (creatures: Creature[]) => {
   //this should just be handlePhaseEffects (`endOfTurn`, creatures)

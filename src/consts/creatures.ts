@@ -1,5 +1,5 @@
 import { attacks } from "./attacks"
-import { BaseCreature, Creature } from "./types"
+import { BaseCreature, Creature } from "./types/types"
 
 export const MAX_HP = 100
 const BASE_HEALTH = 100

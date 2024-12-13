@@ -1,5 +1,5 @@
 import { RefObject } from "react"
-import { Creature } from "../../consts/types"
+import { Creature } from "../../consts/types/types"
 import { ControlRef } from "../../hooks/useCreatureControls"
 
 export const getControls = (

@@ -1,5 +1,5 @@
 import { useRef, useCallback } from "react";
-import { Creature } from "../consts/types";
+import { Creature } from "../consts/types/types";
 import { AnimationControls } from "framer-motion";
 
 export type ControlDetails = {

@@ -3,7 +3,7 @@
 import { POWER_LEVELS } from "../consts/creatures"
 import { BASE_RUNES } from "../consts/items"
 import { auras } from "../consts/mods"
-import { Level } from "../consts/types"
+import { Level } from "../consts/types/types"
 
 // Combine auras, buffs, and debuffs into availableMods
 export const availableMods = [

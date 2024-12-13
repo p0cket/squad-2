@@ -1,4 +1,4 @@
-import { Attack, Creature } from "../../consts/types"
+import { Attack, Creature } from "../../consts/types/types"
 
 // export const calcDamage = (attacker: Creature, target: Creature, attack: Attack) => {
 //   console.group(

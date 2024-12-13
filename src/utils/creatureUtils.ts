@@ -1,4 +1,4 @@
-import { BaseCreature, Creature, Owner } from "../consts/types"
+import { BaseCreature, Creature, Owner } from "../consts/types/types"
 
 let creatureIdCounter = 0
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Attack, Effect } from "../../consts/types";
+import { Attack, Effect } from "../../consts/types/types";
 import { STATUS_EFFECTS } from "../../consts/statuses";
 // import { Attack, Effect } from "../../types";
 

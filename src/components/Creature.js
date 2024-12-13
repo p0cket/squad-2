@@ -3,17 +3,22 @@ import { motion, useAnimationControls } from "framer-motion";
 import CreatureModal from "./modals/CreatureModal";
 import { useDispatchContext } from "../GameContext";
 import ReplaceCreatureModal from "./modals/ReplaceCreatureModal";
-import { Creature as CreatureType } from "../consts/types";
+import { Creature as CreatureType } from "../consts/types/types";
 import { ControlDetails } from "../hooks/useCreatureControls";
 
 type CreatureProps = {
-  position: unknown;
-  isPlayer: boolean;
-  setCreatureControls: (controls: ControlDetails) => void;
-  creatureObj: CreatureType
-}
+  position: unknown,
+  isPlayer: boolean,
+  setCreatureControls: (controls: ControlDetails) => void,
+  creatureObj: CreatureType,
+};
 
-const Creature: FC<CreatureProps> = ({ position, isPlayer, setCreatureControls, creatureObj }) => {
+const Creature: FC<CreatureProps> = ({
+  position,
+  isPlayer,
+  setCreatureControls,
+  creatureObj,
+}) => {
   const { ID, icon, health, maxHealth, statuses } = creatureObj;
   const dispatch = useDispatchContext();
   const controls = useAnimationControls();
@@ -84,6 +89,11 @@ const Creature: FC<CreatureProps> = ({ position, isPlayer, setCreatureControls, 
         // availableCreatures={getAliveCreatures(state.playerCreatures)}
       />
       <motion.div
+        // called.
+        // state health setHealth
+        // useEffect( q.HealthChange(healthAmount, setHealth, health), [health])
+        // in there: setHealth(health + healthAmount)
+        // change health func.
         className={`flex flex-col items-center ${
           health <= 0 ? "opacity-50" : ""
         }`}

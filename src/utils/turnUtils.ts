@@ -1,5 +1,5 @@
 import { runApplyEffect, STATUS_EFFECTS } from "../consts/statuses"
-import { Creature } from "../consts/types"
+import { Creature } from "../consts/types/types"
 
 // export const handleEndOfTurnEffects = (creatures) => {
 //   const creaturesApplied = creatures.map((creature) => {

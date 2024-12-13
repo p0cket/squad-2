@@ -1,5 +1,5 @@
 // import { moveDeadCreaturesToBack } from "./creatureUtils"
-import { Creature } from "../consts/types";
+import { Creature } from "../consts/types/types";
 
 // Reset The Creatures Between Battles (heal fully, etc)
 export const resetCreatures = (creatures: Creature[]) => {

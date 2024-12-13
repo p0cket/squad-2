@@ -1,4 +1,127 @@
-import { AttackPayload } from "../../consts/types"
+// import { AttackPayload, LogType } from "../../consts/types"
+// import { logStep } from "../../debug/logUtils"
+// import { getControls } from "../anim/getControls"
+// import { performAttackAnimation } from "../anim/performAttackAnimation"
+// import { showDamageOnTarget } from "../anim/showDamageOnTarget"
+// import { updateTargetState } from "../party/updateTargetState"
+// import { newFindRelevantProcs } from "./attackUtils"
+// import { calculateDamageAndStatuses } from "./calculateDamageAndStatuses"
+
+// export const newPerformAttack = async (attackPayload: AttackPayload) => {
+//   const {
+//     attacker,
+//     target,
+//     isPlayerAttack,
+//     playerCreatureControlsRef,
+//     enemyCreatureControlsRef,
+//     attack,
+//     dispatch,
+//     playerCreatures,
+//     computerCreatures,
+//   } = attackPayload
+//   console.group("%c⚔️newPerformAttack", "color: blue; font-weight: bold;")
+//   console.log(
+//     "%cPerforming attack from:",
+//     "color: green;",
+//     attacker,
+//     "%cto:",
+//     "color: green;",
+//     target,
+//     "%cattack is:",
+//     "color: green;",
+//     attack
+//   )
+
+//   const newLogEntry: LogType = {
+//     message: `Performing attack. ${attacker?.icon}${attacker?.name} used ${attack.name} on ${attacker?.icon}${target?.name}`,
+//     timestamp: new Date().toISOString(),
+//     details: `#LFG`,
+//     source: "handleTargetedAttack",
+//   }
+//   logStep(newLogEntry, dispatch)
+
+//   // Retrieve controls
+//   const { attackerControls, targetControls, targetShowDamage } = getControls(
+//     attacker,
+//     target,
+//     isPlayerAttack,
+//     playerCreatureControlsRef,
+//     enemyCreatureControlsRef
+//   )
+
+//   if (!attackerControls || !targetControls || !targetShowDamage) {
+//     // this shouldn't happen but theoritecial could happen if the ref wasn't instantiated
+//     throw new Error("ref wasn't instantiated")
+//   }
+//   // Execute animations
+//   await performAttackAnimation(attackerControls, targetControls, isPlayerAttack)
+
+//   // Calculate damage and apply new statuses
+//   console.group(
+//     "%c🧮💻Damage Calculation & Show Damage",
+//     "color: purple; font-weight: bold;"
+//   )
+//   // new statuses
+//   // if the attack has a status, add it to the creature it
+//   // if there are any statuses on the creature that are applied before the attack,
+//   // apply them
+//   const { statuses, damage } = calculateDamageAndStatuses(attackPayload)
+
+//   //
+//   //now apply that damage
+
+//   console.log(
+//     "%c🏥Target's health after damage:",
+//     "color: red;",
+//     target.health - damage
+//   )
+//   console.groupEnd()
+//   const logEntry3: LogType = {
+//     message: `damage: ${damage} to be applied to ${target.name}`,
+//     timestamp: new Date().toISOString(),
+//     details: `Target's health: ${target.health}-${damage}=${target.health - damage}`,
+//     source: "performAttack 83",
+//   }
+//   logStep(logEntry3, attackPayload.dispatch)
+
+//   // Show damage on target
+//   showDamageOnTarget(targetShowDamage, damage, target.ID)
+//   // Update target's health and statuses
+//   const updatedCreatureObj = updateTargetState(target, damage, statuses)
+//   console.log(
+//     `updatedCreatureObj (with status) after attack`,
+//     updatedCreatureObj
+//   )
+//   const curSide = isPlayerAttack ? "computerCreatures" : "playerCreatures"
+//   const log4: LogType = {
+//     message: `before dispatch: ${updatedCreatureObj.name} has ${updatedCreatureObj.health} health.`,
+//     timestamp: new Date().toISOString(),
+//     details: `Updating ${curSide} with ${updatedCreatureObj.name}'s new health.`,
+//     source: "performAttack 99",
+//   }
+//   logStep(log4, attackPayload.dispatch)
+//   // Dispatch the update
+
+//   dispatch({
+//     type: "UPDATE_CREATURE",
+//     side: curSide,
+//     creature: updatedCreatureObj,
+//   })
+
+//   // ----- ----- ----- -----
+//   // The attack is done, do the postAttack proc's. But use the new data - not stale data
+//   const updatedAttackPayload = {
+//     ...attackPayload,
+//     target: updatedCreatureObj,
+//   }
+//   const procdAttackPayload = newFindRelevantProcs(updatedAttackPayload, "beforeAttack");
+//   // newFindRelevantProcs(updatedAttackPayload, "beforeAttack")
+
+//   console.groupEnd()
+// }
+
+import { AttackPayload, LogType, State } from "../../consts/types/types"
+import { logStep } from "../../debug/logUtils"
 import { getControls } from "../anim/getControls"
 import { performAttackAnimation } from "../anim/performAttackAnimation"
 import { showDamageOnTarget } from "../anim/showDamageOnTarget"
@@ -18,6 +141,7 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     playerCreatures,
     computerCreatures,
   } = attackPayload
+
   console.group("%c⚔️newPerformAttack", "color: blue; font-weight: bold;")
   console.log(
     "%cPerforming attack from:",
@@ -31,6 +155,14 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     attack
   )
 
+  const newLogEntry: LogType = {
+    message: `Performing attack. ${attacker?.icon}${attacker?.name} used ${attack.name} on ${attacker?.icon}${target?.name}`,
+    timestamp: new Date().toISOString(),
+    details: `#LFG`,
+    source: "handleTargetedAttack",
+  }
+  logStep(newLogEntry, dispatch)
+
   // Retrieve controls
   const { attackerControls, targetControls, targetShowDamage } = getControls(
     attacker,
@@ -41,9 +173,9 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   )
 
   if (!attackerControls || !targetControls || !targetShowDamage) {
-    // this shouldn't happen but theoritecial could happen if the ref wasn't instantiated
-    throw new Error("ref wasn't instantiated")
+    throw new Error("Controls not found")
   }
+
   // Execute animations
   await performAttackAnimation(attackerControls, targetControls, isPlayerAttack)
 
@@ -52,13 +184,7 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     "%c🧮💻Damage Calculation & Show Damage",
     "color: purple; font-weight: bold;"
   )
-  // new statuses
-  // if the attack has a status, add it to the creature it
-  // if there are any statuses on the creature that are applied before the attack,
-  // apply them
   const { statuses, damage } = calculateDamageAndStatuses(attackPayload)
-  //
-  //now apply that damage
 
   console.log(
     "%c🏥Target's health after damage:",
@@ -67,26 +193,82 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   )
   console.groupEnd()
 
+  const logEntry3: LogType = {
+    message: `damage: ${damage} to be applied to ${target.name}`,
+    timestamp: new Date().toISOString(),
+    details: `Target's health: ${target.health}-${damage}=${
+      target.health - damage
+    }`,
+    source: "performAttack 83",
+  }
+  logStep(logEntry3, dispatch)
+
   // Show damage on target
   showDamageOnTarget(targetShowDamage, damage, target.ID)
+
   // Update target's health and statuses
   const updatedCreatureObj = updateTargetState(target, damage, statuses)
   console.log(
     `updatedCreatureObj (with status) after attack`,
     updatedCreatureObj
   )
-  // Dispatch the update
-  dispatch({
-    type: "UPDATE_CREATURE",
-    side: isPlayerAttack ? "computerCreatures" : "playerCreatures",
-    creature: updatedCreatureObj,
-  })
-  // ----- ----- ----- -----
-  // The attack is done, do the postAttack proc's
-  newFindRelevantProcs(attackPayload, "beforeAttack")
+
+  const curSide = isPlayerAttack ? "computerCreatures" : "playerCreatures"
+  const log4: LogType = {
+    message: `before dispatch: ${updatedCreatureObj.name} has ${updatedCreatureObj.health} health.`,
+    timestamp: new Date().toISOString(),
+    details: `Updating ${curSide} with ${updatedCreatureObj.name}'s new health.`,
+    source: "performAttack 99",
+  }
+  logStep(log4, dispatch)
+
+  // Use a thunk to access state before and after the update
+  // dispatch((dispatch: React.Dispatch<Actions>, getState: () => State) => {
+  //   console.log("State before UPDATE_CREATURE:", getState())
+  //   inner({
+  //     type: "UPDATE_CREATURE",
+  //     creature: updatedCreatureObj,
+  //   })
+  //   console.log("State after UPDATE_CREATURE:", getState())
+  // })
+  // dispatch((innerDispatch: , getState) => {
+  //   console.log("State before UPDATE_CREATURE:", getState());
+
+  //   innerDispatch({
+  //     type: "UPDATE_CREATURE",
+  //     creature: updatedCreatureObj,
+  //   });
+
+  //   console.log("State after UPDATE_CREATURE:", getState());
+  // });
+
+  
+  // dispatch((innerDispatch, getState) => {
+  //   console.log("State before UPDATE_CREATURE:", getState())
+
+  //   // innerDispatch({
+  //   //   type: "UPDATE_CREATURE",
+  //   //   creature: updatedCreatureObj,
+  //   // })
+
+  //   console.log("State after UPDATE_CREATURE:", getState())
+  // })
+
+
+
+  // Now that creature is updated, proceed with post-attack logic
+  const updatedAttackPayload = {
+    ...attackPayload,
+    target: updatedCreatureObj,
+  }
+  const procdAttackPayload = newFindRelevantProcs(
+    updatedAttackPayload,
+    "beforeAttack"
+  )
 
   console.groupEnd()
 }
+
 // export const newOldPerformAttack = async (
 //   attacker,
 //   target,

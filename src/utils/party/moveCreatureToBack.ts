@@ -1,6 +1,6 @@
 //partyUtils instead?
 
-import { Creature } from "../../consts/types"
+import { Creature } from "../../consts/types/types"
 import { Dispatch } from "react"
 
 type Side = "playerCreatures" | "computerCreatures"

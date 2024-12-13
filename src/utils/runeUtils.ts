@@ -1,4 +1,4 @@
-import { Creature, Rune } from "../consts/types"
+import { Creature, Rune } from "../consts/types/types"
 
 export const applyRuneEffects = (
   creature: Creature,

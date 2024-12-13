@@ -1,5 +1,6 @@
 import { attacks } from "../../consts/attacks"
-import { AttackPayload, Creature } from "../../consts/types"
+import { AttackPayload, Creature, LogType } from "../../consts/types/types"
+import { createLogEntry, logStep } from "../../debug/logUtils"
 import { processEndOfTurn } from "../turn/processEndOfTurn"
 import { newPerformAttack } from "./performAttack"
 // import { pocketLog } from "../../pocketLog/utils"
@@ -75,6 +76,52 @@ export const handleTargetedAttack = async (
   // COMPUTER ATTACK:
   const alivePlayers = getAliveCreatures(state.playerCreatures)
   const aliveComputers = getAliveCreatures(state.computerCreatures)
+
+
+  dispatch({
+    type: "ADD_OBJ_TO_DEBUG_STEP",
+    payload: {
+      stepIndex: 0,
+      // stepTitle: "1. Attack Initialization",
+      obj: aliveComputers,
+    },
+  })
+  dispatch({
+    type: "ADD_OBJ_TO_DEBUG_STEP",
+    payload: {
+      stepIndex: 0,
+      obj: alivePlayers,
+    },
+  })
+
+
+
+
+
+  const newLogEntry: LogType = {
+    message: `So: ${attacker?.name} on ${target?.name}`,
+    timestamp: new Date().toISOString(),
+    details: `Does this look right?:`,
+    source: "handleTargetedAttack",
+  }
+
+  logStep(newLogEntry, dispatch)
+
+  const logEntry: LogType = {
+    message: `Attack by ${attacker?.name} on ${target?.name}`,
+    timestamp: new Date().toISOString(),
+    details: `Here we're expecting to see the attackPayload:`,
+    source: "handleTargetedAttack",
+    // details: `Attack details: ${JSON.stringify(attackPayload)}`,
+  }
+  dispatch({
+    type: "ADD_OBJ_TO_DEBUG_STEP",
+    payload: {
+      stepIndex: 0,
+      obj: logEntry,
+    },
+  })
+
   const bothTeamsAlive = alivePlayers.length > 0 && aliveComputers.length > 0
   if (bothTeamsAlive) {
     const computerAttacker = aliveComputers[0] //{ comp: 0 }

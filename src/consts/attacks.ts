@@ -1,4 +1,4 @@
-import { Attack } from "./types"
+import { Attack } from "./types/types"
 
 export const attacks: { [key: string]: Attack } = {
   slash: {

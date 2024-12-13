@@ -1,4 +1,5 @@
 import { RefObject } from "react"
+import { Actions } from "./actionTypes"
 
 export type Rune = {
   id: number
@@ -22,16 +23,20 @@ export type Mod = {
 }
 
 export type AttackPayload = {
-  attacker: Creature // Replace 'any' with the actual type
-  target: Creature // Replace 'any' with the actual type
+  attacker: Creature 
+  target: Creature
   isPlayerAttack: boolean
   playerCreatureControlsRef: RefObject<any> // Replace 'any' with the actual type
   enemyCreatureControlsRef: RefObject<any> // Replace 'any' with the actual type
   attack: Attack // Replace 'any' with the actual type
-  dispatch: React.Dispatch<any> // Replace 'any' with the actual action type
-  playerCreatures: Creature[] // Replace 'any' with the actual creature type
-  computerCreatures: Creature[] // Replace 'any' with the actual creature type
+  // dispatch: React.Dispatch<any>
+  dispatch: EnhancedDispatch
+  playerCreatures: Creature[]
+  computerCreatures: Creature[]
 }
+export type Thunk<S, D> = (dispatch: D, getState: () => S) => void;
+
+export type EnhancedDispatch = React.Dispatch<Actions | Thunk<State, React.Dispatch<Actions>>>
 
 export type Attack = {
   template: string
@@ -133,7 +138,7 @@ export type State = {
   modals: {
     replaceCreatureModal: any | null // Replace 'any' with the actual type if available
   }
-  debugObj: any
+  debugObj: DebugObj
 }
 
 export type Level = {
@@ -147,3 +152,42 @@ export type LevelEffect = {
   name: string
   effect: string
 }
+export type LogType = {
+  message: string
+  timestamp: string
+  source: string
+  details?: string
+}
+
+export type DebugObj = {
+  steps: Array<{
+    title: string
+    objs: (Creature | StatusEffect | LogType)[]
+    details: any
+  }>
+}
+
+// debugObj: {
+//   steps: [
+//     {
+//       title: "1. Attack Initialization",
+//       objs: [
+//         // attack
+//         // creature
+//         // creature
+//         ...structuredClone(createUniqueParty(basePlayerCreatures, "player")),
+//         {
+//           name: "Poison",
+//           type: "debuff",
+//           timing: "afterAttack",
+//           duration: 3,
+//           effectFuncName: "applyPoison",
+//           chance: 1,
+//           icon: "🧪",
+//           id: `POISON`,
+//           notes: "Deals damage over time.",
+//         },
+//       ],
+//       details: {},
+//     },
+//     {

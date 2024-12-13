@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { STATUS_EFFECTS } from "../../consts/statuses";
-import { Attack } from "../../consts/types";
+import { Attack } from "../../consts/types/types";
 
 // Define color classes for each attack type
 

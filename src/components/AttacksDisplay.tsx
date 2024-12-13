@@ -1,5 +1,5 @@
 import React from "react";
-import { Attack } from "../consts/types";
+import { Attack } from "../consts/types/types";
 import { STATUS_EFFECTS } from "../consts/statuses";
 
 function AttacksDisplay({ attacks }: { attacks: Attack[] }) {

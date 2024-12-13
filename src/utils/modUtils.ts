@@ -11,7 +11,7 @@
 //     },
 
 import { STATUS_EFFECTS } from "../consts/statuses"
-import { Creature, Enhancement, Mod } from "../consts/types"
+import { Creature, Enhancement, Mod } from "../consts/types/types"
 import { applyStatus } from "./moves/attackUtils"
 
 //   });

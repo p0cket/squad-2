@@ -1,4 +1,4 @@
-import { Creature, StatusEffect } from "../../consts/types"
+import { Creature, StatusEffect } from "../../consts/types/types"
 
 export const updateTargetState = (
   target: Creature,
