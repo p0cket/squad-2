@@ -1,6 +1,13 @@
 import { shakeTarget } from "../components/animations/attackAnimations"
+import { logStep } from "../debug/logUtils"
 import { getCreatureControlsById } from "../utils/anim/getControls"
-import { AttackPayload, Creature, LogType, StatusEffect } from "./types/types"
+import {
+  AttackPayload,
+  Creature,
+  LogType,
+  PushLogType,
+  StatusEffect,
+} from "./types/types"
 
 export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
   POISON: {
@@ -136,8 +143,45 @@ export const applyBurn = async (
   console.log(
     `Applying ${statusEffectObj.name} to ${creature.name}, reducing health by 5`
   )
+
   let updatedCreature = { ...creature }
-  updatedCreature.health = Math.max(0, creature.health - 5)
+  updatedCreature.health = Math.max(0, updatedCreature.health - 5)
+
+  //1. PROBABLY THIS THREE TIMES (Anim shake, Anim dmg, Dispatch Update)
+  const burnLog2: PushLogType = {
+    message: `applyBurn: updatedCreature ${updatedCreature?.name} updated with burn damage (-5) ${updatedCreature.health}`,
+    timestamp: new Date().toISOString(),
+    action: {
+      type: "HANDLE_CREATURE_UPDATE", //is it more than just the health?
+      payload: { updatedCreature }, //also attackPayload
+    },
+    source: "statuses 157",
+  }
+  // @ts-ignore
+  logStep(burnLog2, dispatch)
+  //2. PROBABLY THIS THREE TIMES (Anim shake, Anim dmg, Dispatch Update)
+  const burnLog3: PushLogType = {
+    message: `applyBurn: updatedCreature ${updatedCreature?.name} updated with burn damage (-5) ${updatedCreature.health}`,
+    timestamp: new Date().toISOString(),
+    action: {
+      type: "HANDLE_ANIM_BURN_SHAKE", //is it more than just the health?
+      payload: { updatedCreature }, //also attackPayload
+    },
+    source: "statuses 157",
+  }
+  // @ts-ignore
+  logStep(burnLog3, dispatch)
+  const newPush2: PushLogType = {
+    message: `Animate applyBurn: on ${updatedCreature?.name}`,
+    timestamp: new Date().toISOString(),
+    action: {
+      type: "HANDLE_ANIM_BURN_DMG", //is it more than just the health?
+      payload: { updatedCreature }, //also attackPayload
+    },
+    source: "statuses 178",
+  }
+  // @ts-ignore
+  logStep(newPush2, dispatch)
   if (!dispatch) {
     console.log("applyBurn: No dispatch", attackPayload)
     return updatedCreature
@@ -148,6 +192,7 @@ export const applyBurn = async (
   }
   // Queue of these events. pop. The specific UI updates need to happen.
   // a queue of promises
+
   const { playerCreatureControlsRef, enemyCreatureControlsRef } = attackPayload
   const targetControls = await getCreatureControlsById(
     creature.ID,
@@ -172,7 +217,7 @@ export const applyBurn = async (
     },
   })
 
-  // have something that updates both the state, 
+  // have something that updates both the state,
   // and dispatches at the same time.
   dispatch({
     type: "UPDATE_CREATURE",

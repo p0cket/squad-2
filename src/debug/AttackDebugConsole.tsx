@@ -3,8 +3,10 @@ import { useStateContext } from "../GameContext"
 import DisplayCreatureObj from "./DisplayCreatureObj"
 import DisplayStatusEffectObj from "./DisplayStatusEffectObj"
 import { AnimatePresence, motion } from "framer-motion"
-import { LogType } from "../consts/types/types"
+import { LogType, PushLogType } from "../consts/types/types"
 import Log from "./Log"
+import DisplayUpdateData from "./DisplayUpdateData"
+import PushLog from "./PushLog"
 
 const variants = {
   hidden: { opacity: 0, y: -20 },
@@ -109,7 +111,6 @@ const POSITIONS = [
 
 const SIZES = ["normal", "compact", "expanded"]
 
-
 interface Creature {
   name: string
   icon: string
@@ -135,6 +136,10 @@ interface StatusEffect {
   notes: string
   [key: string]: any
 }
+
+type UpdateData = any
+
+type PushLog = any
 
 const AttackDebugConsole = ({
   // const AttackDebugConsole: React.FC<DebugConsoleProps> = ({
@@ -181,7 +186,6 @@ const AttackDebugConsole = ({
     compact: "w-64 max-h-[300px]",
     expanded: "w-[500px] max-h-[98vh]",
     // expanded: "w-[500px] max-h-[950px]",
-
   }
 
   const myObj = [
@@ -446,50 +450,78 @@ const AttackDebugConsole = ({
       <div className="mb-2">
         <h3 className="text-lg font-semibold ">{currentStepData.title}</h3>
         <div className="bg-gray-700 p-1 rounded">
-        <AnimatePresence>
-          {currentStepData.objs.map(
-            (obj: Creature | StatusEffect | LogType, index: number) => {
-              const checkDisplayType = (value: Creature | StatusEffect | LogType) => {
-                console.log(`checkDisplayType Reached: value`, value)
-                if ((value as Creature).startingAttacks) {
-                  return "Creature"
+          <AnimatePresence>
+            {currentStepData.objs.map(
+              (
+                obj: Creature | StatusEffect | LogType | UpdateData | PushLog,
+                index: number
+              ) => {
+                const checkDisplayType = (
+                  value:
+                    | Creature
+                    | StatusEffect
+                    | LogType
+                    | PushLogType
+                    | UpdateData
+                    | PushLog
+                ) => {
+                  console.log(`checkDisplayType Reached: value`, value)
+                  if ((value as Creature).startingAttacks) {
+                    return "Creature"
+                  }
+                  if ((value as StatusEffect).effectFuncName) {
+                    return "StatusEffect"
+                  }
+                  // Add displayUpdateData here
+                  if ((value as PushLogType).action) {
+                    console.log(`PushLog reached`)
+                    return "PushLog"
+                  }
+                  if ((value as LogType).source) {
+                    console.log(`Log Reached: value`, value)
+                    return "Log"
+                  }
+                  
                 }
-                if ((value as StatusEffect).effectFuncName) {
-                  return "StatusEffect"
-                }
-                if ((value as LogType).source) {
-                  console.log(`Log Reached: value`, value)
-                  return "Log"
-                }
-              }
-              const displayType = checkDisplayType(obj)
+                const displayType = checkDisplayType(obj)
 
-              return (
-                <motion.div
-                  key={index}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  variants={variants}
-                  className="mb-1"
-                >
-                  {displayType === "Creature" && (
-                    //@ts-ignore
-                    <DisplayCreatureObj obj={obj} num={index} />
-                  )}
-                  {displayType === "StatusEffect" && (
-                    //@ts-ignore
-                    <DisplayStatusEffectObj obj={obj} num={index} />
-                  )}
-                  {displayType === "Log" && (
-                    //@ts-ignore
-                    <Log obj={obj} num={index} />
-                  )}
-                </motion.div>
-              )
-            }
-          )}
-        </AnimatePresence></div>
+                return (
+                  <motion.div
+                    key={index}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    variants={variants}
+                    className="mb-1"
+                  >
+                    {displayType === "Creature" && (
+                      //@ts-ignore
+                      <DisplayCreatureObj obj={obj} num={index} />
+                    )}
+                    {displayType === "StatusEffect" && (
+                      //@ts-ignore
+                      <DisplayStatusEffectObj obj={obj} num={index} />
+                    )}
+                    {/* @ts-ignore */}
+                    {displayType === "UpdateData" && (
+                      //@ts-ignore
+                      <DisplayUpdateData obj={obj} num={index} />
+                    )}
+                    {displayType === "Log" && (
+                      //@ts-ignore
+                      <Log obj={obj} num={index} />
+                    )}
+                    {/* @ts-ignore */}
+                    {displayType === "PushLog" && (
+                      //@ts-ignore
+                      <PushLog obj={obj} num={index} />
+                    )}
+                  </motion.div>
+                )
+              }
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       <div className="flex justify-between">

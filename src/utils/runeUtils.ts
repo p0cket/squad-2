@@ -18,6 +18,7 @@ export const applyRuneEffects = (
         modifiedCreature.maxHealth = (modifiedCreature.maxHealth || 0) + value
         modifiedCreature.health = (modifiedCreature.health || 0) + value
       } else if (typeof modifiedCreature[stat] === "number") {
+        // @ts-ignore
         (modifiedCreature[stat] as number) = (modifiedCreature[stat] || 0) + value;
       }
     }

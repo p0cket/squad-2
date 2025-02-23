@@ -158,6 +158,13 @@ export type LogType = {
   source: string
   details?: string
 }
+export type PushLogType = {
+  message: string
+  timestamp: string
+  source: string
+  action: any
+}
+
 
 export type DebugObj = {
   steps: Array<{

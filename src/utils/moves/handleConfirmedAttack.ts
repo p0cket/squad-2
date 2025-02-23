@@ -1,5 +1,5 @@
 import { attacks } from "../../consts/attacks"
-import { AttackPayload, Creature, LogType } from "../../consts/types/types"
+import { AttackPayload, Creature, LogType, PushLogType } from "../../consts/types/types"
 import { createLogEntry, logStep } from "../../debug/logUtils"
 import { processEndOfTurn } from "../turn/processEndOfTurn"
 import { newPerformAttack } from "./performAttack"
@@ -106,6 +106,15 @@ export const handleTargetedAttack = async (
   }
 
   logStep(newLogEntry, dispatch)
+
+  // const newPushLogEntry: PushLogType = {
+  //   message: `So: ${attacker?.name} on ${target?.name}`,
+  //   timestamp: new Date().toISOString(),
+  //   payload: `Does this look right in green?:`,
+  //   source: "handleTargetedAttack",
+  // }
+
+  // logStep(newPushLogEntry, dispatch)
 
   const logEntry: LogType = {
     message: `Attack by ${attacker?.name} on ${target?.name}`,

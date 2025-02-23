@@ -1,28 +1,30 @@
 import React from "react"
-import { LogType } from "../consts/types/types"
+import { PushLogType } from "../consts/types/types"
 
 interface LogProps {
-  obj: LogType
+  obj: PushLogType
   index: number
 }
-const Log: React.FC<LogProps> = ({ obj, index }) => {
-  const { message, timestamp, source, details } = obj
-  // console.log(index) // Use index to avoid unused variable error
+const PushLog: React.FC<LogProps> = ({ obj, index }) => {
+//   const { message, timestamp, source, details } = obj
+const { message, timestamp, source, action } = obj
+
+  console.log(index) // Use index to avoid unused variable error
 
   return (
-    <div className="p-1 bg-gray-700 rounded-lg mb-1 shadow-md">
+    <div className="p-1 bg-green-900 rounded-lg mb-1 shadow-md border-purple-800 border-x-2">
       <div className="flex justify-between items-stretch">
         <p className="text-sm text-white mr-1">{message}</p>{" "}
         {source && (
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-green-500">
             <p>src: {source}</p>
           </div>
         )}
       </div>
       <div className="flex justify-between items-stretch">
-        {details && (
+        {action && (
           <div className="text-xs text-gray-400">
-            <span>{details}</span>
+            <span>Payload: {JSON.stringify(action)}</span>
           </div>
         )}{" "}
       </div>
@@ -34,4 +36,4 @@ const Log: React.FC<LogProps> = ({ obj, index }) => {
   )
 }
 
-export default Log
+export default PushLog

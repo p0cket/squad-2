@@ -120,7 +120,12 @@
 //   console.groupEnd()
 // }
 
-import { AttackPayload, LogType, State } from "../../consts/types/types"
+import {
+  AttackPayload,
+  LogType,
+  PushLogType,
+  State,
+} from "../../consts/types/types"
 import { logStep } from "../../debug/logUtils"
 import { getControls } from "../anim/getControls"
 import { performAttackAnimation } from "../anim/performAttackAnimation"
@@ -176,6 +181,18 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     throw new Error("Controls not found")
   }
 
+  const newPushLogEntry: PushLogType = {
+    message: `Animate ${attacker?.name} attack on ${target?.name}`,
+    timestamp: new Date().toISOString(),
+    action: {
+      type: "HANDLE_ATTACK_ANIMATION",
+      payload: { attacker, target }, //also attackPayload
+      //  await performAttackAnimation(attackerControls, targetControls, isPlayerAttack)
+    },
+    source: "performAttack 192",
+  }
+
+  logStep(newPushLogEntry, dispatch)
   // Execute animations
   await performAttackAnimation(attackerControls, targetControls, isPlayerAttack)
 
@@ -193,13 +210,27 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   )
   console.groupEnd()
 
+  const newAnim2: PushLogType = {
+    message: `Animate ${target?.name} health loss of ${damage} - ${
+      target?.health
+    } = ${target.health - damage}.`,
+    timestamp: new Date().toISOString(),
+    action: {
+      type: "HANDLE_DAMAGE_ANIMATION",
+      payload: { attacker, target }, //also attackPayload
+    },
+    source: "performAttack 222",
+  }
+
+  logStep(newAnim2, dispatch)
+
   const logEntry3: LogType = {
     message: `damage: ${damage} to be applied to ${target.name}`,
     timestamp: new Date().toISOString(),
     details: `Target's health: ${target.health}-${damage}=${
       target.health - damage
     }`,
-    source: "performAttack 83",
+    source: "performAttack 233",
   }
   logStep(logEntry3, dispatch)
 
@@ -212,6 +243,17 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     `updatedCreatureObj (with status) after attack`,
     updatedCreatureObj
   )
+
+  const newPush2: PushLogType = {
+    message: `updatedCreatureObj ${updatedCreatureObj?.name} updated with "updateTargetState`,
+    timestamp: new Date().toISOString(),
+    action: {
+      type: "HANDLE_CREATURE_UPDATE", //is it more than just the health?
+      payload: { updatedCreatureObj }, //also attackPayload
+    },
+    source: "performAttack 254",
+  }
+  logStep(newPush2, dispatch)
 
   const curSide = isPlayerAttack ? "computerCreatures" : "playerCreatures"
   const log4: LogType = {
@@ -242,7 +284,6 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   //   console.log("State after UPDATE_CREATURE:", getState());
   // });
 
-  
   // dispatch((innerDispatch, getState) => {
   //   console.log("State before UPDATE_CREATURE:", getState())
 
@@ -254,13 +295,12 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   //   console.log("State after UPDATE_CREATURE:", getState())
   // })
 
-
-
   // Now that creature is updated, proceed with post-attack logic
   const updatedAttackPayload = {
     ...attackPayload,
     target: updatedCreatureObj,
   }
+
   const procdAttackPayload = newFindRelevantProcs(
     updatedAttackPayload,
     "beforeAttack"
