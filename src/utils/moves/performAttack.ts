@@ -36,7 +36,7 @@
 //     message: `Performing attack. ${attacker?.icon}${attacker?.name} used ${attack.name} on ${attacker?.icon}${target?.name}`,
 //     timestamp: new Date().toISOString(),
 //     details: `#LFG`,
-//     source: "handleTargetedAttack",
+//     source: "runTurn",
 //   }
 //   logStep(newLogEntry, dispatch)
 
@@ -164,7 +164,7 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     message: `Performing attack. ${attacker?.icon}${attacker?.name} used ${attack.name} on ${attacker?.icon}${target?.name}`,
     timestamp: new Date().toISOString(),
     details: `#LFG`,
-    source: "handleTargetedAttack",
+    source: "runTurn",
   }
   logStep(newLogEntry, dispatch)
 

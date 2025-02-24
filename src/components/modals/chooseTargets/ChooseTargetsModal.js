@@ -4,7 +4,7 @@ import CompactCreatureList from "../../battle/CompactCreatureList";
 import { Box, Modal } from "@mui/material";
 import { modalStyle } from "../../../consts/consts";
 import AttackDetails from "../../battle/AttackDetails";
-import { handleTargetedAttack } from "../../../utils/moves/handleConfirmedAttack";
+import { runTurn } from "../../../utils/moves/handleConfirmedAttack";
 
 export default function ChooseTargetsModal({
   attack,
@@ -62,7 +62,7 @@ export default function ChooseTargetsModal({
     };
     console.log("Executing attack with payload:", attackPayload);
     toggleChooseTargetsModal();
-    handleTargetedAttack(state, attackPayload);
+    runTurn(state, attackPayload);
   };
 
   return (

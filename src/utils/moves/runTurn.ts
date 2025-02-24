@@ -6,6 +6,7 @@ import {
   PushLogType,
 } from "../../consts/types/types"
 import { logStep } from "../../debug/logUtils"
+import { runLoggingNonsense } from "../../debug/runLoggingNonsese"
 import {
   checkAndHandleGameOver,
   checkGameEndConditionStatus,
@@ -14,6 +15,7 @@ import {
 } from "../battle/checkAndHandleGameOver"
 import { processEndOfTurn } from "../turn/processEndOfTurn"
 import { checkTeamsAlive } from "./checkTeamsAlive"
+import { createComputerAttackPayload } from "./createComputerAttackPayload"
 import { newPerformAttack } from "./performAttack"
 
 export const getAliveCreatures = (creatures: Creature[]) => {
@@ -28,7 +30,7 @@ export const runTurn = async (
   attackPayload: AttackPayload
 ) => {
   if (!attackPayload) {
-    console.error("No attackPayload provided for handleTargetedAttack")
+    console.error("No attackPayload provided for runTurn")
     return
   }
   const {
@@ -57,80 +59,28 @@ export const runTurn = async (
     playerCreatures,
     computerCreatures
   )
-
+  // maybe throw this into the newPerformAttack function at the end, seems part of it
   const teamsAliveStatus = checkTeamsAlive(playerCreatures, computerCreatures)
-
   //before the attack, we should see if we end the game
   handleCheckingIfBattleEnds(teamsAliveStatus, dispatch)
-  // Above replaces all of below:
-  // const teamsAliveStatus = checkTeamsAlive(playerCreatures, computerCreatures)
-  // const gameEndStatus = checkGameEndConditionStatus(
-  //   playerCreatures,
-  //   computerCreatures
-  // )
-  // handleGameEnd(gameEndStatus, dispatch)
 
   // COMPUTER ATTACK:
-
-  dispatch({
-    type: "ADD_OBJ_TO_DEBUG_STEP",
-    payload: {
-      stepIndex: 0,
-      // stepTitle: "1. Attack Initialization",
-      obj: teamsAliveStatus.aliveComputerCreatures,
-    },
-  })
-  dispatch({
-    type: "ADD_OBJ_TO_DEBUG_STEP",
-    payload: {
-      stepIndex: 0,
-      obj: teamsAliveStatus.alivePlayerCreatures,
-    },
+  runLoggingNonsense({
+    teamsAliveStatus,
+    attacker,
+    target,
+    dispatch,
   })
 
-  const newLogEntry: LogType = {
-    message: `So: ${attacker?.name} on ${target?.name}`,
-    timestamp: new Date().toISOString(),
-    details: `Does this look right?:`,
-    source: "handleTargetedAttack",
-  }
-
-  logStep(newLogEntry, dispatch)
-
-  const logEntry: LogType = {
-    message: `Attack by ${attacker?.name} on ${target?.name}`,
-    timestamp: new Date().toISOString(),
-    details: `Here we're expecting to see the attackPayload:`,
-    source: "handleTargetedAttack",
-    // details: `Attack details: ${JSON.stringify(attackPayload)}`,
-  }
-  dispatch({
-    type: "ADD_OBJ_TO_DEBUG_STEP",
-    payload: {
-      stepIndex: 0,
-      obj: logEntry,
-    },
-  })
-
-  //hmm? Why is this the logic?
-  const computerAttacker = teamsAliveStatus.aliveComputerCreatures[0] //{ comp: 0 }
-  const computersTarget = teamsAliveStatus.alivePlayerCreatures[0] //{ user: 0 }
-  console.log(
-    "Computer attacking player: Computer Attacker details & Player Target details before attack:",
-    computerAttacker,
-    computersTarget
-  )
-  const computerAttackPayload: AttackPayload = {
-    attacker: computerAttacker,
-    target: computersTarget, //these should rly be indexes
-    playerCreatures: state.playerCreatures,
-    computerCreatures: state.computerCreatures,
-    isPlayerAttack: false, //isPlayer: false -> so computer
+  // Create and use the computer's attack payload
+  const computerAttackPayload = createComputerAttackPayload(
+    teamsAliveStatus.aliveComputerCreatures,
+    teamsAliveStatus.alivePlayerCreatures,
+    state,
     playerCreatureControlsRef,
     enemyCreatureControlsRef,
-    attack: attacks.fireball, // attack. make a comp select a random attack they have
-    dispatch,
-  }
+    dispatch
+  )
 
   try {
     await newPerformAttack(computerAttackPayload)

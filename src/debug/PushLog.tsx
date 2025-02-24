@@ -41,7 +41,7 @@ export default PushLog
   //   message: `So: ${attacker?.name} on ${target?.name}`,
   //   timestamp: new Date().toISOString(),
   //   payload: `Does this look right in green?:`,
-  //   source: "handleTargetedAttack",
+  //   source: "runTurn",
   // }
 
   // logStep(newPushLogEntry, dispatch)

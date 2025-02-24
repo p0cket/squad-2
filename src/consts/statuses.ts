@@ -206,7 +206,7 @@ export const applyBurn = async (
     message: `dispatching burn stuff ☄️. ${attackPayload.attacker?.name} on ${creature.name}`,
     timestamp: new Date().toISOString(),
     details: `Here we're expecting to see the attackPayload:`,
-    source: "handleTargetedAttack",
+    source: "runTurn",
     // details: `Attack details: ${JSON.stringify(attackPayload)}`,
   }
   dispatch({
