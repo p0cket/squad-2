@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { attacks } from "../../consts/attacks";
-import ChooseTargets from "../modals/ChooseTargetsModal";
+import ChooseTargets from "../modals/chooseTargets/ChooseTargetsModal";
 import AttackCard from "./AttackCard";
 import CardModal from "./CardModal";
-import ChooseTargetsModal from "../modals/ChooseTargetsModal";
+import ChooseTargetsModal from "../modals/chooseTargets/ChooseTargetsModal";
 import { STATUS_EFFECTS } from "../../consts/statuses";
 
 const ClassicHand = ({

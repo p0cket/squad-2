@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState, FC } from "react";
 import { motion, useAnimationControls } from "framer-motion";
 import CreatureModal from "./modals/CreatureModal";
@@ -7,10 +8,10 @@ import { Creature as CreatureType } from "../consts/types/types";
 import { ControlDetails } from "../hooks/useCreatureControls";
 
 type CreatureProps = {
-  position: unknown,
-  isPlayer: boolean,
-  setCreatureControls: (controls: ControlDetails) => void,
-  creatureObj: CreatureType,
+  position: unknown;
+  isPlayer: boolean;
+  setCreatureControls: (controls: ControlDetails) => void;
+  creatureObj: CreatureType;
 };
 
 const Creature: FC<CreatureProps> = ({
@@ -29,7 +30,11 @@ const Creature: FC<CreatureProps> = ({
   const handleCloseModal = () => setOpenModal(false);
   const [selectNewActive, setSelectNewActive] = useState(false);
   // Function to handle new active creature selection
-  const handleSelectNewActive = (newActiveCreatureID) => {
+  const handleSelectNewActive = (
+    newActiveCreatureID,
+    dispatch,
+    setSelectNewActive
+  ) => {
     setSelectNewActive(false);
     dispatch({
       type: "SWAP_CREATURE_POSITION",
@@ -45,38 +50,19 @@ const Creature: FC<CreatureProps> = ({
       setSelectNewActive(true); // Trigger modal if the active creature is dead
     }
   }, [health, isPlayer, position]);
-  // Register controls when the component mounts
-  // useEffect(() => {
-  //   if (setCreatureControls) {
-  //     // console.log(
-  //     //   `Setting creature controls for ID: ${ID}, Damage amount before reset:`,
-  //     //   damageAmount
-  //     // );
-  //     setCreatureControls(ID, {
-  //       controls,
-  //       showDamage: (damage) => {
-  //         console.log("showDamage received damage:", damage);
-  //         // do we reset this by putting a
-  //         // timer and setDamageAmount in 1 second to null?
-  //         setDamageAmount(damage);
-  //       },
-  //       creature: creatureObj, // Ensure full creature object is passed
-  //     });
-  //   }
-  // }, [ID, controls, setCreatureControls, creatureObj]);
-  // In Creature component
+  // Register controls when the component mounts ?? There was code here
   useEffect(() => {
     if (setCreatureControls) {
       setCreatureControls(
         ID,
         {
           controls,
-          showDamage: (damage) => {
+          showDamage: (damage: number) => {
             setDamageAmount(damage);
           },
           creature: creatureObj,
         },
-        isPlayer // Pass the isPlayer flag here
+        isPlayer
       );
     }
   }, [ID, controls, setCreatureControls, creatureObj, isPlayer]);
@@ -85,15 +71,15 @@ const Creature: FC<CreatureProps> = ({
     <>
       <ReplaceCreatureModal
         open={selectNewActive}
-        onSelect={handleSelectNewActive}
+        // onSelect pass in the newActiveCreatID and dispatch and setSelectNewActive
+        // onSelect={() handleSelectNewActive(newActiveCreatureID, dispatch, setSelectNewActive)}
+        // prev was:
+        // onSelect={handleSelectNewActive}
+        //--
         // availableCreatures={getAliveCreatures(state.playerCreatures)}
       />
       <motion.div
-        // called.
-        // state health setHealth
-        // useEffect( q.HealthChange(healthAmount, setHealth, health), [health])
-        // in there: setHealth(health + healthAmount)
-        // change health func.
+        // called. state health setHealth | useEffect( q.HealthChange(healthAmount, setHealth, health), [health]) | in there: setHealth(health + healthAmount) | change health func.
         className={`flex flex-col items-center ${
           health <= 0 ? "opacity-50" : ""
         }`}

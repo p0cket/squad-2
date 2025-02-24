@@ -23,7 +23,7 @@ export type Mod = {
 }
 
 export type AttackPayload = {
-  attacker: Creature 
+  attacker: Creature
   target: Creature
   isPlayerAttack: boolean
   playerCreatureControlsRef: RefObject<any> // Replace 'any' with the actual type
@@ -34,9 +34,11 @@ export type AttackPayload = {
   playerCreatures: Creature[]
   computerCreatures: Creature[]
 }
-export type Thunk<S, D> = (dispatch: D, getState: () => S) => void;
+export type Thunk<S, D> = (dispatch: D, getState: () => S) => void
 
-export type EnhancedDispatch = React.Dispatch<Actions | Thunk<State, React.Dispatch<Actions>>>
+export type EnhancedDispatch = React.Dispatch<
+  Actions | Thunk<State, React.Dispatch<Actions>>
+>
 
 export type Attack = {
   template: string
@@ -165,7 +167,6 @@ export type PushLogType = {
   action: any
 }
 
-
 export type DebugObj = {
   steps: Array<{
     title: string
@@ -173,7 +174,13 @@ export type DebugObj = {
     details: any
   }>
 }
-
+export type TeamsAliveStatus = {
+  alivePlayerCreatures: Creature[]
+  aliveComputerCreatures: Creature[]
+  playerTeamAlive: boolean
+  compTeamAlive: boolean
+  bothTeamsAlive: boolean
+}
 // debugObj: {
 //   steps: [
 //     {

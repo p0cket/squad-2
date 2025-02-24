@@ -37,3 +37,12 @@ const { message, timestamp, source, action } = obj
 }
 
 export default PushLog
+  // const newPushLogEntry: PushLogType = {
+  //   message: `So: ${attacker?.name} on ${target?.name}`,
+  //   timestamp: new Date().toISOString(),
+  //   payload: `Does this look right in green?:`,
+  //   source: "handleTargetedAttack",
+  // }
+
+  // logStep(newPushLogEntry, dispatch)
+

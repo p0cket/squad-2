@@ -26,10 +26,17 @@ const Battle = () => {
   // Apply end-of-turn effects using the custom hook
   // useEndOfTurnEffects(state, dispatch)
 
+  // change this to be triggered and not useEffect
   useEffect(() => {
+    const { mp, mpPerTurn, maxMp } = state;
+    const newMp = Math.min(mp + mpPerTurn, maxMp);
+    console.log(
+      `Battle useEffect: Math.min(mp ${mp} + mpPerTurn ${mpPerTurn}, maxMp ${maxMp}`,
+      newMp
+    );
     dispatch({
       type: "UPDATE_MP",
-      mp: Math.min(state.mp + state.mpPerTurn, state.maxMp),
+      mp: newMp,
     });
   }, [state.turn, dispatch, state.mp, state.mpPerTurn, state.maxMp]);
 

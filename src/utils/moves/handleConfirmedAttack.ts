@@ -3,11 +3,13 @@ import { AttackPayload, Creature, LogType, PushLogType } from "../../consts/type
 import { createLogEntry, logStep } from "../../debug/logUtils"
 import { processEndOfTurn } from "../turn/processEndOfTurn"
 import { newPerformAttack } from "./performAttack"
-// import { pocketLog } from "../../pocketLog/utils"
 export const getAliveCreatures = (creatures: Creature[]) => {
   return creatures.filter((c) => c.health > 0)
 }
+
 // from chooseTargetsModal.js use when someone selects a target and runs the attack
+
+// this func shouldn't care if you're the player or the computer, it just runs the attack
 export const handleTargetedAttack = async (
   state: any,
   attackPayload: AttackPayload
@@ -31,36 +33,6 @@ export const handleTargetedAttack = async (
     `⚔️⚔️⚔️running attack: ${attacker?.name} uses ${attack?.name} on ${target?.name}. AttackPayload:`,
     attackPayload
   )
-  //   const imageUrl = "https://picsum.photos/150" // Replace the dimensions as needed
-  //   console.log(
-  //     "%c ",
-  //     `font-size: 0; padding: 75px; background: url(${imageUrl}) no-repeat center/contain;`
-  //   )
-  //   // Fetch the image as a Blob and convert it to a Base64 data URI
-  //   fetch("https://picsum.photos/150")
-  //     .then((response) => response.blob())
-  //     .then((blob) => {
-  //       const reader = new FileReader()
-  //       reader.onloadend = function () {
-  //         const base64Image = reader.result
-  //         console.log(
-  //           "%c ",
-  //           `font-size: 0; padding: 75px; background: url(${base64Image}) no-repeat center/contain;`
-  //         )
-  //       }
-  //       reader.readAsDataURL(blob)
-  //     })
-  //     .catch((error) => console.error("Error loading image:", error))
-  //   const imageUrl2 = "https://picsum.photos/150"
-  //   console.log(
-  //     "%c ",
-  //     `font-size: 0; background: url(${imageUrl2}) no-repeat center/contain; width: 150px; height: 150px;`
-  //   )
-  //   const imageUrl3 = 'https://picsum.photos/150';
-  // console.log(
-  //   '%c ',
-  //   `font-size: 0; padding: 0; margin: 0; line-height: 0; background: url(${imageUrl3}) no-repeat center/contain; width: 150px; height: 150px; display: block;`
-  // );
   // PLAYER ATTACK:
   try {
     await newPerformAttack(attackPayload)
@@ -76,7 +48,8 @@ export const handleTargetedAttack = async (
   // COMPUTER ATTACK:
   const alivePlayers = getAliveCreatures(state.playerCreatures)
   const aliveComputers = getAliveCreatures(state.computerCreatures)
-
+  // both teams have to be alive, no?
+  // const bothTeamsAlive = alivePlayers.length > 0 && aliveComputers.length > 0
 
   dispatch({
     type: "ADD_OBJ_TO_DEBUG_STEP",
@@ -94,10 +67,6 @@ export const handleTargetedAttack = async (
     },
   })
 
-
-
-
-
   const newLogEntry: LogType = {
     message: `So: ${attacker?.name} on ${target?.name}`,
     timestamp: new Date().toISOString(),
@@ -106,15 +75,6 @@ export const handleTargetedAttack = async (
   }
 
   logStep(newLogEntry, dispatch)
-
-  // const newPushLogEntry: PushLogType = {
-  //   message: `So: ${attacker?.name} on ${target?.name}`,
-  //   timestamp: new Date().toISOString(),
-  //   payload: `Does this look right in green?:`,
-  //   source: "handleTargetedAttack",
-  // }
-
-  // logStep(newPushLogEntry, dispatch)
 
   const logEntry: LogType = {
     message: `Attack by ${attacker?.name} on ${target?.name}`,
@@ -131,8 +91,6 @@ export const handleTargetedAttack = async (
     },
   })
 
-  const bothTeamsAlive = alivePlayers.length > 0 && aliveComputers.length > 0
-  if (bothTeamsAlive) {
     const computerAttacker = aliveComputers[0] //{ comp: 0 }
     const computersTarget = alivePlayers[0] //{ user: 0 }
     console.log(
@@ -158,7 +116,8 @@ export const handleTargetedAttack = async (
       console.error("Error in performAttack:", error)
       // Set damage to zero if there's an error to prevent NaN issues
     }
-  }
+
+
   //handleEndOfTurnActions
   // processEndOfTurn(state, dispatch)
   // applyAfterMoveStatusEffects  // go through and apply poison animation, and any other
@@ -167,7 +126,7 @@ export const handleTargetedAttack = async (
   console.groupEnd()
 }
 
-export const runPlayerMove = async () => {}
+// export const runPlayerMove = async () => {}
 // Simple log
 // pocketLog(
 //   `${new Date().toISOString()} isPlayerAttack ${Math.floor(
