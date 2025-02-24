@@ -6,7 +6,12 @@ import {
   PushLogType,
 } from "../../consts/types/types"
 import { logStep } from "../../debug/logUtils"
-import { checkAndHandleGameOver } from "../battle/checkAndHandleGameOver"
+import {
+  checkAndHandleGameOver,
+  checkGameEndConditionStatus,
+  handleCheckingIfBattleEnds,
+  handleGameEnd,
+} from "../battle/checkAndHandleGameOver"
 import { processEndOfTurn } from "../turn/processEndOfTurn"
 import { checkTeamsAlive } from "./checkTeamsAlive"
 import { newPerformAttack } from "./performAttack"
@@ -53,21 +58,26 @@ export const runTurn = async (
     computerCreatures
   )
 
-
-//before the attack, we should see if we end the game
-  // COMPUTER ATTACK:
   const teamsAliveStatus = checkTeamsAlive(playerCreatures, computerCreatures)
-  // runCheckBattleEndConditions(teamsAliveStatus) // if teamsAliveStatus. playerTeamAlive
-  // run  checkAndHandleGameOver ? 
- 
 
+  //before the attack, we should see if we end the game
+  handleCheckingIfBattleEnds(teamsAliveStatus, dispatch)
+  // Above replaces all of below:
+  // const teamsAliveStatus = checkTeamsAlive(playerCreatures, computerCreatures)
+  // const gameEndStatus = checkGameEndConditionStatus(
+  //   playerCreatures,
+  //   computerCreatures
+  // )
+  // handleGameEnd(gameEndStatus, dispatch)
+
+  // COMPUTER ATTACK:
 
   dispatch({
     type: "ADD_OBJ_TO_DEBUG_STEP",
     payload: {
       stepIndex: 0,
       // stepTitle: "1. Attack Initialization",
-      obj:  teamsAliveStatus.aliveComputerCreatures,
+      obj: teamsAliveStatus.aliveComputerCreatures,
     },
   })
   dispatch({
