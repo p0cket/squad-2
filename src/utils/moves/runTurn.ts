@@ -1,18 +1,6 @@
-import { attacks } from "../../consts/attacks"
-import {
-  AttackPayload,
-  Creature,
-  LogType,
-  PushLogType,
-} from "../../consts/types/types"
-import { logStep } from "../../debug/logUtils"
+import { AttackPayload, Creature } from "../../consts/types/types"
 import { runLoggingNonsense } from "../../debug/runLoggingNonsese"
-import {
-  checkAndHandleGameOver,
-  checkGameEndConditionStatus,
-  handleCheckingIfBattleEnds,
-  handleGameEnd,
-} from "../battle/checkAndHandleGameOver"
+import { handleCheckingIfBattleEnds } from "../battle/checkAndHandleGameOver"
 import { processEndOfTurn } from "../turn/processEndOfTurn"
 import { checkTeamsAlive } from "./checkTeamsAlive"
 import { createComputerAttackPayload } from "./createComputerAttackPayload"
@@ -50,6 +38,7 @@ export const runTurn = async (
   )
   // PLAYER ATTACK:
   try {
+    // add player atk to the stack, then run the stack.
     await newPerformAttack(attackPayload)
   } catch (error) {
     console.error("Error in performAttack:", error)

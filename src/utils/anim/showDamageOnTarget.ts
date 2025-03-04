@@ -1,5 +1,5 @@
 export const showDamageOnTarget = (
-  targetShowDamage: (damage: number) => void,
+  targetShowDamage: ((damage: number | null) => void) | null,
   damage: number,
   targetID: number
 ) => {

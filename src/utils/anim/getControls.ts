@@ -49,6 +49,10 @@ export const getControls = (
     }
   }
 
+  if (!attackerControls || !targetControls || !targetShowDamage) {
+    throw new Error("Controls not found")
+  }
+
   return { attackerControls, targetControls, targetShowDamage }
 }
 

@@ -4,7 +4,7 @@ import CompactCreatureList from "../../battle/CompactCreatureList";
 import { Box, Modal } from "@mui/material";
 import { modalStyle } from "../../../consts/consts";
 import AttackDetails from "../../battle/AttackDetails";
-import { runTurn } from "../../../utils/moves/handleConfirmedAttack";
+import { runTurn } from "../../../utils/moves/runTurn";
 
 export default function ChooseTargetsModal({
   attack,
