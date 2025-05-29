@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, FC } from "react";
-import { motion, useAnimationControls } from "framer-motion";
+import { useAnimationControls } from "framer-motion";
 import CreatureModal from "./modals/CreatureModal";
 import { useDispatchContext } from "../GameContext";
 import ReplaceCreatureModal from "./modals/ReplaceCreatureModal";
@@ -78,74 +78,90 @@ const Creature: FC<CreatureProps> = ({
         //--
         // availableCreatures={getAliveCreatures(state.playerCreatures)}
       />
-      <motion.div
-        // called. state health setHealth | useEffect( q.HealthChange(healthAmount, setHealth, health), [health]) | in there: setHealth(health + healthAmount) | change health func.
-        className={`flex flex-col items-center ${
-          health <= 0 ? "opacity-50" : ""
+      <div
+        className={`relative p-3 border border-gray-600 rounded-lg shadow-lg transition-all duration-300 ${
+          health <= 0 ? "opacity-50" : "hover:border-gray-500 hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105"
         }`}
-        animate={controls}
-        initial={position}
-        style={{ position: "relative", cursor: "pointer" }}
+        style={{ 
+          cursor: "pointer", 
+          minWidth: "100px",
+          background: health > 0 
+            ? "linear-gradient(135deg, #374151 0%, #1f2937 50%, #111827 100%)"
+            : "linear-gradient(135deg, #4b5563 0%, #374151 50%, #1f2937 100%)"
+        }}
+        onClick={handleOpenModal}
+        title={`Click to view ${creatureObj.name} details`}
       >
         {/* Creature Icon */}
-        <motion.div
-          className={`text-6xl mb-2 ${health <= 0 ? "hidden" : ""}`}
-          animate={{ y: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          onClick={handleOpenModal} // Open modal on click
-        >
-          {icon}
-        </motion.div>
-        {/* Show creature as defeated */}
-        {health <= 0 && <div className="text-6xl mb-2">❌</div>}
-
-        {/* Health Bar */}
-        <div className="bg-gray-700 w-24 h-4 rounded-full overflow-hidden">
-          <motion.div
-            className="bg-green-500 h-full"
-            initial={{ width: "100%" }} // Start with full health
-            animate={{ width: `${(health / maxHealth) * 100}%` }} // Animate health bar reduction
-          />
-        </div>
-        <div className="mt-1">
-          {health} / {maxHealth}{" "}
-          <span>
-            {statuses?.map((status) => (
-              <span
-                key={status.id}
-                className="relative group"
-                style={{ cursor: "pointer" }}
-              >
-                {status.icon}
-                <span className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1">
-                  {status.description}
-                </span>
-              </span>
-            ))}
-          </span>
-        </div>
-
-        {/* Damage Animation */}
-        {damageAmount !== null && (
-          <motion.div
-            key={damageAmount} // Ensure key changes to trigger animation
-            initial={{ opacity: 1, y: 0 }}
-            animate={{ opacity: 0, y: -50 }}
-            transition={{ duration: 3 }}
+        <div className="flex flex-col items-center">
+          <div
+            className={`text-5xl mb-2 transition-transform duration-200 ${health <= 0 ? "hidden" : ""}`}
             style={{
-              position: "absolute",
-              top: "-20px",
-              left: "50%",
-              transform: "translateX(-50%)",
-              fontSize: "1.5rem",
-              color: "red",
+              animation: health > 0 ? "float 3s ease-in-out infinite" : "none",
+              animationDelay: health > 0 ? `${(ID % 5) * 0.5}s` : "0s"
             }}
-            onAnimationComplete={() => setDamageAmount(null)} // Reset damage amount after animation
+          >
+            {icon}
+          </div>
+          
+          {/* Show creature as defeated */}
+          {health <= 0 && (
+            <div className="text-5xl mb-2">
+              💀
+            </div>
+          )}
+
+          {/* Health Bar Container */}
+          <div className="w-full mb-2">
+            <div className="bg-gray-700 w-full h-2 rounded-full overflow-hidden">
+              <div
+                className={`h-full ${
+                  health <= 0 ? "bg-red-500" : ""
+                }`}
+                style={{ 
+                  width: `${Math.max(0, (health / maxHealth) * 100)}%`,
+                  background: health > 0 
+                    ? "linear-gradient(90deg, #10b981 0%, #34d399 100%)"
+                    : "#ef4444"
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Health Text */}
+          <div className="text-center text-sm text-white mb-1">
+            {health} / {maxHealth}
+          </div>
+
+          {/* Status Effects */}
+          {statuses && statuses.length > 0 && (
+            <div className="flex justify-center space-x-1">
+              {statuses.map((status) => (
+                <span
+                  key={status.id}
+                  className="text-xs bg-gray-700 rounded px-1"
+                  title={status.description}
+                >
+                  {status.icon}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Simple Damage Animation */}
+        {damageAmount !== null && (
+          <div
+            className="absolute top-0 left-1/2 transform -translate-x-1/2 text-red-500 font-bold text-lg pointer-events-none"
+            style={{ 
+              animation: "fadeOut 1s ease-out forwards"
+            }}
+            onAnimationEnd={() => setDamageAmount(null)}
           >
             -{damageAmount}
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+      </div>
       {/* Render the CreatureModal */}
       <CreatureModal
         open={openModal}

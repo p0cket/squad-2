@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatchContext, useStateContext } from "../GameContext";
 import OwnedRunes from "./OwnedRunes";
-import CreatureStats from "./CreatureStats";
+import PlayerCreatureStats from "./PlayerCreatureStats";
 import Hud from "./Hud";
 // import ActionButtons from "./battle/ActionButtons";
 import CreatureGroup from "./battle/CreatureGroup";
@@ -69,7 +69,7 @@ const Battle = () => {
       />
       {/* <Hand cards={cardDataList} />  */}
       {/* <ActionButtons/> */}
-      <CreatureStats />
+      <PlayerCreatureStats />
     </div>
   );
 };

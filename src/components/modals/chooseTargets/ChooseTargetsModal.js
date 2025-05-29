@@ -73,64 +73,118 @@ export default function ChooseTargetsModal({
       aria-describedby="modal-description"
     >
       <Box sx={modalStyle}>
-        <div className="container mx-auto p-4 bg-gray-900 text-gray-200">
-          <AttackDetails attack={attack} />
-          <div className="flex justify-between items-center py-4">
-            <h2 className="text-2xl font-bold text-yellow-500">
-              Choose Target for{" "}
-              <span className="text-green-400">
-                {attacker?.name || "Unknown"}
-              </span>{" "}
-              to use <span className="text-white">{attack?.name}</span> on
-            </h2>
-          </div>
-          <div className="flex justify-between mb-4">
-            {/* Player Creatures */}
-            <div className="w-1/2">
-              <h3 className="text-lg font-semibold text-blue-400">
-                Your Creatures
-              </h3>
-              <CompactCreatureList
-                creatures={playerCreatures}
-                onSelect={handleSelectTarget}
-                isPlayer={true}
-                selectedTarget={selectedTarget}
-              />
-            </div>
-            {/* Computer Creatures */}
-            <div className="w-1/2">
-              <h3 className="text-lg font-semibold text-red-400">
-                Opponent Creatures
-              </h3>
-              <CompactCreatureList
-                creatures={computerCreatures}
-                onSelect={handleSelectTarget}
-                isPlayer={false}
-                selectedTarget={selectedTarget}
-              />
+        <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 border-2 border-gray-600 rounded-xl overflow-hidden shadow-2xl text-white max-h-[90vh] overflow-y-auto">
+          {/* Header Section */}
+          <div className="bg-gradient-to-r from-gray-700 to-gray-600 p-4 border-b border-gray-500 sticky top-0 z-10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="text-2xl mr-3">🎯</div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Choose Target</h2>
+                  <p className="text-sm text-gray-300">
+                    <span className="text-green-400 font-medium">{attacker?.name || "Unknown"}</span>
+                    {" "}will use{" "}
+                    <span className="text-yellow-400 font-medium">{attack?.name}</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={toggleChooseTargetsModal}
+                className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-gray-600 rounded-lg"
+              >
+                ✕
+              </button>
             </div>
           </div>
 
-          {/* Display selected target info and button */}
-          <div className="text-center">
-            <div className={selectedTarget ? "text-green-400 mb-4" : "text-gray-500 mb-4"}>
-              {selectedTarget ? (
-                <>Selected Target: <strong>{selectedTarget.name}</strong> (ID: {selectedTarget.ID})</>
-              ) : (
-                "No target selected"
-              )}
+          {/* Attack Details Section */}
+          <div className="p-4 border-b border-gray-600">
+            <AttackDetails attack={attack} />
+          </div>
+
+          {/* Target Selection Section */}
+          <div className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Player Creatures */}
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <div className="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
+                  <h3 className="text-lg font-semibold text-blue-400">Your Creatures</h3>
+                  <span className="ml-2 text-xs bg-blue-600/20 text-blue-300 px-2 py-1 rounded-full">
+                    {playerCreatures.length}
+                  </span>
+                </div>
+                <div className="bg-blue-600/10 rounded-lg border border-blue-500/30 p-3">
+                  <CompactCreatureList
+                    creatures={playerCreatures}
+                    onSelect={handleSelectTarget}
+                    isPlayer={true}
+                    selectedTarget={selectedTarget}
+                  />
+                </div>
+              </div>
+
+              {/* Computer Creatures */}
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <div className="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
+                  <h3 className="text-lg font-semibold text-red-400">Opponent Creatures</h3>
+                  <span className="ml-2 text-xs bg-red-600/20 text-red-300 px-2 py-1 rounded-full">
+                    {computerCreatures.length}
+                  </span>
+                </div>
+                <div className="bg-red-600/10 rounded-lg border border-red-500/30 p-3">
+                  <CompactCreatureList
+                    creatures={computerCreatures}
+                    onSelect={handleSelectTarget}
+                    isPlayer={false}
+                    selectedTarget={selectedTarget}
+                  />
+                </div>
+              </div>
             </div>
-            <button
-              onClick={handleConfirmTarget}
-              disabled={!selectedTarget}
-              className={`py-2 px-4 rounded ${
-                selectedTarget 
-                  ? "bg-green-600 hover:bg-green-500 text-white cursor-pointer"
-                  : "bg-gray-600 text-gray-400 cursor-not-allowed"
-              }`}
-            >
-              Confirm Target
-            </button>
+
+            {/* Selection Status and Confirm Section */}
+            <div className="mt-6 bg-gray-700/50 rounded-lg border border-gray-600/50 p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  {selectedTarget ? (
+                    <>
+                      <div className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
+                      <div>
+                        <p className="text-green-400 font-medium">Target Selected</p>
+                        <p className="text-sm text-gray-300">
+                          <strong>{selectedTarget.name}</strong>
+                          <span className="ml-2 text-xs bg-gray-600 px-2 py-1 rounded">
+                            ID: {selectedTarget.ID}
+                          </span>
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-3 h-3 bg-gray-500 rounded-full mr-3"></div>
+                      <div>
+                        <p className="text-gray-400">No Target Selected</p>
+                        <p className="text-xs text-gray-500">Choose a creature to target</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+                
+                <button
+                  onClick={handleConfirmTarget}
+                  disabled={!selectedTarget}
+                  className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                    selectedTarget 
+                      ? "bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white shadow-lg hover:shadow-green-500/25 transform hover:scale-105"
+                      : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  {selectedTarget ? "🎯 Execute Attack" : "Select Target"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </Box>

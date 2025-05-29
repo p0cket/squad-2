@@ -205,13 +205,13 @@ function Login() {
           {/* <ChatWithFriend /> */}
         </div>
       ) : (
-        <>
+        <div className="flex space-x-2">
           <Button
             onClick={() => setIsLoginModalOpen(true)}
             variant="contained"
             color="primary"
             size="small"
-            sx={{ mb: 2, minWidth: "auto", padding: "4px 8px" }}
+            sx={{ minWidth: "auto", padding: "4px 8px" }}
           >
             Login
           </Button>
@@ -224,7 +224,7 @@ function Login() {
           >
             Sign Up
           </Button>
-        </>
+        </div>
       )}
 
       {/* Login Modal */}

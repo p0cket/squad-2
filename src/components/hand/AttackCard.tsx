@@ -33,63 +33,91 @@ const AttackCard: React.FC<AttackCardProps> = ({
   onClick,
 }) => (
   <motion.div
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    className="w-full"
+    whileHover={{ scale: 1.02, y: -5 }}
+    whileTap={{ scale: 0.98 }}
+    className="w-48 h-72 cursor-pointer group"
     onClick={onClick}
   >
-    <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden relative cursor-pointer p-2 flex flex-col space-y-2">
-      <div className="flex items-center space-x-3">
-        {/* Attack Icon */}
+    <div className="relative w-full h-full bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 border-2 border-gray-600 rounded-xl overflow-hidden shadow-2xl group-hover:border-blue-400 transition-all duration-300">
+      {/* Card Header */}
+      <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-gray-700 to-gray-600 p-1.5 border-b border-gray-500">
+        <div className="flex items-center justify-between">
+          {/* Attack Template/ID */}
+          <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-md">
+            {attack?.template?.substring(0, 2).toUpperCase() || "??"}
+          </div>
+          {/* Attack Type Badge */}
+          <span
+            className={`${
+              typeColors[attack.attackType]
+            } px-2 py-0.5 text-xs rounded-full font-semibold shadow-sm`}
+          >
+            {attack.attackType}
+          </span>
+        </div>
+      </div>
+
+      {/* Card Art/Icon Area */}
+      <div className="absolute top-10 left-0 right-0 h-16 bg-gradient-to-b from-gray-600 to-gray-700 flex items-center justify-center border-b border-gray-500">
         <motion.div
-          className="text-2xl"
-          whileHover={{ rotate: 360 }}
-          transition={{ duration: 0.3 }}
+          className="text-4xl drop-shadow-lg"
+          whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+          transition={{ duration: 0.5 }}
         >
           {attack?.icon}
         </motion.div>
+      </div>
 
-        {/* Attack Details */}
-        <div className="flex flex-col flex-grow">
-          <h3 className="text-sm font-bold text-gray-200">{attack.name}</h3>
-          <div className="flex items-center justify-between">
-            {/* Type with Color */}
-            <span
-              className={`${
-                typeColors[attack.attackType]
-              } px-1 py-0.5 text-xs rounded`}
-            >
-              {attack.attackType}
-            </span>
-            {/* Additional Info (Effects, Damage, Cooldown) */}
-            <div className="flex items-center space-x-2 text-xs text-gray-400">
-              <span>
-                Effects:{" "}
-                {attack?.effects
-                  ?.map((effect) => STATUS_EFFECTS?.[effect]?.name)
-                  .join(", ")}
+      {/* Card Name */}
+      <div className="absolute top-27 left-0 right-0 px-3 py-0.5">
+        <h3 className="text-base font-bold text-center text-white truncate">
+          {attack.name}
+        </h3>
+      </div>
+
+      {/* Card Stats */}
+      <div className="absolute top-28 left-0 right-0 px-3 space-y-1">
+        {/* Damage */}
+        <div className="flex items-center justify-between bg-red-600/20 rounded-lg px-2 py-0.5 border border-red-500/30">
+          <span className="text-red-300 text-xs">⚔️ Damage</span>
+          <span className="text-red-100 font-bold">{attack?.damage || 0}</span>
+        </div>
+        
+        {/* Hit Chance */}
+        <div className="flex items-center justify-between bg-green-600/20 rounded-lg px-2 py-0.5 border border-green-500/30">
+          <span className="text-green-300 text-xs">🎯 Chance</span>
+          <span className="text-green-100 font-bold">{Math.round((attack?.chanceToLand || 0) * 100)}%</span>
+        </div>
+        
+        {/* Cooldown */}
+        <div className="flex items-center justify-between bg-purple-600/20 rounded-lg px-2 py-0.5 border border-purple-500/30">
+          <span className="text-purple-300 text-xs">⏱️ Cooldown</span>
+          <span className="text-purple-100 font-bold">{attack?.cooldown || 0}s</span>
+        </div>
+      </div>
+
+      {/* Effects */}
+      {attack?.effects && attack.effects.length > 0 && (
+        <div className="absolute bottom-3 left-0 right-0 px-3">
+          <div className="bg-yellow-600/20 rounded-lg px-2 py-0.5 border border-yellow-500/30">
+            <div className="flex flex-col">
+              <span className="text-yellow-300 text-xs">✨ Effects</span>
+              <span className="text-yellow-100 text-xs max-w-full overflow-hidden text-ellipsis">
+                {attack.effects
+                  .map((effect) => STATUS_EFFECTS?.[effect]?.name)
+                  .filter(Boolean)
+                  .join(", ") || "None"}
               </span>
-              <span>DMG: {attack?.damage}</span>
-              <span>CoolDown: {attack?.cooldown}s</span>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Cost and Use Button */}
-      <div className="flex justify-between items-center mt-1">
-        <div className="text-xs font-semibold text-yellow-400">
-          Chance: {attack?.chanceToLand * 100}%
-        </div>
-        {showUseButton && (
-          <button
-            // onClick={() => onUse(attack)}
-            className="bg-blue-600 hover:bg-blue-500 text-white py-1 px-2 rounded text-sm"
-          >
-            Use Attack
-          </button>
-        )}
-      </div>
+      {/* Card Glow Effect */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/0 via-blue-500/0 to-blue-500/0 group-hover:from-blue-500/10 group-hover:via-blue-500/5 group-hover:to-blue-500/10 transition-all duration-300 pointer-events-none" />
+      
+      {/* Card Border Highlight */}
+      <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-blue-400/50 transition-all duration-300 pointer-events-none" />
     </div>
   </motion.div>
 );
