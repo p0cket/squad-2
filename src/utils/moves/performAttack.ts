@@ -3,14 +3,13 @@ import {
   AttackPayload,
   LogType,
   PushLogType,
-  State,
 } from "../../consts/types/types"
 import { logStep } from "../../debug/logUtils"
 import { getControls } from "../anim/getControls"
 import { performAttackAnimation } from "../anim/performAttackAnimation"
 import { showDamageOnTarget } from "../anim/showDamageOnTarget"
 import { updateTargetState } from "../party/updateTargetState"
-import { newFindRelevantProcs } from "./attackUtils"
+// import { newFindRelevantProcs } from "./attackUtils" // TODO: Implement proc system (Build 2.2)
 import { calculateDamageAndStatuses } from "./calculateDamageAndStatuses"
 
 // Each of these is added to the stack, and each part is individually resolved.
@@ -29,8 +28,8 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     enemyCreatureControlsRef,
     attack,
     dispatch,
-    playerCreatures,
-    computerCreatures,
+    // playerCreatures, // Currently unused but may be needed for future features
+    // computerCreatures, // Currently unused but may be needed for future features
   } = attackPayload
 
   const newLogEntry: LogType = {
@@ -62,31 +61,32 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   }
   logStep(newPushLogEntry, dispatch)
 
-  const createAnimPayload = (
-    attackerControls: AnimationControls | null,
-    targetControls: AnimationControls | null,
-    isPlayerAttack: boolean
-  ) => {
-    const p = {
-      controls: { attacker: attackerControls, target: targetControls },
-      isPlayer: isPlayerAttack,
-      //details?
-    }
-    return p
-  }
+  // TODO: Implement animation queue system (Build 1.1)
+  // const createAnimPayload = (
+  //   attackerControls: AnimationControls | null,
+  //   targetControls: AnimationControls | null,
+  //   isPlayerAttack: boolean
+  // ) => {
+  //   const p = {
+  //     controls: { attacker: attackerControls, target: targetControls },
+  //     isPlayer: isPlayerAttack,
+  //     //details?
+  //   }
+  //   return p
+  // }
 
   const addAnimToStack = (
     attackerControls: AnimationControls | null,
     targetControls: AnimationControls | null,
     isPlayerAttack: boolean
   ) => {
-    const animPayload = createAnimPayload(
-      attackerControls,
-      targetControls,
-      isPlayerAttack
-    )
+    // const animPayload = createAnimPayload(
+    //   attackerControls,
+    //   targetControls,
+    //   isPlayerAttack
+    // )
 
-    // do this somewhere
+    // TODO: Implement animation queue system (Build 1.1)
     // pushAnimToStack(animPayload)
   }
 
@@ -141,6 +141,14 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
     `updatedCreatureObj (with status) after attack`,
     updatedCreatureObj
   )
+
+  // 🔥 CRITICAL FIX: Actually dispatch the state update
+  dispatch({
+    type: "UPDATE_CREATURE",
+    creature: updatedCreatureObj,
+  })
+  console.log(`✅ Dispatched UPDATE_CREATURE for ${updatedCreatureObj.name}`, updatedCreatureObj)
+
   const newPush2: PushLogType = {
     message: `updatedCreatureObj ${updatedCreatureObj?.name} updated with "updateTargetState`,
     timestamp: new Date().toISOString(),
@@ -162,15 +170,17 @@ export const newPerformAttack = async (attackPayload: AttackPayload) => {
   logStep(log4, dispatch)
 
   // Now that creature is updated, proceed with post-attack logic
-  const updatedAttackPayload = {
-    ...attackPayload,
-    target: updatedCreatureObj,
-  }
+  // TODO: Implement proc system (Build 2.2)
+  // const updatedAttackPayload = {
+  //   ...attackPayload,
+  //   target: updatedCreatureObj,
+  // }
 
-  const procdAttackPayload = newFindRelevantProcs(
-    updatedAttackPayload,
-    "beforeAttack"
-  )
+  // TODO: Implement proc system (Build 2.2)
+  // const procdAttackPayload = newFindRelevantProcs(
+  //   updatedAttackPayload,
+  //   "beforeAttack"
+  // )
 
   console.groupEnd()
 }
