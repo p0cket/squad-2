@@ -1,4 +1,5 @@
 import { Creature } from "./types"
+import { AnimationQueueItem } from "../../utils/anim/AnimationQueue"
 
 export type Action<Type extends string, Payload> = { type: Type } & Payload
 export type ClassicAction<Type extends string, Payload> = {
@@ -115,6 +116,18 @@ export type AddObjToDebugStepAction = ClassicAction<
   }
 >
 
+// Build 1.1: Animation Queue Action Types
+export type AddAnimationAction = Action<
+  "ADD_ANIMATION",
+  {
+    animation: AnimationQueueItem
+  }
+>
+
+export type ProcessAnimationQueueAction = Action<"PROCESS_ANIMATION_QUEUE", {}>
+
+export type ClearAnimationQueueAction = Action<"CLEAR_ANIMATION_QUEUE", {}>
+
 export type Actions =
   | UpdateMPAction
   | UpdateCreatureAction
@@ -137,3 +150,6 @@ export type Actions =
   | AddGoldAction
   | ResetGameAction
   | AddObjToDebugStepAction
+  | AddAnimationAction
+  | ProcessAnimationQueueAction
+  | ClearAnimationQueueAction

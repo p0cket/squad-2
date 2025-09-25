@@ -3,16 +3,10 @@ import { useDispatchContext, useStateContext } from "../GameContext";
 import OwnedRunes from "./OwnedRunes";
 import CreatureStats from "./CreatureStats";
 import Hud from "./Hud";
-// import ActionButtons from "./battle/ActionButtons";
 import CreatureGroup from "./battle/CreatureGroup";
 import { useCreatureControls } from "../hooks/useCreatureControls";
-// import Hand from "./hand/Hand"
-// import { cardDataList } from "../consts/consts";
-// import Hand from "./hand/Hand";
 import ClassicHand from "./hand/ClassicHand";
-// import { handleAttack } from "../utils/moves/handleConfirmedAttack";
-// import { handleConfirmedAttack } from "../utilsmoves/attackUtils";
-// import { useEndOfTurnEffects } from "../hooks/useEndOfTurnEffects"
+import AnimationQueueDemo from "./AnimationQueueDemo"; // Build 1.1: Animation Queue Demo
 
 const Battle = () => {
   const state = useStateContext();
@@ -44,6 +38,12 @@ const Battle = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white p-1">
       <Hud />
       <OwnedRunes />
+      
+      {/* Build 1.1: Animation Queue Demo */}
+      <div className="mb-4 w-full max-w-3xl">
+        <AnimationQueueDemo />
+      </div>
+      
       <div className="flex flex-col items-center w-full max-w-3xl mb-1">
         {/* Enemy Creatures at the Top */}
         <div className="flex flex-row items-center justify-center mb-4">
@@ -67,8 +67,6 @@ const Battle = () => {
         playerCreatureControlsRef={playerCreatureControlsRef}
         enemyCreatureControlsRef={enemyCreatureControlsRef}
       />
-      {/* <Hand cards={cardDataList} />  */}
-      {/* <ActionButtons/> */}
       <CreatureStats />
     </div>
   );

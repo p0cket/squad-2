@@ -1,5 +1,7 @@
 # Squad Master Development Plan
 
+> **Note:** All technical implementation details, architecture, and engine documentation are now consolidated in [BATTLE_ENGINE.md](./BATTLE_ENGINE.md). This file contains the overall project strategy, design, art, marketing, and roadmap.
+
 ## Executive Summary
 
 Squad is a turn-based tactical RPG featuring creature collection, team building, and strategic combat. This comprehensive plan outlines all aspects of development from technical implementation to marketing strategy, providing a single source of truth for the entire project.
@@ -7,7 +9,7 @@ Squad is a turn-based tactical RPG featuring creature collection, team building,
 ## How to Use This Plan
 
 - **All Team Members**: Review the complete document for project understanding
-- **Developers**: Focus on Technical Architecture and reference [Battle Engine Documentation](../BATTLE_ENGINE.md) and [Battle Engine Implementation Guide](../BATTLE_ENGINE_README.md)
+- **Developers**: Focus on Technical Architecture and reference [Battle Engine Documentation](BATTLE_ENGINE.md)
 - **Designers**: Pay special attention to Game Design and Art Production sections
 - **Marketers**: Concentrate on Marketing & Community strategy
 - **Project Managers**: Use Development Roadmap and Team Structure for planning
@@ -155,6 +157,84 @@ App Structure:
 - Eliminate all enemy creatures
 - Survive for a set number of turns (special modes)
 
+### Attack lifecycle (engine -> gameplay contract)
+
+This subsection documents the intended lifecycle of an attack from player input through final state updates. It exists to make the engine's expectations explicit for designers and devs so implementations remain consistent and debuggable.
+
+High-level phases (authoritative order):
+
+1. Input & Validation
+
+  - Player/AI creates an `AttackPayload` (selected attack, attacker, targets, flags).
+  - Validate legality (is attacker alive, has MP, not stunned, target valid).
+
+2. Pre-attack phase
+
+  - Run effects with timing `beforeAttack` (buffs, interrupts, preventions).
+  - Resolve any immediate cancels (e.g., stun causes attack to abort).
+
+3. Targeting & Intent
+
+  - Resolve final target list (single, multi-target, area) and calculate any targeting modifiers.
+
+4. Damage & Status Calculation (deterministic core)
+
+  - Run `calculateDamageAndStatuses` (pure computation): base damage, modifiers, type multipliers, variance, crits, and status procs.
+  - This step should be deterministic given inputs (optionally seed RNG centrally).
+
+5. Animation queue planning
+
+  - Build animation items (attack wind-up, hit effect, damage number, status icon) and push to `AnimationQueue`.
+  - Note: animations are presentation-only and must not be the source of truth for game state.
+
+6. State application (atomic, immutable)
+
+  - Create new creature objects with the computed damage and statuses using pure helpers (`updateTargetState` and friends).
+  - Batch dispatches so the reducer receives a coherent snapshot (avoid interleaved partial mutations).
+
+7. Post-attack procs
+
+  - Run `afterAttack` effects and on-hit triggers (lifesteal, counters, auras). These should produce further queued animations and state updates.
+
+8. Death resolution and party updates
+
+  - Move dead creatures to the back, trigger replacement modals, and run any on-death effects. Use `moveCreatureToBack` / `selectNewActive` helpers.
+
+9. End-of-turn scheduling
+
+  - If the attack ends the turn (or as part of turn resolution), schedule/process end-of-turn effects: DOT ticks, duration decay, stat resets (`processEndOfTurn`, `handleEndOfTurnEffects`).
+
+Developer contracts and rules
+
+- Determinism: Calculation functions should be pure and return a deterministic result given inputs.
+- Immutability: Never mutate `Creature` objects in-place. Always return new objects and arrays.
+- Atomicity: Prefer batching state updates for a single attack so UI snapshots remain consistent.
+- Animation separation: Animation queue reflects results, it must not drive game logic.
+- Error handling: `performAttack` should guard against missing dispatches and fallback to logging an error rather than leaving inconsistent state.
+
+Primary files that implement or should follow this lifecycle:
+
+- `src/utils/moves/performAttack.ts` (attack orchestration)
+- `src/utils/moves/calculateDamageAndStatuses.ts` (damage/status computation)
+- `src/utils/moves/handleConfirmedAttack.ts` (confirmation & dispatch)
+- `src/utils/party/updateTargetState.ts` (pure state updates)
+- `src/utils/anim/AnimationQueue.ts`, `src/hooks/useAnimationQueue.ts` (presentation)
+- `src/GameContext.tsx` (reducer and dispatch targets)
+- `src/utils/turn/processEndOfTurn.ts`, `src/utils/turn/handleEndOfTurnEffects.ts` (turn resolution)
+
+Quick example (mini trace)
+
+1. UI: player clicks "Fireball" on Enemy A → build AttackPayload
+2. `performAttack` validates, runs `beforeAttack` (no blocks)
+3. `calculateDamageAndStatuses` returns damage=120, status=Burn(3)
+4. Queue: windup → explosion → damage pop → burn icon
+5. `updateTargetState` returns a new Enemy A with health -120 and statuses+[Burn]
+6. Dispatch: `UPDATE_CREATURE` with new Enemy A
+7. `afterAttack` procs: attacker lifesteal for 12 HP → create new attacker object and dispatch
+8. End-of-turn later applies DOTs and reduces durations
+
+This lifecycle section should be the reference when changing the attack pipeline — preserve order, immutability, and separation of visual effects from authoritative state changes.
+
 ### Creature System
 
 **10 Elemental Types**
@@ -224,7 +304,7 @@ App Structure:
 - 🔲 State management standardization
 - 🔲 Status effect timing fixes
 
-**Implementation Guide**: See [Battle Engine Checklist](../BATTLE_ENGINE_CHECKLIST.md) for detailed build-by-build implementation plan.
+**Implementation Guide**: See [Battle Engine Documentation](BATTLE_ENGINE.md) for detailed technical implementation and current progress.
 
 ### Phase 2: Collection & Progression (Q3 2025)
 

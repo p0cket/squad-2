@@ -1,6 +1,35 @@
-# Getting Started with Create React App
+# Squad - Strategic Creature Battle Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React/TypeScript turn-based battle game featuring creature collection and tactical combat.
+
+## 🚀 Quick Start
+
+```bash
+npm install
+npm start
+```
+
+Open [http://localhost:3000](http://localhost:3000) to play.
+
+## 🎮 Battle Engine
+
+Complete battle system documentation: **[`plans/BATTLE_ENGINE.md`](plans/BATTLE_ENGINE.md)**
+
+- **Technical Overview**: System architecture and data flow
+- **Implementation Status**: Current progress and next steps  
+- **Testing Guide**: How to verify functionality
+- **Troubleshooting**: Common issues and solutions
+
+## 📊 Current Status
+
+- ✅ **Core Combat**: Attacks, damage, status effects working
+- ✅ **Animation Queue**: Infrastructure for smooth battle animations
+- 🚧 **Next**: Animation integration into attack flow
+
+## 📋 Project Documentation
+
+- **[Master Plan](plans/MASTER_PLAN.md)** - Comprehensive development strategy and roadmap
+- **[Battle Engine](plans/BATTLE_ENGINE.md)** - Technical implementation and testing guide
 
 ## Available Scripts
 

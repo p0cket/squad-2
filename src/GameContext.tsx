@@ -8,8 +8,9 @@ import { generateLevels, loadLevelData } from "./utils/levelGeneratorUtils"
 import { createUniqueParty } from "./utils/creatureUtils"
 import { updateCreatureInList } from "./utils/moves/attackUtils"
 import { BASE_RUNES } from "./consts/items"
-import { Creature, State, Thunk } from "./consts/types/types"
+import { Creature, State } from "./consts/types/types"
 import { Actions, MoveCreatureToBackPayload } from "./consts/types/actionTypes"
+import { AnimationQueue } from "./utils/anim/AnimationQueue"
 
 // Constants
 export const INITIAL_MAX_MP = 50
@@ -46,6 +47,8 @@ const initialState: State = {
   levels: generatedLevels, // Store the generated levels here
   levelEffects: generatedLevels[0].levelEffects, // Load level 1's effects
   modals: { replaceCreatureModal: null },
+  // Build 1.1: Animation Queue Integration
+  animationQueue: new AnimationQueue(),
   debugObj: {
     steps: [
       {
@@ -222,10 +225,10 @@ const gameReducer: React.Reducer<State, Actions> = (state, action) => {
     // Deprecated?
     case "ATTACK_CREATURE":
       // Handle creature attack, applying aura effect if it exists
-      const attacker = state.playerCreatures.find(
-        (creature) => creature.ID === action.attacker.ID
-      )
-      // attacker aura's dono't exist yet
+      // const attacker = state.playerCreatures.find(
+      //   (creature) => creature.ID === action.attacker.ID
+      // )
+      // attacker aura's don't exist yet
       // if (attacker && attacker.aura && Math.random() < 0.75) {
       //   // 75% chance to apply the aura's effect
       //   //   applyAuraEffect(attacker.aura);
@@ -395,6 +398,21 @@ const gameReducer: React.Reducer<State, Actions> = (state, action) => {
       console.log("ADD_OBJ_TO_DEBUG_STEP returning newState:", newState)
       return {...newState}
     }
+    
+    // Build 1.1: Animation Queue Actions
+    case "ADD_ANIMATION":
+      state.animationQueue.add(action.animation)
+      return state // Return state as-is since AnimationQueue is mutable
+      
+    case "PROCESS_ANIMATION_QUEUE":
+      // Trigger queue processing (async operation handled by queue itself)
+      state.animationQueue.processQueue()
+      return state
+      
+    case "CLEAR_ANIMATION_QUEUE":
+      state.animationQueue.clear()
+      return state
+    
     default:
       return state
   }

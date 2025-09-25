@@ -1,5 +1,6 @@
 import { RefObject } from "react"
 import { Actions } from "./actionTypes"
+import { AnimationQueue } from "../../utils/anim/AnimationQueue"
 
 export type Rune = {
   id: number
@@ -141,6 +142,7 @@ export type State = {
     replaceCreatureModal: any | null // Replace 'any' with the actual type if available
   }
   debugObj: DebugObj
+  animationQueue: AnimationQueue // Build 1.1: Animation queue integration
 }
 
 export type Level = {
