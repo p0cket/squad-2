@@ -1,0 +1,303 @@
+// React Integration Hook - Main hook for using the Effect Pipeline System in React
+import { useState, useRef, useCallback, useEffect } from 'react'
+import { BattleState, BattleContext, Effect, StateChange } from '../types'
+import { createBattleContext, subscribeToContext, getContextState } from '../battleContext'
+import { processEffectChain } from '../effectPipelineEngine'
+import { setupDefaultTriggers } from '../effects/triggerSetup'
+import {
+  createBurnEffect,
+  createPoisonEffect,
+  createRegenerationEffect,
+  createAttackBuffEffect,
+  createDefenseBuffEffect,
+  createStunEffect
+} from '../effects/statusEffects'
+import {
+  createAttackEffect,
+  createTrueDamageAttackEffect,
+  createHealingEffect,
+  createDeathEffect,
+  createLifeDrainEffect,
+  createAoeAttackEffect
+} from '../effects/combatEffects'
+
+/**
+ * Main hook for integrating the Effect Pipeline System with React
+ */
+export const useBattleEngine = (initialState: BattleState) => {
+  const [battleState, setBattleState] = useState<BattleState>(initialState)
+  const contextRef = useRef<BattleContext>()
+  const [isProcessingEffects, setIsProcessingEffects] = useState(false)
+
+  // Initialize context on first render (during render phase, not in useEffect)
+  // This ensures the context persists across React Strict Mode double-mounting
+  if (!contextRef.current) {
+    contextRef.current = createBattleContext(initialState)
+    setupDefaultTriggers()
+  }
+
+  // Subscribe to context changes
+  // IMPORTANT: Subscription must happen in useEffect, separate from context creation
+  // This ensures the subscription is re-established after React Strict Mode cleanup
+  useEffect(() => {
+    if (!contextRef.current) return
+
+    const unsubscribe = subscribeToContext(
+      contextRef.current,
+      'all',
+      (changes: StateChange[], newState: BattleState) => {
+        if (contextRef.current) {
+          const updatedState = getContextState(contextRef.current)
+          setBattleState(updatedState)
+        }
+      }
+    )
+
+    return unsubscribe
+  }, [])
+
+  // Note: Removed state synchronization that could interfere with effect pipeline
+  // The context should be the single source of truth, not React state
+
+  /**
+   * Applies an effect and processes the entire chain
+   */
+  const applyEffect = useCallback(async (effect: Effect) => {
+    if (!contextRef.current) {
+      console.error('❌ Battle context not initialized')
+      return
+    }
+
+    // Applying effect
+    setIsProcessingEffects(true)
+
+    try {
+      await processEffectChain(effect, contextRef.current)
+      // Effect chain processing completed
+    } catch (error) {
+      console.error('💥 Error processing effect chain:', error)
+      throw error
+    } finally {
+      setIsProcessingEffects(false)
+      // End effect group
+    }
+  }, [])
+
+  /**
+   * Helper function to apply a burn effect
+   */
+  const applyBurn = useCallback(async (targetId: number, damage?: number) => {
+    const effect = createBurnEffect(targetId, damage)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to apply a poison effect
+   */
+  const applyPoison = useCallback(async (targetId: number, damage?: number) => {
+    const effect = createPoisonEffect(targetId, damage)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to apply regeneration
+   */
+  const applyRegeneration = useCallback(async (targetId: number, healing?: number) => {
+    const effect = createRegenerationEffect(targetId, healing)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to apply attack buff
+   */
+  const applyAttackBuff = useCallback(async (targetId: number, attackBonus?: number) => {
+    const effect = createAttackBuffEffect(targetId, attackBonus)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to apply defense buff
+   */
+  const applyDefenseBuff = useCallback(async (targetId: number, defenseBonus?: number) => {
+    const effect = createDefenseBuffEffect(targetId, defenseBonus)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to apply stun
+   */
+  const applyStun = useCallback(async (targetId: number, duration?: number) => {
+    const effect = createStunEffect(targetId, duration)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to perform an attack
+   */
+  const performAttack = useCallback(async (attackerId: number, targetId: number, attack: any) => {
+    const effect = createAttackEffect(attackerId, targetId, attack)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to perform true damage attack
+   */
+  const performTrueDamageAttack = useCallback(async (attackerId: number, targetId: number, damage: number) => {
+    const effect = createTrueDamageAttackEffect(attackerId, targetId, damage)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to perform healing
+   */
+  const performHealing = useCallback(async (casterId: number, targetId: number, healingAmount: number) => {
+    const effect = createHealingEffect(casterId, targetId, healingAmount)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to trigger death effect
+   */
+  const triggerDeath = useCallback(async (creatureId: number) => {
+    const effect = createDeathEffect(creatureId)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to perform life drain attack
+   */
+  const performLifeDrain = useCallback(async (attackerId: number, targetId: number, drainAmount: number) => {
+    const effect = createLifeDrainEffect(attackerId, targetId, drainAmount)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to perform AoE attack
+   */
+  const performAoeAttack = useCallback(async (attackerId: number, targetIds: number[], damage: number) => {
+    const effect = createAoeAttackEffect(attackerId, targetIds, damage)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Get a creature by ID from current state
+   */
+  const getCreatureById = useCallback((creatureId: number) => {
+    const playerCreature = battleState.playerCreatures.find(c => c.ID === creatureId)
+    if (playerCreature) return playerCreature
+
+    const computerCreature = battleState.computerCreatures.find(c => c.ID === creatureId)
+    if (computerCreature) return computerCreature
+
+    return null
+  }, [battleState])
+
+  /**
+   * Get alive creatures by owner
+   */
+  const getAliveCreatures = useCallback((owner: 'player' | 'computer') => {
+    const creatures = owner === 'player' ? battleState.playerCreatures : battleState.computerCreatures
+    return creatures.filter(creature => creature.health > 0)
+  }, [battleState])
+
+  /**
+   * Check if battle is over
+   */
+  const isBattleOver = useCallback(() => {
+    const alivePlayerCreatures = getAliveCreatures('player')
+    const aliveComputerCreatures = getAliveCreatures('computer')
+    return alivePlayerCreatures.length === 0 || aliveComputerCreatures.length === 0
+  }, [getAliveCreatures])
+
+  /**
+   * Get battle winner
+   */
+  const getBattleWinner = useCallback(() => {
+    if (!isBattleOver()) return null
+
+    const alivePlayerCreatures = getAliveCreatures('player')
+    const aliveComputerCreatures = getAliveCreatures('computer')
+
+    if (alivePlayerCreatures.length > 0) return 'player'
+    if (aliveComputerCreatures.length > 0) return 'computer'
+    return 'draw'
+  }, [isBattleOver, getAliveCreatures])
+
+  /**
+   * Reset battle state
+   */
+  const resetBattle = useCallback((newInitialState?: BattleState) => {
+    const stateToUse = newInitialState || initialState
+    setBattleState(stateToUse)
+    if (contextRef.current) {
+      contextRef.current.state = stateToUse
+      contextRef.current.stateHistory = []
+    }
+    // Battle state reset
+  }, [initialState])
+
+  /**
+   * Get debug information about the current state
+   */
+  const getDebugInfo = useCallback(() => {
+    if (!contextRef.current) return null
+
+    return {
+      battleState,
+      stateHistoryLength: contextRef.current.stateHistory.length,
+      subscriberCount: Array.from(contextRef.current.subscribers.values())
+        .reduce((total, callbacks) => total + callbacks.length, 0),
+      isProcessingEffects
+    }
+  }, [battleState, isProcessingEffects])
+
+  return {
+    // State
+    battleState,
+    isProcessingEffects,
+
+    // Core functions
+    applyEffect,
+
+    // Status effect helpers
+    applyBurn,
+    applyPoison,
+    applyRegeneration,
+    applyAttackBuff,
+    applyDefenseBuff,
+    applyStun,
+
+    // Combat helpers
+    performAttack,
+    performTrueDamageAttack,
+    performHealing,
+    triggerDeath,
+    performLifeDrain,
+    performAoeAttack,
+
+    // Utility functions
+    getCreatureById,
+    getAliveCreatures,
+    isBattleOver,
+    getBattleWinner,
+    resetBattle,
+
+    // Debug
+    getDebugInfo
+  }
+}
+
+/**
+ * Hook for components that only need to read battle state
+ */
+export const useBattleState = (initialState: BattleState) => {
+  const { battleState, getCreatureById, getAliveCreatures, isBattleOver, getBattleWinner } = useBattleEngine(initialState)
+
+  return {
+    battleState,
+    getCreatureById,
+    getAliveCreatures,
+    isBattleOver,
+    getBattleWinner
+  }
+}

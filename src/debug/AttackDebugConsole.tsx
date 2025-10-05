@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react"
-import { useStateContext } from "../GameContext"
+import { useStateContext, useDispatchContext } from "../GameContext"
 import DisplayCreatureObj from "./DisplayCreatureObj"
 import DisplayStatusEffectObj from "./DisplayStatusEffectObj"
 import { AnimatePresence, motion } from "framer-motion"
@@ -148,6 +148,7 @@ const AttackDebugConsole = ({
   debugObj: any
 }) => {
   const { steps } = debugObj
+  const dispatch = useDispatchContext()
   console.log(`debugObj`, debugObj)
 
   const [currentStep, setCurrentStep] = useState(0)
@@ -403,6 +404,10 @@ const AttackDebugConsole = ({
     setSize(SIZES[(currentIndex + 1) % SIZES.length])
   }
 
+  const goToEffectPipelineDemo = () => {
+    dispatch({ type: "CHANGE_SCREEN", payload: { screen: "effect-pipeline-demo" } })
+  }
+
   const currentStepData = steps[currentStep]
 
   if (isMinimized) {
@@ -423,6 +428,13 @@ const AttackDebugConsole = ({
       <div className="flex justify-between items-center mb-1">
         <h2 className="text-xl font-bold flex items-center">Debug Stack</h2>
         <div className="flex space-x-2">
+          <button
+            onClick={goToEffectPipelineDemo}
+            className="hover:bg-blue-600 bg-blue-500 px-2 py-1 rounded text-xs font-bold"
+            title="Effect Pipeline Demo"
+          >
+            🧪 Pipeline
+          </button>
           <button
             onClick={cyclePosition}
             className="hover:bg-gray-700 p-1 rounded"

@@ -5,6 +5,7 @@ import Results from "./screens/Results";
 import Death from "./screens/GameOver";
 import Login from "./Login";
 import AttackDebugConsole from "./../debug/AttackDebugConsole";
+import BattleEngineExample from "../utils/effectPipeline/integration/BattleEngineExample";
 
 function Main() {
   const flog = (emoji, details) => {
@@ -56,6 +57,7 @@ function Main() {
       {screen === "battle" && <Battle />}
       {screen === "results" && <Results />}
       {screen === "game_over" && <Death />}
+      {screen === "effect-pipeline-demo" && <BattleEngineExample />}
 
       {screen === "intro" && <Battle />}
       {screen === "shop" && <Battle />}

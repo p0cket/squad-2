@@ -1,6 +1,4 @@
-# Squad Battle Engine Documentation
-
-This document contains all technical implementation, architecture, and system details for the Squad battle engine. For project strategy, design, and roadmap, see [MASTER_PLAN.md](./MASTER_PLAN.md).
+# Squad Battle Engine README
 
 ## Overview
 
