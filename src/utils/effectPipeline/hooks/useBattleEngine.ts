@@ -2,6 +2,12 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { BattleState, BattleContext, Effect, StateChange } from '../types'
 import { createBattleContext, subscribeToContext, getContextState } from '../battleContext'
+import {
+  createZustandBattleStore,
+  subscribeToZustandContext,
+  getZustandContextState,
+  zustandToBattleContext
+} from '../zustandAdapter'
 import { processEffectChain } from '../effectPipelineEngine'
 import { setupDefaultTriggers } from '../effects/triggerSetup'
 import {
@@ -21,18 +27,29 @@ import {
   createAoeAttackEffect
 } from '../effects/combatEffects'
 
+// Feature flag: Set to true to use Zustand adapter instead of native BattleContext
+const USE_ZUSTAND_ADAPTER = true // ✅ ZUSTAND ENABLED FOR TESTING
+
 /**
  * Main hook for integrating the Effect Pipeline System with React
  */
 export const useBattleEngine = (initialState: BattleState) => {
   const [battleState, setBattleState] = useState<BattleState>(initialState)
   const contextRef = useRef<BattleContext>()
+  const zustandStoreRef = useRef<ReturnType<typeof createZustandBattleStore>>()
   const [isProcessingEffects, setIsProcessingEffects] = useState(false)
 
   // Initialize context on first render (during render phase, not in useEffect)
   // This ensures the context persists across React Strict Mode double-mounting
-  if (!contextRef.current) {
-    contextRef.current = createBattleContext(initialState)
+  if (!contextRef.current && !zustandStoreRef.current) {
+    if (USE_ZUSTAND_ADAPTER) {
+      console.log('🎯 Using Zustand adapter for battle context')
+      zustandStoreRef.current = createZustandBattleStore(initialState)
+      contextRef.current = zustandToBattleContext(zustandStoreRef.current)
+    } else {
+      console.log('📦 Using native BattleContext')
+      contextRef.current = createBattleContext(initialState)
+    }
     setupDefaultTriggers()
   }
 
@@ -42,18 +59,46 @@ export const useBattleEngine = (initialState: BattleState) => {
   useEffect(() => {
     if (!contextRef.current) return
 
-    const unsubscribe = subscribeToContext(
-      contextRef.current,
-      'all',
-      (changes: StateChange[], newState: BattleState) => {
-        if (contextRef.current) {
-          const updatedState = getContextState(contextRef.current)
-          setBattleState(updatedState)
-        }
-      }
-    )
+    console.log('🔌 Subscribing to battle context changes')
 
-    return unsubscribe
+    const unsubscribe = USE_ZUSTAND_ADAPTER && zustandStoreRef.current
+      ? subscribeToZustandContext(
+          zustandStoreRef.current,
+          'all',
+          (changes: StateChange[], newState: BattleState) => {
+            console.log('📢 Context change notification received (Zustand):', {
+              changeCount: changes.length,
+              changeTypes: changes.map(c => c.type)
+            })
+            
+            if (zustandStoreRef.current) {
+              const updatedState = getZustandContextState(zustandStoreRef.current)
+              console.log('🔄 Updating React state with new battle state (Zustand)')
+              setBattleState(updatedState)
+            }
+          }
+        )
+      : subscribeToContext(
+          contextRef.current,
+          'all',
+          (changes: StateChange[], newState: BattleState) => {
+            console.log('📢 Context change notification received:', {
+              changeCount: changes.length,
+              changeTypes: changes.map(c => c.type)
+            })
+            
+            if (contextRef.current) {
+              const updatedState = getContextState(contextRef.current)
+              console.log('🔄 Updating React state with new battle state')
+              setBattleState(updatedState)
+            }
+          }
+        )
+
+    return () => {
+      console.log('🔌 Unsubscribing from battle context')
+      unsubscribe()
+    }
   }, [])
 
   // Note: Removed state synchronization that could interfere with effect pipeline

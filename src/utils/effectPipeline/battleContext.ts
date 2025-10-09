@@ -105,11 +105,11 @@ const applyHealthChange = (state: BattleState, change: HealthChange): BattleStat
     ...state,
     playerCreatures: updateCreatureInArray(state.playerCreatures, creatureId, creature => ({
       ...creature,
-      health: Math.max(0, Math.min(creature.maxHealth, data.newHealth))
+      health: Math.max(0, Math.min(creature.maxHealth, creature.health + data.delta))
     })),
     computerCreatures: updateCreatureInArray(state.computerCreatures, creatureId, creature => ({
       ...creature,
-      health: Math.max(0, Math.min(creature.maxHealth, data.newHealth))
+      health: Math.max(0, Math.min(creature.maxHealth, creature.health + data.delta))
     }))
   }
 }

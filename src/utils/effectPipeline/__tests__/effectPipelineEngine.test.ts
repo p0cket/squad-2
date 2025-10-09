@@ -115,27 +115,34 @@ describe('Effect Pipeline Engine', () => {
       ]
     }
 
-    // Mock trigger registration that creates cascading effect
-    const originalRegister = require('../effectResolver').registerEffectTrigger
-    require('../effectResolver').registerEffectTrigger = jest.fn((changeType, rule) => {
-      if (changeType === 'HEALTH_CHANGE') {
-        // Simulate trigger creating cascade effect
-        setTimeout(() => {
-          processEffectChain(cascadingEffect, context)
-        }, 10)
-      }
+    // Register a proper trigger rule that creates a cascade effect
+    const { registerEffectTrigger, clearAllTriggers } = require('../effectResolver')
+    
+    // Clear any existing triggers
+    clearAllTriggers()
+    
+    // Register a trigger that creates a cascade when health changes
+    registerEffectTrigger('HEALTH_CHANGE', {
+      condition: (change: any, context: any) => {
+        // Trigger on any health change from the initial effect
+        return change.data.source === 'initial'
+      },
+      createEffect: (change: any, context: any) => {
+        return cascadingEffect
+      },
+      priority: 10
     })
 
     await processEffectChain(initialEffect, context)
 
-    // Wait for cascade
+    // Wait for cascade processing
     await new Promise(resolve => setTimeout(resolve, 50))
 
     expect(cascadeTriggered).toBe(true)
-    expect(context.state.computerCreatures[0].health).toBe(50) // Initial effect applied
+    expect(context.state.computerCreatures[0].health).toBe(45) // Both initial (-10) and cascade (-5) effects applied
 
-    // Restore original
-    require('../effectResolver').registerEffectTrigger = originalRegister
+    // Clean up
+    clearAllTriggers()
   })
 
   test('prevents infinite loops', async () => {
