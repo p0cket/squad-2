@@ -128,21 +128,14 @@ const setupChainReactionTriggers = (): void => {
       // Could create a rage buff or desperate attack
       return {
         id: 'desperation',
+        type: 'STAT_BUFF',
         targetId: change.creatureId,
         priority: 30,
-        animations: [
-          { type: 'status-apply', targetId: change.creatureId, duration: 800, data: { statusType: 'buff' } }
-        ],
-        apply: async (context: BattleContext) => [{
-          type: 'STAT_MODIFIED',
-          creatureId: change.creatureId,
-          timestamp: Date.now(),
-          data: {
-            statName: 'attack',
-            value: 10, // +10 attack when desperate
-            source: 'desperation'
-          }
-        }]
+        data: {
+          statName: 'attack',
+          value: 10,
+          source: 'desperation'
+        }
       }
     },
     priority: 25
@@ -162,15 +155,10 @@ const setupChainReactionTriggers = (): void => {
       // Could create splash damage or intimidation effects
       return {
         id: 'overkill',
+        type: 'OVERKILL',
         targetId: change.creatureId,
         priority: 15,
-        animations: [
-          { type: 'impact', targetId: change.creatureId, duration: 600 }
-        ],
-        apply: async (context: BattleContext) => {
-          // Add intimidation or splash effects here
-          return []
-        }
+        data: {}
       }
     },
     priority: 15
@@ -193,12 +181,10 @@ const setupCombatTriggers = (): void => {
       // Could add a recovery effect
       return {
         id: 'stun-recovery',
+        type: 'STUN_RECOVERY',
         targetId: change.creatureId,
         priority: 10,
-        animations: [
-          { type: 'status-apply', targetId: change.creatureId, duration: 500, data: { statusType: 'recovery' } }
-        ],
-        apply: async (context: BattleContext) => []
+        data: {}
       }
     },
     priority: 10
@@ -217,13 +203,10 @@ const setupCombatTriggers = (): void => {
 
       return {
         id: 'first-blood',
+        type: 'FIRST_BLOOD',
         targetId: change.creatureId,
         priority: 5,
-        animations: [],
-        apply: async (context: BattleContext) => {
-          // Could trigger battle music change or other effects
-          return []
-        }
+        data: {}
       }
     },
     priority: 5

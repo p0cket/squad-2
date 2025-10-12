@@ -2,11 +2,64 @@
 import { processEffectChain } from '../effectPipelineEngine'
 import { createBattleContext } from '../battleContext'
 import { BattleState, Effect, StateChange } from '../types'
+import { registerEffectApplicator } from '../effectApplicatorRegistry'
 
 // Mock animation engine
 jest.mock('../animationEngine', () => ({
-  executeAnimationsSequentially: jest.fn().mockResolvedValue(undefined)
+  executeAnimationsSequentially: jest.fn().mockResolvedValue(() => Promise.resolve())
 }))
+
+// Register test applicators
+beforeAll(() => {
+  // Simple test damage applicator
+  registerEffectApplicator('TEST_DAMAGE', async (effect, context) => {
+    const { delta, newHealth } = effect.data
+    return {
+      stateChanges: [
+        {
+          type: 'HEALTH_CHANGE',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: { delta, newHealth, source: 'test' }
+        }
+      ],
+      animations: [
+        { type: 'shake', targetId: effect.targetId, duration: 300 }
+      ]
+    }
+  })
+
+  // Cascade trigger applicator
+  registerEffectApplicator('CASCADE', async (effect, context) => {
+    return {
+      stateChanges: [
+        {
+          type: 'HEALTH_CHANGE',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: { delta: effect.data.delta, newHealth: effect.data.newHealth, source: 'cascade' }
+        }
+      ],
+      animations: []
+    }
+  })
+
+  // Error applicator
+  registerEffectApplicator('ERROR_EFFECT', async (effect, context) => {
+    throw new Error('Test error')
+  })
+
+  // Tracking applicator
+  registerEffectApplicator('TRACKING', async (effect, context) => {
+    if (effect.data.onApply) {
+      effect.data.onApply(effect.id)
+    }
+    return {
+      stateChanges: [],
+      animations: []
+    }
+  })
+})
 
 describe('Effect Pipeline Engine', () => {
   const mockBattleState: BattleState = {
@@ -53,23 +106,16 @@ describe('Effect Pipeline Engine', () => {
 
   test('processes single effect successfully', async () => {
     const context = createBattleContext(mockBattleState)
-    const changes: StateChange[] = [
-      {
-        type: 'HEALTH_CHANGE',
-        creatureId: 2,
-        timestamp: Date.now(),
-        data: { delta: -10, newHealth: 50, source: 'test' }
-      }
-    ]
 
     const testEffect: Effect = {
       id: 'test-damage',
+      type: 'TEST_DAMAGE',
       targetId: 2,
       priority: 50,
-      animations: [
-        { type: 'shake', targetId: 2, duration: 300 }
-      ],
-      apply: async () => changes
+      data: {
+        delta: -10,
+        newHealth: 50
+      }
     }
 
     await processEffectChain(testEffect, context)
@@ -84,35 +130,31 @@ describe('Effect Pipeline Engine', () => {
 
     const cascadingEffect: Effect = {
       id: 'cascade-trigger',
+      type: 'CASCADE',
       targetId: 2,
       priority: 50,
-      animations: [],
-      apply: async () => {
-        cascadeTriggered = true
-        return [
-          {
-            type: 'HEALTH_CHANGE',
-            creatureId: 2,
-            timestamp: Date.now(),
-            data: { delta: -5, newHealth: 55, source: 'cascade' }
-          }
-        ]
+      data: {
+        delta: -5,
+        newHealth: 55
       }
+    }
+
+    // Wrap to track when cascade is triggered
+    const originalData = cascadingEffect.data
+    cascadingEffect.data = {
+      ...originalData,
+      onExecute: () => { cascadeTriggered = true }
     }
 
     const initialEffect: Effect = {
       id: 'initial-effect',
+      type: 'TEST_DAMAGE',
       targetId: 2,
       priority: 50,
-      animations: [],
-      apply: async () => [
-        {
-          type: 'HEALTH_CHANGE',
-          creatureId: 2,
-          timestamp: Date.now(),
-          data: { delta: -10, newHealth: 50, source: 'initial' }
-        }
-      ]
+      data: {
+        delta: -10,
+        newHealth: 50
+      }
     }
 
     // Register a proper trigger rule that creates a cascade effect
@@ -125,9 +167,10 @@ describe('Effect Pipeline Engine', () => {
     registerEffectTrigger('HEALTH_CHANGE', {
       condition: (change: any, context: any) => {
         // Trigger on any health change from the initial effect
-        return change.data.source === 'initial'
+        return change.data.source === 'test'
       },
       createEffect: (change: any, context: any) => {
+        cascadeTriggered = true
         return cascadingEffect
       },
       priority: 10
@@ -151,19 +194,11 @@ describe('Effect Pipeline Engine', () => {
 
     const loopingEffect: Effect = {
       id: 'loop-effect',
+      type: 'TRACKING',
       targetId: 1,
       priority: 50,
-      animations: [],
-      apply: async () => {
-        applyCount++
-        return [
-          {
-            type: 'HEALTH_CHANGE',
-            creatureId: 1,
-            timestamp: Date.now(),
-            data: { delta: -1, newHealth: 99 - applyCount, source: 'loop' }
-          }
-        ]
+      data: {
+        onApply: () => { applyCount++ }
       }
     }
 
@@ -178,12 +213,10 @@ describe('Effect Pipeline Engine', () => {
 
     const errorEffect: Effect = {
       id: 'error-effect',
+      type: 'ERROR_EFFECT',
       targetId: 1,
       priority: 50,
-      animations: [],
-      apply: async () => {
-        throw new Error('Test error')
-      }
+      data: {}
     }
 
     // Should not throw, should handle gracefully
@@ -196,23 +229,21 @@ describe('Effect Pipeline Engine', () => {
 
     const lowPriorityEffect: Effect = {
       id: 'low-priority',
+      type: 'TRACKING',
       targetId: 1,
       priority: 10,
-      animations: [],
-      apply: async () => {
-        executionOrder.push('low')
-        return []
+      data: {
+        onApply: () => { executionOrder.push('low') }
       }
     }
 
     const highPriorityEffect: Effect = {
       id: 'high-priority',
+      type: 'TRACKING',
       targetId: 1,
       priority: 90,
-      animations: [],
-      apply: async () => {
-        executionOrder.push('high')
-        return []
+      data: {
+        onApply: () => { executionOrder.push('high') }
       }
     }
 

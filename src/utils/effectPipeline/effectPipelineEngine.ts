@@ -1,5 +1,6 @@
 // Core Effect Pipeline Engine - Main orchestrator for effect chains
 import { Effect, BattleContext, EffectPipelineState } from './types'
+import { applyEffect } from './effectApplicatorRegistry'
 import {
   createEffectPipeline,
   addEffectToPipeline,
@@ -82,8 +83,8 @@ const executeEffectPipeline = async (
     // Processing effect
 
     try {
-      // 1. Apply the effect and get state changes
-      const stateChanges = await currentEffect.apply(context)
+      // 1. Apply the effect and get state changes + animations
+      const { stateChanges, animations } = await applyEffect(currentEffect, context)
 
       // 2. Apply state changes to context (but defer UI notification)
       if (stateChanges.length > 0) {
@@ -92,8 +93,8 @@ const executeEffectPipeline = async (
 
       // 3. Execute animations (returns after damage numbers appear, not after they fade)
       let finishAnimations: (() => Promise<void>) | null = null
-      if (currentEffect.animations.length > 0) {
-        finishAnimations = await executeAnimationsSequentially(currentEffect.animations)
+      if (animations.length > 0) {
+        finishAnimations = await executeAnimationsSequentially(animations)
       }
 
       // 4. Now notify UI subscribers AFTER damage numbers have appeared

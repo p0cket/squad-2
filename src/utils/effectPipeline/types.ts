@@ -52,11 +52,23 @@ export type Animation = {
 
 export type Effect = {
   id: string
+  type: string // Effect type identifier for applicator lookup (e.g., 'ATTACK', 'HEAL', 'STATUS_APPLY')
   targetId: number
   priority?: number
-  animations: Animation[]
-  apply: (context: BattleContext) => Promise<StateChange[]>
+  data: any // Serializable effect-specific payload
 }
+
+// Result of applying an effect
+export type EffectApplicationResult = {
+  stateChanges: StateChange[]
+  animations: Animation[]
+}
+
+// Pure function that applies an effect and returns state changes + animations
+export type EffectApplicator = (
+  effect: Effect,
+  context: BattleContext
+) => Promise<EffectApplicationResult>
 
 export type EffectNode = {
   effect: Effect
