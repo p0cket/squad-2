@@ -37,6 +37,12 @@ export const applyChangesToContext = (
 ): void => {
   const { notify = true, deferNotification = false } = options
 
+  console.log(`🔄 applyChangesToContext called with ${changes.length} changes`, {
+    changes: changes.map(c => ({ type: c.type, creatureId: c.creatureId })),
+    notify,
+    deferNotification
+  })
+
   if (changes.length === 0) return
 
   // Save history for potential rollback
@@ -44,7 +50,14 @@ export const applyChangesToContext = (
 
   // Apply changes one by one
   changes.forEach(change => {
-    context.state = applyStateChange(context.state, change)
+    console.log(`  🔸 Applying change: ${change.type} to creature ${change.creatureId}`)
+    const oldState = context.state
+    const newState = applyStateChange(context.state, change)
+    console.log(`  🔸 Old state health: ${oldState.computerCreatures[0]?.health}`)
+    console.log(`  🔸 New state health: ${newState.computerCreatures[0]?.health}`)
+    console.log(`  🔸 Assigning new state to context...`)
+    context.state = newState
+    console.log(`  🔸 After assignment, context.state health: ${context.state.computerCreatures[0]?.health}`)
   })
 
   // Notify subscribers unless deferred
@@ -101,7 +114,13 @@ const applyStateChange = (state: BattleState, change: StateChange): BattleState 
 const applyHealthChange = (state: BattleState, change: HealthChange): BattleState => {
   const { creatureId, data } = change
 
-  return {
+  console.log('❤️❤️❤️ applyHealthChange in battleContext.ts:', {
+    creatureId,
+    delta: data.delta,
+    currentHealth: state.computerCreatures.find(c => c.ID === creatureId)?.health
+  })
+
+  const newState = {
     ...state,
     playerCreatures: updateCreatureInArray(state.playerCreatures, creatureId, creature => ({
       ...creature,
@@ -112,6 +131,13 @@ const applyHealthChange = (state: BattleState, change: HealthChange): BattleStat
       health: Math.max(0, Math.min(creature.maxHealth, creature.health + data.delta))
     }))
   }
+
+  console.log('❤️❤️❤️ After health change, new health:', {
+    creatureId,
+    newHealth: newState.computerCreatures.find(c => c.ID === creatureId)?.health
+  })
+
+  return newState
 }
 
 /**

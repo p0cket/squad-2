@@ -79,6 +79,8 @@ const Creature: FC<CreatureProps> = ({
         // availableCreatures={getAliveCreatures(state.playerCreatures)}
       />
       <motion.div
+        data-testid="creature-card"
+        data-creature-name={creatureObj.name}
         // called. state health setHealth | useEffect( q.HealthChange(healthAmount, setHealth, health), [health]) | in there: setHealth(health + healthAmount) | change health func.
         className={`flex flex-col items-center ${
           health <= 0 ? "opacity-50" : ""
@@ -107,16 +109,19 @@ const Creature: FC<CreatureProps> = ({
             animate={{ width: `${(health / maxHealth) * 100}%` }} // Animate health bar reduction
           />
         </div>
-        <div className="mt-1">
+        <div className="mt-1" data-testid="creature-health">
           {health} / {maxHealth}{" "}
           <span>
             {statuses?.map((status) => (
               <span
                 key={status.id}
+                data-testid="status-badge"
+                data-status-id={status.id}
                 className="relative group"
                 style={{ cursor: "pointer" }}
               >
                 {status.icon}
+                {status.duration !== undefined && ` ${status.duration}`}
                 <span className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1">
                   {status.description}
                 </span>

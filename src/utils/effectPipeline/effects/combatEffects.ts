@@ -100,12 +100,50 @@ const applyAttackEffect = async (
     data: {
       delta: -actualDamage,
       newHealth,
-      source: `attack-${attack.name}`
+      source: `attack-${attack.name}`,
+      sourceCreatureId: attackerId // Track attacker for counter-attack triggers
+    }
+  }
+
+  const stateChanges: StateChange[] = [healthChange]
+
+  // Process attack effects (burn, poison, etc.)
+  if (attack.effects && Array.isArray(attack.effects)) {
+    for (const effectName of attack.effects) {
+      const effectType = effectName.toUpperCase()
+      
+      if (effectType === 'BURN') {
+        console.log(`🔥 Attack applies burn effect to ${target.name}`)
+        const burnChange: StateChange = {
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'BURN',
+            duration: 3,
+            damagePerTurn: 5
+          }
+        }
+        stateChanges.push(burnChange)
+      } else if (effectType === 'POISON') {
+        console.log(`🧪 Attack applies poison effect to ${target.name}`)
+        const poisonChange: StateChange = {
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'POISON',
+            duration: 3,
+            damagePerTurn: 10
+          }
+        }
+        stateChanges.push(poisonChange)
+      }
     }
   }
 
   return {
-    stateChanges: [healthChange],
+    stateChanges,
     animations
   }
 }
@@ -132,7 +170,8 @@ const applyTrueDamageEffect = async (
     data: {
       delta: -damage,
       newHealth,
-      source: 'true-damage'
+      source: 'true-damage',
+      sourceCreatureId: attackerId // Track attacker for counter-attack triggers
     }
   }
 
@@ -253,7 +292,8 @@ const applyLifeDrainEffect = async (
     data: {
       delta: -actualDrain,
       newHealth: targetNewHealth,
-      source: 'life-drain'
+      source: 'life-drain',
+      sourceCreatureId: attackerId // Track attacker for counter-attack triggers
     }
   }
 
@@ -307,7 +347,8 @@ const applyAoeAttackEffect = async (
         data: {
           delta: -actualDamage,
           newHealth,
-          source: 'aoe-attack'
+          source: 'aoe-attack',
+          sourceCreatureId: attackerId // Track attacker for counter-attack triggers
         }
       }
 
@@ -353,6 +394,7 @@ export const createAttackEffect = (
   type: 'ATTACK',
   targetId,
   priority: 50,
+  timestamp: Date.now(),
   data: {
     attackerId,
     attack
@@ -368,6 +410,7 @@ export const createTrueDamageAttackEffect = (
   type: 'TRUE_DAMAGE',
   targetId,
   priority: 55,
+  timestamp: Date.now(),
   data: {
     attackerId,
     damage
@@ -383,6 +426,7 @@ export const createHealingEffect = (
   type: 'HEALING',
   targetId,
   priority: 30,
+  timestamp: Date.now(),
   data: {
     casterId,
     healingAmount
@@ -394,6 +438,7 @@ export const createDeathEffect = (creatureId: number): Effect => ({
   type: 'DEATH',
   targetId: creatureId,
   priority: 100,
+  timestamp: Date.now(),
   data: {}
 })
 
@@ -406,6 +451,7 @@ export const createLifeDrainEffect = (
   type: 'LIFE_DRAIN',
   targetId,
   priority: 40,
+  timestamp: Date.now(),
   data: {
     attackerId,
     drainAmount
@@ -421,6 +467,7 @@ export const createAoeAttackEffect = (
   type: 'AOE_ATTACK',
   targetId: targetIds[0],
   priority: 45,
+  timestamp: Date.now(),
   data: {
     attackerId,
     targetIds,

@@ -192,6 +192,11 @@ const createDamageNumberAnimation = (animation: Animation): AnimationInstance =>
       const creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
 
       if (creatureElement) {
+        // Calculate position BEFORE the delay (so it's relative to current scroll position)
+        const rect = creatureElement.getBoundingClientRect()
+        const scrollY = window.scrollY
+        const scrollX = window.scrollX
+        
         // Use delay before showing animation
         setTimeout(() => {
           const damageElement = document.createElement('div')
@@ -223,10 +228,11 @@ const createDamageNumberAnimation = (animation: Animation): AnimationInstance =>
             damageElement.style.color = '#66ff66' // Light green for healing/bonuses
           }
 
-          // Position relative to creature
-          const rect = creatureElement.getBoundingClientRect()
-          damageElement.style.left = `${rect.left + rect.width / 2 - 50}px`
-          damageElement.style.top = `${rect.top - 20}px`
+          // Position relative to creature (using pre-calculated position + scroll offset)
+          // Stack vertically based on delay to avoid overlap
+          const verticalOffset = delay ? (delay / 200) * 25 : 0 // 25px per 200ms delay
+          damageElement.style.left = `${rect.left + scrollX + rect.width / 2 - 50}px`
+          damageElement.style.top = `${rect.top + scrollY - 20 - verticalOffset}px`
 
           document.body.appendChild(damageElement)
 

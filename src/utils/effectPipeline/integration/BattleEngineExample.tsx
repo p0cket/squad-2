@@ -1,8 +1,9 @@
 // Example component showing how to use the Effect Pipeline System
-import React from 'react'
+import React, { useState } from 'react'
 import { useBattleEngine } from '../hooks/useBattleEngine'
 import { BattleState } from '../types'
 import { useDispatchContext } from '../../../GameContext'
+import { InfoModal } from '../../../components/battle/InfoModal'
 
 // Example initial battle state
 const exampleBattleState: BattleState = {
@@ -98,6 +99,36 @@ const exampleBattleState: BattleState = {
         },
         icon: '🧪'
       }]
+    },
+    {
+      ID: 5,
+      name: "Plague Rat",
+      icon: "🐀",
+      template: "rat",
+      health: 50,
+      maxHealth: 50,
+      attack: 12,
+      trueDamage: 0,
+      defense: 5,
+      mods: [],
+      startingAttacks: [],
+      possibleAttacks: [],
+      statuses: [],
+      owner: "computer",
+      passiveAbilities: [{
+        id: 'outbreak',
+        name: 'Outbreak',
+        description: 'When burn is applied, 25% chance to spread to an ally (3 dmg)',
+        trigger: 'on_status_applied',
+        effect: {
+          type: 'spread_burn',
+          targetType: 'all_allies',
+          statusId: 'BURN',
+          chance: 0.25,
+          value: 3
+        },
+        icon: '🦠'
+      }]
     }
   ],
   mp: 0,
@@ -121,26 +152,73 @@ export const BattleEngineExample: React.FC = () => {
     isBattleOver,
     getBattleWinner,
     resetBattle,
+    processEndOfTurn,
     getDebugInfo
   } = useBattleEngine(exampleBattleState)
 
   const playerCreatures = getAliveCreatures('player')
-  const computerCreatures = getAliveCreatures('computer')
+  // const computerCreatures = getAliveCreatures('computer') // Not currently used
 
   // Target selection state
   const [isSelectingTarget, setIsSelectingTarget] = React.useState(false)
-  const [pendingAction, setPendingAction] = React.useState<'attack' | 'heal' | null>(null)
+  const [pendingAction, setPendingAction] = React.useState<'attack' | 'heal' | 'burn' | 'poison' | 'kindle' | 'passive-test' | null>(null)
 
-  const handleBurnTest = async () => {
-    if (computerCreatures.length > 0) {
-      await applyBurn(computerCreatures[0].ID, 10)
-    }
+  // Info modal state
+  const [infoModal, setInfoModal] = useState<{
+    isOpen: boolean;
+    type: 'status' | 'passive' | null;
+    data: any;
+  }>({
+    isOpen: false,
+    type: null,
+    data: null
+  })
+
+  // Handle clicking on status effect
+  const handleStatusClick = (status: any, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent creature click
+    setInfoModal({
+      isOpen: true,
+      type: 'status',
+      data: status
+    })
   }
 
-  const handlePoisonTest = async () => {
-    if (computerCreatures.length > 0) {
-      await applyPoison(computerCreatures[0].ID, 15)
-    }
+  // Handle clicking on passive ability
+  const handlePassiveClick = (passive: any, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent creature click
+    setInfoModal({
+      isOpen: true,
+      type: 'passive',
+      data: passive
+    })
+  }
+
+  // Close modal
+  const closeModal = () => {
+    setInfoModal({
+      isOpen: false,
+      type: null,
+      data: null
+    })
+  }
+
+  // Start target selection for burn
+  const handleBurnTest = () => {
+    setIsSelectingTarget(true)
+    setPendingAction('burn')
+  }
+
+  // Start target selection for kindle (burn with spread)
+  const handleKindleTest = () => {
+    setIsSelectingTarget(true)
+    setPendingAction('kindle')
+  }
+
+  // Start target selection for poison
+  const handlePoisonTest = () => {
+    setIsSelectingTarget(true)
+    setPendingAction('poison')
   }
 
   // Start target selection for attack
@@ -153,15 +231,15 @@ export const BattleEngineExample: React.FC = () => {
   const executeAttack = async (targetId: number) => {
     if (playerCreatures.length > 0) {
       const attack = {
-        name: "Fire Breath",
-        damage: 20,
-        template: "fire",
-        attackType: "magical",
-        effects: [],
+        name: "Slash",
+        damage: 15,
+        template: "physical",
+        attackType: "physical",
+        effects: [], // No status effects - just damage
         chanceToLand: 1,
         trueDamage: 0,
-        icon: "🔥",
-        notes: "Deals fire damage",
+        icon: "⚔️",
+        notes: "Basic physical attack",
         cooldown: 0
       }
       await performAttack(playerCreatures[0].ID, targetId, attack)
@@ -185,6 +263,74 @@ export const BattleEngineExample: React.FC = () => {
     }
   }
 
+  // Execute burn on selected target
+  const executeBurn = async (targetId: number) => {
+    await applyBurn(targetId, 10)
+    setIsSelectingTarget(false)
+    setPendingAction(null)
+  }
+
+  // Execute kindle (burn with spread) on selected target
+  const executeKindle = async (targetId: number) => {
+    // Apply burn to the primary target
+    await applyBurn(targetId, 10)
+    
+    // Find the target creature to get its team
+    const targetCreature = battleState.playerCreatures.find(c => c.ID === targetId) || 
+                           battleState.computerCreatures.find(c => c.ID === targetId)
+    
+    if (targetCreature) {
+      const targetTeam = targetCreature.owner === 'player' 
+        ? battleState.playerCreatures 
+        : battleState.computerCreatures
+      
+      // Find allies of the target that don't have burn yet
+      const potentialSpreadTargets = targetTeam.filter(c => 
+        c.ID !== targetId && 
+        c.health > 0 &&
+        !c.statuses.some(s => s.id === 'BURN')
+      )
+      
+      // Spread to one random ally with weaker burn
+      if (potentialSpreadTargets.length > 0) {
+        const spreadTarget = potentialSpreadTargets[Math.floor(Math.random() * potentialSpreadTargets.length)]
+        console.log(`🔥 Kindle spreads from ${targetCreature.name} to ${spreadTarget.name}`)
+        await applyBurn(spreadTarget.ID, 5) // Weaker spread (5 damage instead of 10)
+      }
+    }
+    
+    setIsSelectingTarget(false)
+    setPendingAction(null)
+  }
+
+  // Execute poison on selected target
+  const executePoison = async (targetId: number) => {
+    await applyPoison(targetId, 15)
+    setIsSelectingTarget(false)
+    setPendingAction(null)
+  }
+
+  // Execute passive ability test on selected target
+  const executePassiveTest = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = {
+        name: "Test Strike",
+        damage: 15,
+        template: "physical",
+        attackType: "physical",
+        effects: [],
+        chanceToLand: 1,
+        trueDamage: 0,
+        icon: "⚔️",
+        notes: "Test attack to trigger passive abilities",
+        cooldown: 0
+      }
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
   // Handle clicking on a creature during target selection
   const handleCreatureClick = async (creatureId: number) => {
     if (!isSelectingTarget) return
@@ -193,6 +339,14 @@ export const BattleEngineExample: React.FC = () => {
       await executeAttack(creatureId)
     } else if (pendingAction === 'heal') {
       await executeHeal(creatureId)
+    } else if (pendingAction === 'burn') {
+      await executeBurn(creatureId)
+    } else if (pendingAction === 'kindle') {
+      await executeKindle(creatureId)
+    } else if (pendingAction === 'poison') {
+      await executePoison(creatureId)
+    } else if (pendingAction === 'passive-test') {
+      await executePassiveTest(creatureId)
     }
   }
 
@@ -202,28 +356,10 @@ export const BattleEngineExample: React.FC = () => {
     setPendingAction(null)
   }
 
-  const handlePassiveAbilityTest = async () => {
-    // Attack a creature with passive abilities to trigger counter-attack
-    if (playerCreatures.length > 0 && computerCreatures.length > 0) {
-      // Find a creature with passive abilities
-      const creatureWithPassive = computerCreatures.find(c => c.passiveAbilities && c.passiveAbilities.length > 0)
-      
-      if (creatureWithPassive) {
-        const attack = {
-          name: "Test Strike",
-          damage: 15,
-          template: "physical",
-          attackType: "physical",
-          effects: [],
-          chanceToLand: 1,
-          trueDamage: 0,
-          icon: "⚔️",
-          notes: "Test attack to trigger passive abilities",
-          cooldown: 0
-        }
-        await performAttack(playerCreatures[0].ID, creatureWithPassive.ID, attack)
-      }
-    }
+  // Start target selection for passive ability test
+  const handlePassiveAbilityTest = () => {
+    setIsSelectingTarget(true)
+    setPendingAction('passive-test')
   }
 
   const goBackToBattle = () => {
@@ -232,21 +368,43 @@ export const BattleEngineExample: React.FC = () => {
 
   const debugInfo = getDebugInfo()
 
+  // Turn state
+  const [turnNumber, setTurnNumber] = React.useState(1)
+  const [currentTurnOwner, setCurrentTurnOwner] = React.useState<'player' | 'computer'>('player')
+
+  const handleEndTurn = async () => {
+    // Process end of turn status ticks
+    try {
+      await processEndOfTurn()
+    } catch (err) {
+      console.error('Error during end of turn processing', err)
+    }
+
+    // Advance turn counter and flip owner
+    setTurnNumber(t => t + 1)
+    setCurrentTurnOwner(prev => prev === 'player' ? 'computer' : 'player')
+  }
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Target Selection Banner */}
       {isSelectingTarget && (
-        <div className="mb-4 p-4 bg-blue-600 text-white rounded-lg shadow-lg">
+        <div className="mb-4 p-4 bg-blue-900/80 backdrop-blur-sm border border-blue-500/50 text-blue-100 rounded-lg shadow-lg shadow-blue-500/20">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-lg font-bold">
-                {pendingAction === 'attack' ? '⚔️ Select a target to attack' : '💚 Select a target to heal'}
+                {pendingAction === 'attack' && '⚔️ Select a target to attack'}
+                {pendingAction === 'heal' && '💚 Select a target to heal'}
+                {pendingAction === 'burn' && '🔥 Select a target to burn'}
+                {pendingAction === 'kindle' && '🔥✨ Select a target to kindle (spreads to allies)'}
+                {pendingAction === 'poison' && '🧪 Select a target to poison'}
+                {pendingAction === 'passive-test' && '🌿 Select a creature to attack (triggers passives)'}
               </p>
               <p className="text-sm opacity-90">Click on any creature to target them</p>
             </div>
             <button
               onClick={cancelTargetSelection}
-              className="px-4 py-2 bg-white text-blue-600 rounded hover:bg-gray-100 font-semibold"
+              className="px-4 py-2 bg-slate-100 text-blue-900 rounded hover:bg-white font-semibold"
             >
               Cancel
             </button>
@@ -255,54 +413,67 @@ export const BattleEngineExample: React.FC = () => {
       )}
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Effect Pipeline System Demo</h1>
+        <h1 className="text-3xl font-bold text-purple-100">Effect Pipeline System Demo</h1>
         <button
           onClick={goBackToBattle}
-          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+          className="px-4 py-2 bg-slate-700 text-purple-200 rounded hover:bg-slate-600 border border-purple-500/30"
         >
           ← Back to Battle
         </button>
       </div>
 
       {/* Battle Status */}
-      <div className="mb-6 p-4 bg-gray-100 rounded-lg">
-        <h2 className="text-xl font-semibold mb-2">Battle Status</h2>
+      <div className="mb-6 p-4 bg-slate-800/80 backdrop-blur-sm border border-purple-500/30 rounded-lg">
+        <h2 className="text-xl font-semibold mb-2 text-purple-200">Battle Status</h2>
         {isBattleOver() ? (
-          <div className="text-lg">
-            Battle Over! Winner: <span className="font-bold">{getBattleWinner()}</span>
+          <div className="text-lg text-purple-100">
+            Battle Over! Winner: <span className="font-bold text-pink-400">{getBattleWinner()}</span>
           </div>
         ) : (
-          <div>Battle in progress...</div>
+          <div className="flex items-center gap-4">
+            <div className="text-purple-200">Battle in progress...</div>
+            <div className="text-sm text-slate-300" data-testid="turn-counter">Turn: <span className="font-semibold text-purple-100">{turnNumber}</span></div>
+            <div className="text-sm text-slate-300" data-testid="turn-owner">Owner: <span className="font-semibold text-purple-100">{currentTurnOwner}</span></div>
+            <button
+              onClick={handleEndTurn}
+              className="ml-4 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded"
+              data-testid="end-turn-button"
+            >
+              End Turn
+            </button>
+          </div>
         )}
         {isProcessingEffects && (
-          <div className="text-blue-600 font-semibold">⚡ Processing effects...</div>
+          <div className="text-blue-400 font-semibold">⚡ Processing effects...</div>
         )}
       </div>
 
       {/* Creatures Display */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Player Creatures */}
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <h3 className="text-lg font-semibold mb-3">Player Creatures</h3>
+        <div className="p-4 bg-slate-800/60 backdrop-blur-sm border border-blue-500/30 rounded-lg">
+          <h3 className="text-lg font-semibold mb-3 text-blue-300">Player Creatures</h3>
           {battleState.playerCreatures.map(creature => (
             <div
               key={creature.ID}
+              data-testid="creature-card"
+              data-creature-name={creature.name}
               data-creature-id={creature.ID}
               onClick={() => handleCreatureClick(creature.ID)}
               className={`p-3 border rounded mb-2 transition-all ${
                 creature.health <= 0 
-                  ? 'opacity-50 bg-gray-200' 
+                  ? 'opacity-50 bg-slate-900/50 border-slate-600' 
                   : isSelectingTarget
-                  ? 'bg-blue-50 border-blue-400 cursor-pointer hover:bg-blue-100 hover:shadow-lg'
-                  : 'bg-white'
+                  ? 'bg-blue-900/40 border-blue-400 cursor-pointer hover:bg-blue-800/60 hover:shadow-lg hover:shadow-blue-500/20'
+                  : 'bg-slate-900/70 border-slate-600'
               }`}
             >
               <div className="flex justify-between items-center">
-                <span className="font-medium">
+                <span className="font-medium text-purple-100">
                   {creature.icon} {creature.name}
                 </span>
-                <div className="text-sm">
-                  <span className={creature.health <= 0 ? 'text-red-500' : 'text-green-600'}>
+                <div className="text-sm" data-testid="creature-health">
+                  <span className={creature.health <= 0 ? 'text-red-400' : 'text-green-400'}>
                     {creature.health}/{creature.maxHealth} HP
                   </span>
                 </div>
@@ -311,13 +482,19 @@ export const BattleEngineExample: React.FC = () => {
                 ATK: {creature.attack} | DEF: {creature.defense}
               </div>
               {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-gray-200">
+                <div className="mt-2 pt-2 border-t border-purple-500/20">
+                  <div className="text-xs text-purple-300 mb-1 font-semibold">⚡ Passive Abilities:</div>
                   {creature.passiveAbilities.map((ability) => (
-                    <div key={ability.id} className="text-xs bg-yellow-100 rounded p-2 mb-1">
-                      <div className="font-semibold text-yellow-900">
+                    <div 
+                      key={ability.id} 
+                      onClick={(e) => handlePassiveClick(ability, e)}
+                      className="text-xs bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/40 rounded p-2 mb-1 cursor-pointer transition-all hover:shadow-lg hover:shadow-yellow-500/20 group"
+                    >
+                      <div className="font-semibold text-yellow-200 group-hover:text-yellow-100">
                         {ability.icon} {ability.name}
+                        <span className="ml-2 text-xs text-yellow-400/70 group-hover:text-yellow-300">ⓘ Click for details</span>
                       </div>
-                      <div className="text-yellow-800">{ability.description}</div>
+                      <div className="text-yellow-300/90 mt-1">{ability.description}</div>
                     </div>
                   ))}
                 </div>
@@ -327,12 +504,15 @@ export const BattleEngineExample: React.FC = () => {
                   {creature.statuses.map((status, idx) => (
                     <span
                       key={`${status.id}-${idx}`}
-                      className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                      data-testid="status-badge"
+                      data-status-id={status.id}
+                      onClick={(e) => handleStatusClick(status, e)}
+                      className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium cursor-pointer transition-all hover:shadow-lg group ${
                         status.type === 'debuff'
-                          ? 'bg-red-100 text-red-800 border border-red-300'
+                          ? 'bg-red-500/30 text-red-200 border border-red-400/50 hover:bg-red-500/40 hover:shadow-red-500/30'
                           : status.type === 'buff'
-                          ? 'bg-green-100 text-green-800 border border-green-300'
-                          : 'bg-gray-100 text-gray-800 border border-gray-300'
+                          ? 'bg-green-500/30 text-green-200 border border-green-400/50 hover:bg-green-500/40 hover:shadow-green-500/30'
+                          : 'bg-slate-500/30 text-slate-200 border border-slate-400/50 hover:bg-slate-500/40 hover:shadow-slate-500/30'
                       }`}
                     >
                       {status.icon} {status.name} ({status.duration})
@@ -345,27 +525,29 @@ export const BattleEngineExample: React.FC = () => {
         </div>
 
         {/* Computer Creatures */}
-        <div className="p-4 bg-red-50 rounded-lg">
-          <h3 className="text-lg font-semibold mb-3">Computer Creatures</h3>
+        <div className="p-4 bg-slate-800/60 backdrop-blur-sm border border-red-500/30 rounded-lg">
+          <h3 className="text-lg font-semibold mb-3 text-red-300">Computer Creatures</h3>
           {battleState.computerCreatures.map(creature => (
             <div
               key={creature.ID}
+              data-testid="creature-card"
+              data-creature-name={creature.name}
               data-creature-id={creature.ID}
               onClick={() => handleCreatureClick(creature.ID)}
               className={`p-3 border rounded mb-2 transition-all ${
                 creature.health <= 0 
-                  ? 'opacity-50 bg-gray-200' 
+                  ? 'opacity-50 bg-slate-900/50 border-slate-600' 
                   : isSelectingTarget
-                  ? 'bg-blue-50 border-blue-400 cursor-pointer hover:bg-blue-100 hover:shadow-lg'
-                  : 'bg-white'
+                  ? 'bg-red-900/40 border-red-400 cursor-pointer hover:bg-red-800/60 hover:shadow-lg hover:shadow-red-500/20'
+                  : 'bg-slate-900/70 border-slate-600'
               }`}
             >
               <div className="flex justify-between items-center">
-                <span className="font-medium">
+                <span className="font-medium text-purple-100">
                   {creature.icon} {creature.name}
                 </span>
-                <div className="text-sm">
-                  <span className={creature.health <= 0 ? 'text-red-500' : 'text-green-600'}>
+                <div className="text-sm" data-testid="creature-health">
+                  <span className={creature.health <= 0 ? 'text-red-400' : 'text-green-400'}>
                     {creature.health}/{creature.maxHealth} HP
                   </span>
                 </div>
@@ -374,13 +556,19 @@ export const BattleEngineExample: React.FC = () => {
                 ATK: {creature.attack} | DEF: {creature.defense}
               </div>
               {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-gray-200">
+                <div className="mt-2 pt-2 border-t border-purple-500/20">
+                  <div className="text-xs text-purple-300 mb-1 font-semibold">⚡ Passive Abilities:</div>
                   {creature.passiveAbilities.map((ability) => (
-                    <div key={ability.id} className="text-xs bg-yellow-100 rounded p-2 mb-1">
-                      <div className="font-semibold text-yellow-900">
+                    <div 
+                      key={ability.id} 
+                      onClick={(e) => handlePassiveClick(ability, e)}
+                      className="text-xs bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/40 rounded p-2 mb-1 cursor-pointer transition-all hover:shadow-lg hover:shadow-yellow-500/20 group"
+                    >
+                      <div className="font-semibold text-yellow-200 group-hover:text-yellow-100">
                         {ability.icon} {ability.name}
+                        <span className="ml-2 text-xs text-yellow-400/70 group-hover:text-yellow-300">ⓘ Click for details</span>
                       </div>
-                      <div className="text-yellow-800">{ability.description}</div>
+                      <div className="text-yellow-300/90 mt-1">{ability.description}</div>
                     </div>
                   ))}
                 </div>
@@ -390,12 +578,15 @@ export const BattleEngineExample: React.FC = () => {
                   {creature.statuses.map((status, idx) => (
                     <span
                       key={`${status.id}-${idx}`}
-                      className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                      data-testid="status-badge"
+                      data-status-id={status.id}
+                      onClick={(e) => handleStatusClick(status, e)}
+                      className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium cursor-pointer transition-all hover:shadow-lg group ${
                         status.type === 'debuff'
-                          ? 'bg-red-100 text-red-800 border border-red-300'
+                          ? 'bg-red-500/30 text-red-200 border border-red-400/50 hover:bg-red-500/40 hover:shadow-red-500/30'
                           : status.type === 'buff'
-                          ? 'bg-green-100 text-green-800 border border-green-300'
-                          : 'bg-gray-100 text-gray-800 border border-gray-300'
+                          ? 'bg-green-500/30 text-green-200 border border-green-400/50 hover:bg-green-500/40 hover:shadow-green-500/30'
+                          : 'bg-slate-500/30 text-slate-200 border border-slate-400/50 hover:bg-slate-500/40 hover:shadow-slate-500/30'
                       }`}
                     >
                       {status.icon} {status.name} ({status.duration})
@@ -408,71 +599,92 @@ export const BattleEngineExample: React.FC = () => {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-        <h3 className="text-lg font-semibold mb-3">Test Actions</h3>
-        <div className="mb-3 p-3 bg-blue-50 rounded text-sm">
-          <p className="font-semibold mb-1">🌿 Passive Abilities Demo:</p>
-          <p>Click "Test Passive Abilities" to attack a creature with counter-attack abilities!</p>
-          <ul className="list-disc list-inside mt-1 text-xs space-y-1">
-            <li><strong>Golem (Stone Thorns)</strong>: Always reflects 15 true damage back to attacker</li>
-            <li><strong>Basilisk (Poison Skin)</strong>: 60% chance to poison the attacker for 8 damage</li>
-          </ul>
-          <p className="mt-2 text-xs text-gray-700">Watch your Dragon's HP - it will take counter-attack damage!</p>
-        </div>
+      {/* Test Actions */}
+      <div className="mb-6 p-4 bg-slate-800/60 backdrop-blur-sm border border-purple-500/30 rounded-lg">
+        <h2 className="text-xl font-semibold mb-3 text-purple-200">Test Actions</h2>
         <div className="flex flex-wrap gap-2">
-          <button
-            onClick={handleBurnTest}
-            disabled={isProcessingEffects || computerCreatures.length === 0}
-            className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 disabled:opacity-50"
-          >
-            🔥 Apply Burn
-          </button>
-
-          <button
-            onClick={handlePoisonTest}
-            disabled={isProcessingEffects || computerCreatures.length === 0}
-            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
-          >
-            🧪 Apply Poison
-          </button>
-
           <button
             onClick={handleAttackTest}
             disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+            title="Basic physical attack (15 damage, no status effects)"
             className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
               isSelectingTarget && pendingAction === 'attack'
                 ? 'bg-blue-600 ring-2 ring-blue-400'
                 : 'bg-red-500 hover:bg-red-600'
             }`}
           >
-            ⚔️ {isSelectingTarget && pendingAction === 'attack' ? 'Selecting Target...' : 'Attack'}
+            ⚔️ {isSelectingTarget && pendingAction === 'attack' ? 'Selecting...' : 'Slash'}
+          </button>
+
+          <button
+            onClick={handleBurnTest}
+            disabled={isProcessingEffects || isSelectingTarget}
+            title="Directly apply burn status (10 damage, 3 turns)"
+            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
+              isSelectingTarget && pendingAction === 'burn'
+                ? 'bg-blue-600 ring-2 ring-blue-400'
+                : 'bg-orange-500 hover:bg-orange-600'
+            }`}
+          >
+            🔥 {isSelectingTarget && pendingAction === 'burn' ? 'Selecting...' : 'Burn'}
+          </button>
+
+          <button
+            onClick={handleKindleTest}
+            disabled={isProcessingEffects || isSelectingTarget}
+            title="Apply burn + spread to one ally (10 dmg primary, 5 dmg spread)"
+            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
+              isSelectingTarget && pendingAction === 'kindle'
+                ? 'bg-blue-600 ring-2 ring-blue-400'
+                : 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
+            }`}
+          >
+            🔥✨ {isSelectingTarget && pendingAction === 'kindle' ? 'Selecting...' : 'Kindle'}
+          </button>
+
+          <button
+            onClick={handlePoisonTest}
+            disabled={isProcessingEffects || isSelectingTarget}
+            title="Directly apply poison status (15 damage, 3 turns)"
+            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
+              isSelectingTarget && pendingAction === 'poison'
+                ? 'bg-blue-600 ring-2 ring-blue-400'
+                : 'bg-purple-500 hover:bg-purple-600'
+            }`}
+          >
+            🧪 {isSelectingTarget && pendingAction === 'poison' ? 'Selecting...' : 'Poison'}
           </button>
 
           <button
             onClick={handleHealTest}
             disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+            title="Heal target for 25 HP (capped at max health)"
             className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
               isSelectingTarget && pendingAction === 'heal'
                 ? 'bg-blue-600 ring-2 ring-blue-400'
                 : 'bg-green-500 hover:bg-green-600'
             }`}
           >
-            💚 {isSelectingTarget && pendingAction === 'heal' ? 'Selecting Target...' : 'Heal'}
+            💚 {isSelectingTarget && pendingAction === 'heal' ? 'Selecting...' : 'Heal'}
           </button>
 
           <button
             onClick={handlePassiveAbilityTest}
-            disabled={isProcessingEffects || playerCreatures.length === 0 || computerCreatures.length === 0}
-            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:opacity-50"
+            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+            title="Attack to trigger passive abilities: Golem (Stone Thorns: reflects 15 dmg), Basilisk (Poison Skin: 60% chance to poison)"
+            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
+              isSelectingTarget && pendingAction === 'passive-test'
+                ? 'bg-blue-600 ring-2 ring-blue-400'
+                : 'bg-yellow-500 hover:bg-yellow-600'
+            }`}
           >
-            🌿 Test Passive Abilities (Counter-Attack)
+            🌿 {isSelectingTarget && pendingAction === 'passive-test' ? 'Selecting...' : 'Test Passives'}
           </button>
 
           <button
             onClick={() => resetBattle()}
             disabled={isProcessingEffects}
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50"
+            className="px-4 py-2 bg-slate-600 text-purple-100 rounded hover:bg-slate-500 disabled:opacity-50 border border-purple-500/30"
           >
             🔄 Reset Battle
           </button>
@@ -481,9 +693,9 @@ export const BattleEngineExample: React.FC = () => {
 
       {/* Debug Info */}
       {debugInfo && (
-        <div className="p-4 bg-yellow-50 rounded-lg">
-          <h3 className="text-lg font-semibold mb-3">Debug Info</h3>
-          <pre className="text-xs bg-white p-2 rounded overflow-auto">
+        <div className="p-4 bg-slate-800/60 backdrop-blur-sm border border-yellow-500/30 rounded-lg">
+          <h3 className="text-lg font-semibold mb-3 text-yellow-300">Debug Info</h3>
+          <pre className="text-xs bg-slate-900/70 text-purple-200 p-2 rounded overflow-auto border border-slate-700">
             {JSON.stringify({
               turn: debugInfo.battleState.turn,
               stateHistoryLength: debugInfo.stateHistoryLength,
@@ -521,6 +733,14 @@ export const BattleEngineExample: React.FC = () => {
           z-index: 1000;
         }
       `}</style>
+
+      {/* Info Modal */}
+      <InfoModal
+        isOpen={infoModal.isOpen}
+        onClose={closeModal}
+        type={infoModal.type as 'status' | 'passive'}
+        data={infoModal.data}
+      />
     </div>
   )
 }

@@ -86,9 +86,17 @@ const executeEffectPipeline = async (
       // 1. Apply the effect and get state changes + animations
       const { stateChanges, animations } = await applyEffect(currentEffect, context)
 
+      console.log(`📦 Effect ${currentEffect.type} returned:`, {
+        stateChangesCount: stateChanges.length,
+        stateChangeTypes: stateChanges.map(sc => sc.type),
+        animationsCount: animations.length
+      })
+
       // 2. Apply state changes to context (but defer UI notification)
       if (stateChanges.length > 0) {
+        console.log('🔧 Applying state changes to context...')
         applyChangesToContext(context, stateChanges, { deferNotification: true })
+        console.log('✅ State changes applied to context')
       }
 
       // 3. Execute animations (returns after damage numbers appear, not after they fade)

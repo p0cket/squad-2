@@ -11,20 +11,30 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) to play.
 
-## 🎮 Battle Engine
+## � Development Roadmap
 
-Complete battle system documentation: **[`plans/BATTLE_ENGINE.md`](plans/BATTLE_ENGINE.md)**
+**Main Development Guide**: **[BATTLE_SYSTEM_ROADMAP.md](BATTLE_SYSTEM_ROADMAP.md)**
 
-- **Technical Overview**: System architecture and data flow
-- **Implementation Status**: Current progress and next steps  
-- **Testing Guide**: How to verify functionality
-- **Troubleshooting**: Common issues and solutions
+Follow our phased development plan with playable builds at each milestone:
+- **Phase 1**: ✅ Core battle engine, effects, and passives (COMPLETE)
+- **Phase 2**: 🔄 Turn system and status effect ticking (IN PROGRESS)
+- **Phase 3-8**: Attack variety, items, AI, polish, and advanced features
+
+## 📚 Documentation
+
+All documentation has been organized into `/docs/`:
+- **[/docs/README.md](docs/README.md)** - Documentation index
+- **[/docs/technical/](docs/technical/)** - Architecture and implementation guides
+- **[/docs/planning/](docs/planning/)** - Active checklists and todos
+- **[/docs/archive/](docs/archive/)** - Historical documents and completed work
 
 ## 📊 Current Status
 
-- ✅ **Core Combat**: Attacks, damage, status effects working
-- ✅ **Animation Queue**: Infrastructure for smooth battle animations
-- 🚧 **Next**: Animation integration into attack flow
+- ✅ **Effect Pipeline**: Complete with trigger system
+- ✅ **Passive Abilities**: Stone Thorns, Poison Skin, Outbreak (LOCAL scope)
+- ✅ **Status Effects**: Burn, Poison with target selection
+- ✅ **Zustand Integration**: State management working
+- � **Next**: Turn-based system with status ticking
 
 ## 📋 Project Documentation
 

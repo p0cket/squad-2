@@ -42,12 +42,24 @@ const applyBurnEffect = async (
   effect: Effect,
   context: BattleContext
 ): Promise<EffectApplicationResult> => {
+  console.log('🚨🚨🚨 BURN APPLICATOR CALLED! 🚨🚨🚨')
+  console.group(`🔥 APPLY BURN EFFECT`)
+  console.log('Effect:', effect)
+  console.log('Effect type:', effect.type)
+  console.log('Effect data:', effect.data)
+  
   const { damage } = effect.data as BurnEffectData
   const creature = getCreatureFromContext(context, effect.targetId)
+  
+  console.log(`Target creature:`, { name: creature.name, health: creature.health, statuses: creature.statuses })
+  console.log(`🔥 BURN DAMAGE VALUE: ${damage}`)
+  
   const actualDamage = Math.min(damage, creature.health)
   const newHealth = creature.health - actualDamage
 
-  console.log(`🔥 Burn effect: ${creature.name} takes ${actualDamage} damage (${creature.health} → ${newHealth})`)
+  console.log(`💥 Damage calculation: ${damage} → ${actualDamage} (capped by health)`)
+  console.log(`❤️ Health: ${creature.health} → ${newHealth}`)
+  console.log(`📉 Health delta: -${actualDamage}`)
 
   const healthChange: HealthChange = {
     type: 'HEALTH_CHANGE',
@@ -60,24 +72,22 @@ const applyBurnEffect = async (
     }
   }
 
-  const statusChange: StateChange = {
-    type: 'STATUS_APPLIED',
-    creatureId: effect.targetId,
-    timestamp: Date.now(),
-    data: {
-      statusId: 'BURN',
-      duration: 3,
-      source: 'burn'
-    }
-  }
+  console.log('📝 Creating HEALTH_CHANGE:', healthChange)
 
+  // NOTE: When called as a tick during processEndOfTurn, we should NOT reapply the status
+  // The status already exists and its duration is managed separately
+  // Only create health change, not status change
   const animations: Animation[] = [
     { type: 'burn', targetId: effect.targetId, duration: 500 },
     { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
   ]
 
+  console.log('🎬 Animations:', animations)
+  console.log('📤 Returning state changes:', [healthChange])
+  console.groupEnd()
+
   return {
-    stateChanges: [healthChange, statusChange],
+    stateChanges: [healthChange], // Only health change, no status reapplication
     animations
   }
 }
@@ -290,9 +300,13 @@ const applyStunEffect = async (
 // REGISTER APPLICATORS
 // ============================================================================
 
+console.log('🔧 Registering status effect applicators...')
 registerEffectApplicator('BURN', applyBurnEffect)
+console.log('✅ BURN applicator registered')
 registerEffectApplicator('POISON', applyPoisonEffect)
+console.log('✅ POISON applicator registered')
 registerEffectApplicator('REGENERATION', applyRegenerationEffect)
+console.log('✅ REGENERATION applicator registered')
 registerEffectApplicator('ATTACK_BUFF', applyAttackBuffEffect)
 registerEffectApplicator('DEFENSE_BUFF', applyDefenseBuffEffect)
 registerEffectApplicator('STUN', applyStunEffect)
@@ -306,6 +320,7 @@ export const createBurnEffect = (targetId: number, damage: number = 5): Effect =
   type: 'BURN',
   targetId,
   priority: 10,
+  timestamp: Date.now(),
   data: { damage }
 })
 
@@ -314,6 +329,7 @@ export const createPoisonEffect = (targetId: number, damage: number = 10): Effec
   type: 'POISON',
   targetId,
   priority: 10,
+  timestamp: Date.now(),
   data: { damage }
 })
 
@@ -322,6 +338,7 @@ export const createRegenerationEffect = (targetId: number, healing: number = 5):
   type: 'REGENERATION',
   targetId,
   priority: 5,
+  timestamp: Date.now(),
   data: { healing }
 })
 
@@ -330,6 +347,7 @@ export const createAttackBuffEffect = (targetId: number, attackBonus: number = 5
   type: 'ATTACK_BUFF',
   targetId,
   priority: 15,
+  timestamp: Date.now(),
   data: { attackBonus }
 })
 
@@ -338,6 +356,7 @@ export const createDefenseBuffEffect = (targetId: number, defenseBonus: number =
   type: 'DEFENSE_BUFF',
   targetId,
   priority: 15,
+  timestamp: Date.now(),
   data: { defenseBonus }
 })
 
@@ -346,5 +365,6 @@ export const createStunEffect = (targetId: number, duration: number = 2): Effect
   type: 'STUN',
   targetId,
   priority: 20,
+  timestamp: Date.now(),
   data: { duration }
 })

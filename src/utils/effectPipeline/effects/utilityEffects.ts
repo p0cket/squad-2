@@ -129,6 +129,7 @@ export const createStatBuffEffect = (
   type: 'STAT_BUFF',
   targetId,
   priority: 30,
+  timestamp: Date.now(),
   data: {
     statName,
     value,
@@ -141,6 +142,7 @@ export const createOverkillEffect = (targetId: number): Effect => ({
   type: 'OVERKILL',
   targetId,
   priority: 15,
+  timestamp: Date.now(),
   data: {}
 })
 
@@ -149,6 +151,7 @@ export const createStunRecoveryEffect = (targetId: number): Effect => ({
   type: 'STUN_RECOVERY',
   targetId,
   priority: 10,
+  timestamp: Date.now(),
   data: {}
 })
 
@@ -157,5 +160,6 @@ export const createFirstBloodEffect = (targetId: number): Effect => ({
   type: 'FIRST_BLOOD',
   targetId,
   priority: 5,
+  timestamp: Date.now(),
   data: {}
 })

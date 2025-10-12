@@ -54,6 +54,32 @@ export type Attack = {
   cooldown: number
 }
 
+export type PassiveAbilityTrigger = 
+  | 'on_damaged'        // When this creature takes damage
+  | 'on_attack'         // When this creature attacks
+  | 'on_death'          // When this creature dies
+  | 'on_kill'           // When this creature kills another
+  | 'start_of_turn'     // At the start of each turn
+  | 'end_of_turn'       // At the end of each turn
+  | 'on_heal'           // When this creature is healed
+  | 'on_status_applied' // When a status is applied to this creature
+
+export type PassiveAbility = {
+  id: string
+  name: string
+  description: string
+  trigger: PassiveAbilityTrigger
+  effect: {
+    type: string // 'poison', 'damage', 'heal', 'status', etc.
+    targetType: 'attacker' | 'self' | 'all_enemies' | 'all_allies' | 'random_enemy'
+    value?: number // Amount of damage/heal/etc
+    statusId?: string // If applying a status
+    duration?: number // Duration if applicable
+    chance?: number // Probability (0-1) that the effect triggers
+  }
+  icon?: string
+}
+
 export type BaseCreature = {
   name: string
   icon: string
@@ -67,6 +93,7 @@ export type BaseCreature = {
   startingAttacks: Attack[]
   possibleAttacks: Attack[]
   statuses: StatusEffect[]
+  passiveAbilities?: PassiveAbility[] // Optional passive abilities (thorns, counter-attack, etc.)
 }
 
 export type Owner = "player" | "computer" | null

@@ -22,6 +22,7 @@ export type HealthChange = StateChange & {
     delta: number
     newHealth: number
     source: string
+    sourceCreatureId?: number // ID of creature that caused this health change (for counter-attacks)
   }
 }
 
@@ -52,9 +53,10 @@ export type Animation = {
 
 export type Effect = {
   id: string
-  type: string // Effect type identifier for applicator lookup (e.g., 'ATTACK', 'HEAL', 'STATUS_APPLY')
+  type: string // Effect type identifier for handler lookup (e.g., 'ATTACK', 'HEAL', 'STATUS_APPLY')
   targetId: number
-  priority?: number
+  priority: number // 0-100, higher = processes first
+  timestamp: number // For tie-breaking when priorities are equal
   data: any // Serializable effect-specific payload
 }
 
@@ -64,11 +66,23 @@ export type EffectApplicationResult = {
   animations: Animation[]
 }
 
+// New cleaner name for effect result
+export type EffectResult = {
+  changes: StateChange[]
+  anims: Animation[]
+}
+
 // Pure function that applies an effect and returns state changes + animations
 export type EffectApplicator = (
   effect: Effect,
   context: BattleContext
 ) => Promise<EffectApplicationResult>
+
+// New cleaner name for handler function
+export type EffectHandler = (
+  effect: Effect,
+  context: BattleContext
+) => Promise<EffectResult>
 
 export type EffectNode = {
   effect: Effect

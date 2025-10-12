@@ -15,6 +15,7 @@ export const setupDefaultTriggers = (): void => {
   setupStatusSpreadTriggers()
   setupChainReactionTriggers()
   setupCombatTriggers()
+  setupPassiveAbilityTriggers()
 
   console.log('✅ Default effect triggers configured')
 }
@@ -49,12 +50,45 @@ const setupDeathTriggers = (): void => {
 
 /**
  * Sets up triggers for status effects that can spread
+ * 
+ * Example: "Outbreak" passive ability
+ * - Can be attached to creatures as passive ability
+ * - Can be triggered by attacks
+ * - Can be response to damage
+ * 
+ * To use as passive ability on a creature:
+ * ```
+ * passiveAbilities: [{
+ *   id: 'outbreak',
+ *   name: 'Outbreak',
+ *   description: 'When you burn an enemy, 25% chance to spread to their ally',
+ *   trigger: 'on_status_applied',
+ *   effect: { type: 'spread_burn', chance: 0.25 }
+ * }]
+ * ```
  */
 const setupStatusSpreadTriggers = (): void => {
-  // Burn spread trigger
+  // Outbreak: Burn spread trigger (LOCAL SCOPE)
+  // Only triggers when the creature WITH the "outbreak" passive gets burned
+  // This demonstrates LOCAL scope - passive only affects the creature that has it
   registerEffectTrigger('STATUS_APPLIED', {
     condition: (change, context) => {
-      return change.data.statusId === 'BURN' && Math.random() < 0.25 // 25% chance
+      // Only trigger for BURN status
+      if (change.data.statusId !== 'BURN') return false
+      
+      // LOCAL SCOPE: Check if the burned creature has the "outbreak" passive
+      const burnedCreature = getCreatureFromContext(context, change.creatureId)
+      const hasOutbreakPassive = burnedCreature.passiveAbilities?.some(
+        ability => ability.id === 'outbreak'
+      )
+      
+      if (!hasOutbreakPassive) return false
+      
+      // If creature has outbreak passive, check probability
+      const outbreakAbility = burnedCreature.passiveAbilities?.find(a => a.id === 'outbreak')
+      const chance = outbreakAbility?.effect.chance ?? 0.25
+      
+      return Math.random() < chance
     },
     createEffect: (change, context) => {
       const creature = getCreatureFromContext(context, change.creatureId)
@@ -74,8 +108,13 @@ const setupStatusSpreadTriggers = (): void => {
 
       if (potentialTargets.length > 0) {
         const randomTarget = potentialTargets[Math.floor(Math.random() * potentialTargets.length)]
-        console.log(`🔥 Burn spreads from ${creature.name} to ${randomTarget.name}`)
-        return createBurnEffect(randomTarget.ID, 3) // Weaker spread damage
+        console.log(`🦠 Outbreak! ${creature.name}'s passive spreads burn to ${randomTarget.name}`)
+        
+        // Get damage value from passive ability or default to 3
+        const outbreakAbility = creature.passiveAbilities?.find(a => a.id === 'outbreak')
+        const spreadDamage = outbreakAbility?.effect.value ?? 3
+        
+        return createBurnEffect(randomTarget.ID, spreadDamage)
       }
 
       return createBurnEffect(change.creatureId, 0) // No effect if no valid targets
@@ -131,6 +170,7 @@ const setupChainReactionTriggers = (): void => {
         type: 'STAT_BUFF',
         targetId: change.creatureId,
         priority: 30,
+        timestamp: Date.now(),
         data: {
           statName: 'attack',
           value: 10,
@@ -158,6 +198,7 @@ const setupChainReactionTriggers = (): void => {
         type: 'OVERKILL',
         targetId: change.creatureId,
         priority: 15,
+        timestamp: Date.now(),
         data: {}
       }
     },
@@ -184,6 +225,7 @@ const setupCombatTriggers = (): void => {
         type: 'STUN_RECOVERY',
         targetId: change.creatureId,
         priority: 10,
+        timestamp: Date.now(),
         data: {}
       }
     },
@@ -191,6 +233,7 @@ const setupCombatTriggers = (): void => {
   })
 
   // First blood trigger (first creature to take damage in battle)
+  // This is a tracking/logging trigger, doesn't create an actual effect
   let firstBloodTriggered = false
   registerEffectTrigger('HEALTH_CHANGE', {
     condition: (change, context) => {
@@ -201,16 +244,128 @@ const setupCombatTriggers = (): void => {
       const creature = getCreatureFromContext(context, change.creatureId)
       console.log(`🩸 First blood: ${creature.name} takes the first damage!`)
 
+      // Return a no-op effect instead of FIRST_BLOOD type (no applicator exists)
       return {
-        id: 'first-blood',
-        type: 'FIRST_BLOOD',
+        id: 'first-blood-marker',
+        type: 'NO_EFFECT',
         targetId: change.creatureId,
         priority: 5,
+        timestamp: Date.now(),
         data: {}
       }
     },
     priority: 5
   })
+}
+
+/**
+ * Sets up triggers for passive abilities (thorns, counter-attack, etc.)
+ */
+const setupPassiveAbilityTriggers = (): void => {
+  // Thorns/Counter-attack trigger - when damaged, retaliate against attacker
+  registerEffectTrigger('HEALTH_CHANGE', {
+    condition: (change, context) => {
+      // Only trigger on damage (negative delta)
+      if (change.data.delta >= 0) return false
+      
+      // Must have a source creature ID (attacker)
+      if (!change.data.sourceCreatureId) return false
+      
+      const damagedCreature = getCreatureFromContext(context, change.creatureId)
+      
+      // Check if creature has any on_damaged passive abilities
+      return damagedCreature.passiveAbilities?.some(ability => 
+        ability.trigger === 'on_damaged'
+      ) ?? false
+    },
+    createEffect: (change, context) => {
+      const damagedCreature = getCreatureFromContext(context, change.creatureId)
+      const attackerId = change.data.sourceCreatureId!
+      
+      // Find the first on_damaged passive ability
+      const passiveAbility = damagedCreature.passiveAbilities?.find(ability => 
+        ability.trigger === 'on_damaged'
+      )
+      
+      if (!passiveAbility) {
+        // Fallback - should not happen due to condition check
+        return {
+          id: 'no-op',
+          type: 'NO_OP',
+          targetId: change.creatureId,
+          priority: 0,
+          timestamp: Date.now(),
+          data: {}
+        }
+      }
+      
+      // Check if ability triggers (based on chance)
+      const chance = passiveAbility.effect.chance ?? 1.0
+      if (Math.random() > chance) {
+        console.log(`🎲 ${damagedCreature.name}'s ${passiveAbility.name} failed to trigger (${Math.round(chance * 100)}% chance)`)
+        return {
+          id: 'no-op',
+          type: 'NO_OP',
+          targetId: change.creatureId,
+          priority: 0,
+          timestamp: Date.now(),
+          data: {}
+        }
+      }
+      
+      console.log(`🌿 ${damagedCreature.name}'s ${passiveAbility.name} triggered!`)
+      
+      // Determine target based on targetType
+      let targetId: number
+      switch (passiveAbility.effect.targetType) {
+        case 'attacker':
+          targetId = attackerId
+          break
+        case 'self':
+          targetId = change.creatureId
+          break
+        // Add more target types as needed
+        default:
+          targetId = attackerId
+      }
+      
+      // Create effect based on ability type
+      switch (passiveAbility.effect.type) {
+        case 'poison':
+          return createPoisonEffect(targetId, passiveAbility.effect.value ?? 5)
+        
+        case 'damage':
+          return {
+            id: 'counter-damage',
+            type: 'TRUE_DAMAGE',
+            targetId,
+            priority: 55,
+            timestamp: Date.now(),
+            data: {
+              attackerId: change.creatureId,
+              damage: passiveAbility.effect.value ?? 10
+            }
+          }
+        
+        case 'burn':
+          return createBurnEffect(targetId, passiveAbility.effect.value ?? 5)
+        
+        default:
+          console.warn(`⚠️ Unknown passive ability effect type: ${passiveAbility.effect.type}`)
+          return {
+            id: 'no-op',
+            type: 'NO_OP',
+            targetId: change.creatureId,
+            priority: 0,
+            timestamp: Date.now(),
+            data: {}
+          }
+      }
+    },
+    priority: 60 // High priority to trigger soon after damage
+  })
+  
+  console.log('✅ Passive ability triggers configured')
 }
 
 /**

@@ -145,6 +145,7 @@ export const zustandToBattleContext = (store: ReturnType<typeof createZustandBat
       return store.getState().state
     },
     set state(newState: BattleState) {
+      console.log('🔵 Zustand context.state setter called - updating store')
       store.getState().setState(newState)
     },
     get stateHistory() {
@@ -164,6 +165,9 @@ export const zustandToBattleContext = (store: ReturnType<typeof createZustandBat
 
 /**
  * Applies state changes to Zustand-backed context
+ * @deprecated Use recordChangesZustand() + updateDisplayZustand() instead
+ * Old pattern: applyChangesToZustandContext(store, changes, { deferNotification: false })
+ * New pattern: recordChangesZustand(store, changes); updateDisplayZustand(store, changes)
  */
 export const applyChangesToZustandContext = (
   store: ReturnType<typeof createZustandBattleStore>,
@@ -171,6 +175,11 @@ export const applyChangesToZustandContext = (
   options: { notify?: boolean; deferNotification?: boolean } = {}
 ): void => {
   const { notify = true, deferNotification = false } = options
+
+  // Show deprecation warning if not using new pattern
+  if (!deferNotification) {
+    console.warn('⚠️ DEPRECATED: applyChangesToZustandContext() - Use recordChangesZustand() + updateDisplayZustand() instead')
+  }
 
   console.log('🔄 applyChangesToZustandContext:', {
     changeCount: changes.length,
@@ -203,11 +212,13 @@ export const applyChangesToZustandContext = (
 
 /**
  * Manually trigger subscriber notifications (for deferred updates)
+ * @deprecated Use updateDisplayZustand() instead - cleaner naming
  */
 export const notifyZustandContextSubscribers = (
   store: ReturnType<typeof createZustandBattleStore>,
   changes: StateChange[] = []
 ): void => {
+  console.warn('⚠️ DEPRECATED: notifyZustandContextSubscribers() - Use updateDisplayZustand() instead')
   store.getState().notifySubscribers(changes)
 }
 
@@ -227,6 +238,63 @@ export const subscribeToZustandContext = (
  */
 export const getZustandContextState = (store: ReturnType<typeof createZustandBattleStore>): BattleState => {
   return safeClone(store.getState().state)
+}
+
+// ============================================================================
+// NEW NAMING SCHEME (matches effect pipeline refactoring)
+// ============================================================================
+
+/**
+ * Record state changes to the Zustand store (deferred notification)
+ * New name for: applyChangesToZustandContext with deferNotification: true
+ * 
+ * This applies changes to the store but does NOT notify subscribers yet.
+ * Call updateDisplayZustand() afterwards to trigger re-renders.
+ * 
+ * @param store - The Zustand battle store
+ * @param changes - Array of state changes to apply
+ */
+export const recordChangesZustand = (
+  store: ReturnType<typeof createZustandBattleStore>,
+  changes: StateChange[]
+): void => {
+  console.group(`💾 [Zustand] Recording ${changes.length} changes`)
+  
+  changes.forEach((change, i) => {
+    console.log(`Change ${i + 1}:`, change.type, change)
+  })
+  
+  // Apply changes with deferred notification
+  applyChangesToZustandContext(store, changes, { 
+    notify: true,
+    deferNotification: true 
+  })
+  
+  console.log('✅ Changes recorded to Zustand store')
+  console.groupEnd()
+}
+
+/**
+ * Update the display by notifying all Zustand subscribers
+ * New name for: notifyZustandContextSubscribers
+ * 
+ * Triggers React component re-renders by notifying all subscribers
+ * of the state changes that occurred.
+ * 
+ * @param store - The Zustand battle store
+ * @param changes - Array of state changes that occurred
+ */
+export const updateDisplayZustand = (
+  store: ReturnType<typeof createZustandBattleStore>,
+  changes: StateChange[] = []
+): void => {
+  const subscriberCount = store.getState().subscribers.size
+  console.log(`📢 [Zustand] Notifying ${subscriberCount} subscriber groups`)
+  
+  // Notify all subscribers
+  store.getState().notifySubscribers(changes)
+  
+  console.log('✅ Display updated')
 }
 
 /**
@@ -259,8 +327,11 @@ export const rollbackZustandContext = (store: ReturnType<typeof createZustandBat
  * Applies a single state change to the battle state
  */
 const applyStateChange = (state: BattleState, change: StateChange): BattleState => {
+  console.log(`🔹 applyStateChange called for type: ${change.type}`)
+  
   switch (change.type) {
     case 'HEALTH_CHANGE':
+      console.log('  ➡️ Routing to applyHealthChange')
       return applyHealthChange(state, change as any)
 
     case 'STATUS_APPLIED':
@@ -313,11 +384,20 @@ const applyHealthChange = (state: BattleState, change: any): BattleState => {
 const applyStatusChange = (state: BattleState, change: any): BattleState => {
   const { creatureId, data, type } = change
 
+  console.log(`📊 Zustand applying status change:`, {
+    type,
+    creatureId,
+    statusId: data.statusId,
+    duration: data.duration,
+    reason: data.reason
+  })
+
   const updateStatuses = (creature: Creature): Creature => {
     if (type === 'STATUS_APPLIED') {
       const existingStatusIndex = creature.statuses.findIndex(s => s.id === data.statusId)
 
       if (existingStatusIndex >= 0) {
+        console.log(`🔄 Updating existing ${data.statusId} on ${creature.name} - duration: ${creature.statuses[existingStatusIndex].duration} → ${data.duration}`)
         const updatedStatuses = [...creature.statuses]
         updatedStatuses[existingStatusIndex] = {
           ...updatedStatuses[existingStatusIndex],
@@ -325,6 +405,7 @@ const applyStatusChange = (state: BattleState, change: any): BattleState => {
         }
         return { ...creature, statuses: updatedStatuses }
       } else {
+        console.log(`➕ Adding new ${data.statusId} to ${creature.name} with duration ${data.duration}`)
         const statusEffect = getStatusEffectById(data.statusId)
         if (statusEffect) {
           return {
@@ -335,6 +416,7 @@ const applyStatusChange = (state: BattleState, change: any): BattleState => {
       }
     } else {
       // Remove status
+      console.log(`❌ Removing ${data.statusId} from ${creature.name} (reason: ${data.reason})`)
       return {
         ...creature,
         statuses: creature.statuses.filter(s => s.id !== data.statusId)

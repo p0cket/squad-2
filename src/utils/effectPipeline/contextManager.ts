@@ -5,6 +5,9 @@ import {
   notifyContextSubscribers as nativeNotify 
 } from './battleContext'
 import { 
+  recordChangesZustand,
+  updateDisplayZustand,
+  // Deprecated functions (kept for backwards compatibility)
   applyChangesToZustandContext,
   notifyZustandContextSubscribers 
 } from './zustandAdapter'

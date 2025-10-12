@@ -1,6 +1,7 @@
 // React Integration Hook - Main hook for using the Effect Pipeline System in React
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { BattleState, BattleContext, Effect, StateChange } from '../types'
+import { applyChangesToContext } from '../battleContext'
 import { createBattleContext, subscribeToContext, getContextState } from '../battleContext'
 import {
   createZustandBattleStore,
@@ -134,6 +135,107 @@ export const useBattleEngine = (initialState: BattleState) => {
   const applyBurn = useCallback(async (targetId: number, damage?: number) => {
     const effect = createBurnEffect(targetId, damage)
     await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Process end-of-turn: apply status ticks (burn/poison/regeneration) and decrement durations.
+   */
+  const processEndOfTurn = useCallback(async () => {
+    if (!contextRef.current) return
+
+    const ctx = contextRef.current
+
+    console.group('🔄 PROCESS END OF TURN')
+
+    // Gather all creatures from the context state
+    const allCreatures = [
+      ...(ctx.state.playerCreatures || []),
+      ...(ctx.state.computerCreatures || [])
+    ]
+
+    console.log('📊 All creatures:', allCreatures.map(c => ({ 
+      name: c.name, 
+      health: c.health, 
+      statuses: c.statuses.map(s => ({ id: s.id, duration: s.duration }))
+    })))
+
+    // Build effects to apply for each status
+    const effectsToApply: Effect[] = []
+
+    for (const creature of allCreatures) {
+      if (!creature || creature.health <= 0) continue
+
+      for (const status of creature.statuses) {
+        const sid = status.id
+        // Create appropriate effect using the existing factories (defaults handle values)
+        if (sid === 'BURN') {
+          console.log(`🔥 Creating burn tick effect for ${creature.name}`)
+          effectsToApply.push(createBurnEffect(creature.ID, undefined))
+        } else if (sid === 'POISON') {
+          console.log(`🧪 Creating poison tick effect for ${creature.name}`)
+          effectsToApply.push(createPoisonEffect(creature.ID, undefined))
+        } else if (sid === 'REGENERATION') {
+          console.log(`💚 Creating regen tick effect for ${creature.name}`)
+          effectsToApply.push(createRegenerationEffect(creature.ID, undefined))
+        } else {
+          // Unknown status: skip or extend here
+        }
+      }
+    }
+
+    console.log(`🎯 Total effects to apply: ${effectsToApply.length}`, effectsToApply.map(e => e.type))
+
+    // Apply effects sequentially so logs and animations are deterministic
+    for (const eff of effectsToApply) {
+      try {
+        console.log(`⚡ Applying ${eff.type} effect to creature ${eff.targetId}`)
+        await applyEffect(eff)
+      } catch (err) {
+        console.error('Error applying status tick effect', err)
+      }
+    }
+
+    // After applying ticks, decrement durations (batch update)
+    const durationChanges: StateChange[] = []
+
+    for (const creature of allCreatures) {
+      if (!creature || creature.health <= 0) continue
+
+      for (const status of creature.statuses) {
+        const newDuration = (status.duration || 0) - 1
+        console.log(`⏱️ ${creature.name} ${status.id}: duration ${status.duration} → ${newDuration}`)
+        
+        if (newDuration <= 0) {
+          console.log(`❌ ${status.id} expired on ${creature.name}, removing...`)
+          durationChanges.push({
+            type: 'STATUS_REMOVED',
+            creatureId: creature.ID,
+            timestamp: Date.now(),
+            data: { statusId: status.id, reason: 'expired' }
+          })
+        } else {
+          durationChanges.push({
+            type: 'STATUS_APPLIED',
+            creatureId: creature.ID,
+            timestamp: Date.now(),
+            data: { statusId: status.id, duration: newDuration, source: 'tick' }
+          })
+        }
+      }
+    }
+
+    console.log(`📝 Duration changes to apply: ${durationChanges.length}`, durationChanges)
+
+    if (durationChanges.length > 0) {
+      try {
+        applyChangesToContext(ctx, durationChanges)
+        console.log('✅ Duration changes applied successfully')
+      } catch (err) {
+        console.error('Error applying duration changes', err)
+      }
+    }
+
+    console.groupEnd()
   }, [applyEffect])
 
   /**
@@ -326,6 +428,9 @@ export const useBattleEngine = (initialState: BattleState) => {
     isBattleOver,
     getBattleWinner,
     resetBattle,
+
+    // Turn system
+    processEndOfTurn,
 
     // Debug
     getDebugInfo

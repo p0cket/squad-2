@@ -120,6 +120,19 @@ export const CREATURES: { [key: string]: BaseCreature } = {
       attacks.elemental_burst,
       attacks.inspire,
     ],
+    passiveAbilities: [{
+      id: 'flame-retribution',
+      name: 'Flame Retribution',
+      description: 'When damaged, burns attacker for 6 damage',
+      trigger: 'on_damaged',
+      effect: {
+        type: 'burn',
+        targetType: 'attacker',
+        value: 6,
+        chance: 0.75
+      },
+      icon: '🔥'
+    }]
   },
   minotaur: {
     name: "Asterion",
@@ -176,6 +189,19 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     statuses: [],
     startingAttacks: [attacks.protect, attacks.bash],
     possibleAttacks: [attacks.quicksand, attacks.rend, attacks.heal],
+    passiveAbilities: [{
+      id: 'stone-thorns',
+      name: 'Stone Thorns',
+      description: 'When damaged, deals 15 true damage back to attacker',
+      trigger: 'on_damaged',
+      effect: {
+        type: 'damage',
+        targetType: 'attacker',
+        value: 15,
+        chance: 1.0
+      },
+      icon: '🪨'
+    }]
   },
   vampire: {
     name: "Vlad",
@@ -300,6 +326,19 @@ export const CREATURES: { [key: string]: BaseCreature } = {
     statuses: [],
     startingAttacks: [attacks.venom_strike, attacks.camouflage],
     possibleAttacks: [attacks.snipe, attacks.quicksand, attacks.shadow_step],
+    passiveAbilities: [{
+      id: 'poison-skin',
+      name: 'Poison Skin',
+      description: 'When damaged, has 60% chance to poison attacker for 8 damage',
+      trigger: 'on_damaged',
+      effect: {
+        type: 'poison',
+        targetType: 'attacker',
+        value: 8,
+        chance: 0.6
+      },
+      icon: '🧪'
+    }]
   },
   centaur: {
     name: "Cento",
