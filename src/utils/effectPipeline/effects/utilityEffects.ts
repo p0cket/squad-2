@@ -24,6 +24,10 @@ export type FirstBloodEffectData = {
   // No additional data needed
 }
 
+export type NoOpEffectData = {
+  // No additional data needed - used for tracking/logging effects
+}
+
 // ============================================================================
 // EFFECT APPLICATORS (Pure functions)
 // ============================================================================
@@ -106,6 +110,20 @@ const applyFirstBloodEffect = async (
   }
 }
 
+/**
+ * Apply no-op effect (does nothing, used for tracking/logging)
+ */
+const applyNoOpEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  // No-op: just a marker effect with no state changes or animations
+  return {
+    stateChanges: [],
+    animations: []
+  }
+}
+
 // ============================================================================
 // REGISTER APPLICATORS
 // ============================================================================
@@ -114,6 +132,7 @@ registerEffectApplicator('STAT_BUFF', applyStatBuffEffect)
 registerEffectApplicator('OVERKILL', applyOverkillEffect)
 registerEffectApplicator('STUN_RECOVERY', applyStunRecoveryEffect)
 registerEffectApplicator('FIRST_BLOOD', applyFirstBloodEffect)
+registerEffectApplicator('NO_OP', applyNoOpEffect)
 
 // ============================================================================
 // EFFECT FACTORY FUNCTIONS (Create serializable effects)

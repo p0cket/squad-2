@@ -30,44 +30,37 @@ test.describe('Turn System - Status Effects', () => {
 
   test('should apply burn status and show duration badge', async ({ page }) => {
     console.log('🧪 TEST: Apply burn status');
-    
-    // Find Dragon (player creature with fireball)
-    const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
-    await expect(dragon).toBeVisible();
-    
+
     // Find Goblin (enemy creature)
     const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
     await expect(goblin).toBeVisible();
-    
+
     // Get initial health
     const initialHealth = await getCreatureHealth(page, 'Goblin');
     console.log(`📊 Goblin initial health: ${initialHealth}`);
-    
-    // Click Dragon to select
-    await dragon.click();
-    await page.waitForTimeout(500);
-    
-    // Click Attack button
-    const attackButton = page.locator('button').filter({ hasText: /^⚔️.*Attack/i }).first();
-    await expect(attackButton).toBeVisible();
-    await attackButton.click();
-    
+
+    // Click Burn button to start target selection (scroll into view if needed)
+    const burnButton = page.locator('button').filter({ hasText: /🔥.*Burn/i }).first();
+    await burnButton.scrollIntoViewIfNeeded();
+    await expect(burnButton).toBeVisible();
+    await burnButton.click();
+
     // Click Goblin as target
     await goblin.click();
     await page.waitForTimeout(1000);
-    
+
     // Verify burn status appears
     const burnBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /🔥|burn/i });
     await expect(burnBadge).toBeVisible({ timeout: 5000 });
-    
+
     // Verify duration is shown (should be 3 or similar)
     const burnText = await burnBadge.textContent();
     console.log(`🔥 Burn badge text: ${burnText}`);
     expect(burnText).toMatch(/[0-9]/); // Should contain a number
-    
-    // Verify health decreased
+
+    // Note: Burn applies damage immediately, so health should be lower
     const newHealth = await getCreatureHealth(page, 'Goblin');
-    console.log(`📊 Goblin health after attack: ${newHealth}`);
+    console.log(`📊 Goblin health after burn: ${newHealth}`);
     expect(newHealth).toBeLessThan(initialHealth);
   });
 
@@ -231,30 +224,26 @@ test.describe('Turn System - Status Effects', () => {
 // ============================================================================
 
 /**
- * Applies burn status to Goblin by using Dragon's Attack (Fire Breath)
+ * Applies burn status to Goblin using the Burn test button
  */
 async function applyBurnToGoblin(page: Page) {
   console.log('🔥 Applying burn to Goblin...');
-  
-  const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
+
   const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
-  
-  // Select Dragon
-  await dragon.click();
-  await page.waitForTimeout(500);
-  
-  // Click Attack button
-  const attackButton = page.locator('button').filter({ hasText: /^⚔️.*Attack/i }).first();
-  await attackButton.click();
-  
+
+  // Click Burn button to start target selection (scroll into view if needed)
+  const burnButton = page.locator('button').filter({ hasText: /🔥.*Burn/i }).first();
+  await burnButton.scrollIntoViewIfNeeded();
+  await burnButton.click();
+
   // Target Goblin
   await goblin.click();
   await page.waitForTimeout(3000);
-  
+
   // Verify burn applied
   const burnBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /🔥|burn/i });
   await expect(burnBadge).toBeVisible({ timeout: 5000 });
-  
+
   console.log('✅ Burn applied successfully');
 }
 

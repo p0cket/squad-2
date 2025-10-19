@@ -4,6 +4,12 @@ import { useBattleEngine } from '../hooks/useBattleEngine'
 import { BattleState } from '../types'
 import { useDispatchContext } from '../../../GameContext'
 import { InfoModal } from '../../../components/battle/InfoModal'
+import {
+  createStunAttack,
+  createWeakeningAttack,
+  createCleanseAttack,
+  createBuffingAttack
+} from '../effects/attackFactories'
 
 // Example initial battle state
 const exampleBattleState: BattleState = {
@@ -161,7 +167,7 @@ export const BattleEngineExample: React.FC = () => {
 
   // Target selection state
   const [isSelectingTarget, setIsSelectingTarget] = React.useState(false)
-  const [pendingAction, setPendingAction] = React.useState<'attack' | 'heal' | 'burn' | 'poison' | 'kindle' | 'passive-test' | null>(null)
+  const [pendingAction, setPendingAction] = React.useState<'attack' | 'heal' | 'burn' | 'poison' | 'kindle' | 'passive-test' | 'stun' | 'weaken' | 'cleanse' | 'buff' | null>(null)
 
   // Info modal state
   const [infoModal, setInfoModal] = useState<{
@@ -331,6 +337,43 @@ export const BattleEngineExample: React.FC = () => {
     }
   }
 
+  // Execute new attack types
+  const executeStunAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createStunAttack("Stunning Blow", 10)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
+  const executeWeakenAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createWeakeningAttack("Sap Strength", 8)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
+  const executeCleanseAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createCleanseAttack("Purifying Strike", 5)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
+  const executeBuffAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createBuffingAttack("Power Strike", 12, ['strengthen'])
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
   // Handle clicking on a creature during target selection
   const handleCreatureClick = async (creatureId: number) => {
     if (!isSelectingTarget) return
@@ -347,6 +390,14 @@ export const BattleEngineExample: React.FC = () => {
       await executePoison(creatureId)
     } else if (pendingAction === 'passive-test') {
       await executePassiveTest(creatureId)
+    } else if (pendingAction === 'stun') {
+      await executeStunAttack(creatureId)
+    } else if (pendingAction === 'weaken') {
+      await executeWeakenAttack(creatureId)
+    } else if (pendingAction === 'cleanse') {
+      await executeCleanseAttack(creatureId)
+    } else if (pendingAction === 'buff') {
+      await executeBuffAttack(creatureId)
     }
   }
 
@@ -391,7 +442,7 @@ export const BattleEngineExample: React.FC = () => {
       {isSelectingTarget && (
         <div className="mb-4 p-4 bg-blue-900/80 backdrop-blur-sm border border-blue-500/50 text-blue-100 rounded-lg shadow-lg shadow-blue-500/20">
           <div className="flex justify-between items-center">
-            <div>
+          <div data-selecting-target={isSelectingTarget ? 'true' : 'false'} data-pending-action={pendingAction || ''}>
               <p className="text-lg font-bold">
                 {pendingAction === 'attack' && '⚔️ Select a target to attack'}
                 {pendingAction === 'heal' && '💚 Select a target to heal'}
@@ -399,6 +450,10 @@ export const BattleEngineExample: React.FC = () => {
                 {pendingAction === 'kindle' && '🔥✨ Select a target to kindle (spreads to allies)'}
                 {pendingAction === 'poison' && '🧪 Select a target to poison'}
                 {pendingAction === 'passive-test' && '🌿 Select a creature to attack (triggers passives)'}
+                {pendingAction === 'stun' && '💫 Select a target to stun (10 dmg + 1 turn disable)'}
+                {pendingAction === 'weaken' && '⚔️↓ Select a target to weaken (8 dmg + reduce attack)'}
+                {pendingAction === 'cleanse' && '✨ Select a target to cleanse (5 dmg + remove debuffs)'}
+                {pendingAction === 'buff' && '💪 Select a target for power strike (12 dmg + gain attack buff)'}
               </p>
               <p className="text-sm opacity-90">Click on any creature to target them</p>
             </div>
@@ -679,6 +734,64 @@ export const BattleEngineExample: React.FC = () => {
             }`}
           >
             🌿 {isSelectingTarget && pendingAction === 'passive-test' ? 'Selecting...' : 'Test Passives'}
+          </button>
+
+          {/* New Attack Type Buttons */}
+          <button
+            onClick={() => { setIsSelectingTarget(true); setPendingAction('stun'); }}
+            data-testid="btn-stun"
+            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+            title="Stunning Blow: 10 damage + stun (prevents action for 1 turn)"
+            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
+              isSelectingTarget && pendingAction === 'stun'
+                ? 'bg-blue-600 ring-2 ring-blue-400'
+                : 'bg-cyan-500 hover:bg-cyan-600'
+            }`}
+          >
+            💫 {isSelectingTarget && pendingAction === 'stun' ? 'Selecting...' : 'Stun'}
+          </button>
+
+
+          <button
+            onClick={() => { setIsSelectingTarget(true); setPendingAction('weaken'); }}
+            data-testid="btn-weaken"
+            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+            title="Sap Strength: 8 damage + reduce target attack by 5 for 3 turns"
+            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
+              isSelectingTarget && pendingAction === 'weaken'
+                ? 'bg-blue-600 ring-2 ring-blue-400'
+                : 'bg-amber-600 hover:bg-amber-700'
+            }`}
+          >
+            ⚔️↓ {isSelectingTarget && pendingAction === 'weaken' ? 'Selecting...' : 'Weaken'}
+          </button>
+
+          <button
+            onClick={() => { setIsSelectingTarget(true); setPendingAction('cleanse'); }}
+            data-testid="btn-cleanse"
+            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+            title="Purifying Strike: 5 damage + remove all debuffs from target"
+            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
+              isSelectingTarget && pendingAction === 'cleanse'
+                ? 'bg-blue-600 ring-2 ring-blue-400'
+                : 'bg-teal-500 hover:bg-teal-600'
+            }`}
+          >
+            ✨ {isSelectingTarget && pendingAction === 'cleanse' ? 'Selecting...' : 'Cleanse'}
+          </button>
+
+          <button
+            onClick={() => { setIsSelectingTarget(true); setPendingAction('buff'); }}
+            data-testid="btn-buff"
+            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+            title="Power Strike: 12 damage + gain +5 attack for 3 turns"
+            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
+              isSelectingTarget && pendingAction === 'buff'
+                ? 'bg-blue-600 ring-2 ring-blue-400'
+                : 'bg-indigo-500 hover:bg-indigo-600'
+            }`}
+          >
+            💪 {isSelectingTarget && pendingAction === 'buff' ? 'Selecting...' : 'Power Up'}
           </button>
 
           <button

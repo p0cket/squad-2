@@ -107,14 +107,15 @@ const applyAttackEffect = async (
 
   const stateChanges: StateChange[] = [healthChange]
 
-  // Process attack effects (burn, poison, etc.)
+  // Process attack effects (burn, poison, stun, cleanse, etc.)
   if (attack.effects && Array.isArray(attack.effects)) {
     for (const effectName of attack.effects) {
       const effectType = effectName.toUpperCase()
-      
+
+      // Damage Over Time Effects
       if (effectType === 'BURN') {
         console.log(`🔥 Attack applies burn effect to ${target.name}`)
-        const burnChange: StateChange = {
+        stateChanges.push({
           type: 'STATUS_APPLIED',
           creatureId: effect.targetId,
           timestamp: Date.now(),
@@ -123,11 +124,10 @@ const applyAttackEffect = async (
             duration: 3,
             damagePerTurn: 5
           }
-        }
-        stateChanges.push(burnChange)
+        })
       } else if (effectType === 'POISON') {
         console.log(`🧪 Attack applies poison effect to ${target.name}`)
-        const poisonChange: StateChange = {
+        stateChanges.push({
           type: 'STATUS_APPLIED',
           creatureId: effect.targetId,
           timestamp: Date.now(),
@@ -136,8 +136,145 @@ const applyAttackEffect = async (
             duration: 3,
             damagePerTurn: 10
           }
+        })
+      } else if (effectType === 'BLEED') {
+        console.log(`🩸 Attack applies bleed effect to ${target.name}`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'BLEED',
+            duration: 3,
+            damagePerTurn: 7
+          }
+        })
+      }
+
+      // Crowd Control Effects
+      else if (effectType === 'STUN') {
+        console.log(`💫 Attack stuns ${target.name}`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'STUN',
+            duration: 4
+          }
+        })
+      } else if (effectType === 'FREEZE') {
+        console.log(`❄️ Attack freezes ${target.name}`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'FREEZE',
+            duration: 2
+          }
+        })
+      }
+
+      // Debuff Effects
+      else if (effectType === 'WEAKEN') {
+        console.log(`⚔️↓ Attack weakens ${target.name}`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'ATTACK_DEBUFF',
+            duration: 3,
+            amount: -5
+          }
+        })
+      } else if (effectType === 'VULNERABILITY') {
+        console.log(`🛡️↓ Attack makes ${target.name} vulnerable`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'DEFENSE_DEBUFF',
+            duration: 3,
+            amount: -5
+          }
+        })
+      }
+
+      // Self-Buff Effects (applied to attacker)
+      else if (effectType === 'STRENGTHEN') {
+        console.log(`💪 ${attacker.name} gains strength`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: attackerId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'ATTACK_BUFF',
+            duration: 3,
+            amount: 5
+          }
+        })
+      } else if (effectType === 'FORTIFY') {
+        console.log(`🛡️ ${attacker.name} fortifies defenses`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: attackerId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'DEFENSE_BUFF',
+            duration: 3,
+            amount: 5
+          }
+        })
+      }
+
+      // Cleansing Effects
+      else if (effectType === 'CLEANSE') {
+        console.log(`✨ Cleansing debuffs from ${target.name}`)
+        // Remove all debuffs from target
+        const targetStatuses = target.statuses.filter(s => s.type === 'debuff')
+        for (const status of targetStatuses) {
+          stateChanges.push({
+            type: 'STATUS_REMOVED',
+            creatureId: effect.targetId,
+            timestamp: Date.now(),
+            data: {
+              statusId: status.id,
+              reason: 'cleansed'
+            }
+          })
         }
-        stateChanges.push(poisonChange)
+      } else if (effectType === 'DISPEL') {
+        console.log(`🌟 Dispelling buffs from ${target.name}`)
+        // Remove all buffs from target
+        const targetStatuses = target.statuses.filter(s => s.type === 'buff')
+        for (const status of targetStatuses) {
+          stateChanges.push({
+            type: 'STATUS_REMOVED',
+            creatureId: effect.targetId,
+            timestamp: Date.now(),
+            data: {
+              statusId: status.id,
+              reason: 'dispelled'
+            }
+          })
+        }
+      } else if (effectType === 'PURGE') {
+        console.log(`💥 Purging all effects from ${target.name}`)
+        // Remove ALL status effects from target
+        for (const status of target.statuses) {
+          stateChanges.push({
+            type: 'STATUS_REMOVED',
+            creatureId: effect.targetId,
+            timestamp: Date.now(),
+            data: {
+              statusId: status.id,
+              reason: 'purged'
+            }
+          })
+        }
       }
     }
   }

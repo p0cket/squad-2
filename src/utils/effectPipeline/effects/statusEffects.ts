@@ -2,6 +2,7 @@
 import { Effect, BattleContext, EffectApplicationResult, HealthChange, StateChange, Animation } from '../types'
 import { registerEffectApplicator } from '../effectApplicatorRegistry'
 import { getCreatureFromContext } from '../effectResolver'
+import './utilityEffects' // Import to register NO_OP and other utility effects
 
 // ============================================================================
 // EFFECT DATA TYPES (Serializable)
@@ -74,20 +75,39 @@ const applyBurnEffect = async (
 
   console.log('📝 Creating HEALTH_CHANGE:', healthChange)
 
-  // NOTE: When called as a tick during processEndOfTurn, we should NOT reapply the status
-  // The status already exists and its duration is managed separately
-  // Only create health change, not status change
+  // Check if the creature already has burn status
+  const hasBurnStatus = creature.statuses.some(s => s.id === 'BURN')
+  const stateChanges: StateChange[] = [healthChange]
+
+  // Only add STATUS_APPLIED if this is the first application (not a tick)
+  if (!hasBurnStatus) {
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'BURN',
+        duration: 3,
+        source: 'burn'
+      }
+    }
+    stateChanges.push(statusChange)
+    console.log('📝 Creating STATUS_APPLIED (first application):', statusChange)
+  } else {
+    console.log('⏭️ Burn status already exists, skipping STATUS_APPLIED (tick)')
+  }
+
   const animations: Animation[] = [
     { type: 'burn', targetId: effect.targetId, duration: 500 },
     { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
   ]
 
   console.log('🎬 Animations:', animations)
-  console.log('📤 Returning state changes:', [healthChange])
+  console.log('📤 Returning state changes:', stateChanges)
   console.groupEnd()
 
   return {
-    stateChanges: [healthChange], // Only health change, no status reapplication
+    stateChanges,
     animations
   }
 }

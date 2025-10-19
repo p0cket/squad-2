@@ -247,7 +247,7 @@ const setupCombatTriggers = (): void => {
       // Return a no-op effect instead of FIRST_BLOOD type (no applicator exists)
       return {
         id: 'first-blood-marker',
-        type: 'NO_EFFECT',
+        type: 'NO_OP',
         targetId: change.creatureId,
         priority: 5,
         timestamp: Date.now(),
