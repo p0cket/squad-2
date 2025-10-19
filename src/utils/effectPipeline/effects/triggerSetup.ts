@@ -2,7 +2,6 @@
 import { registerEffectTrigger, getCreatureFromContext, getAliveCreaturesByOwner } from '../effectResolver'
 import { createBurnEffect, createPoisonEffect } from './statusEffects'
 import { createDeathEffect } from './combatEffects'
-import { BattleContext, StateChange } from '../types'
 
 /**
  * Sets up all default trigger rules for effect cascading

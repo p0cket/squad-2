@@ -160,7 +160,7 @@ const applyAttackEffect = async (
           timestamp: Date.now(),
           data: {
             statusId: 'STUN',
-            duration: 4
+            duration: 2
           }
         })
       } else if (effectType === 'FREEZE') {

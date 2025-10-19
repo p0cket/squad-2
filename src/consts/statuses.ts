@@ -1,4 +1,3 @@
-import { shakeTarget } from "../components/animations/attackAnimations"
 import { logStep } from "../debug/logUtils"
 import { getCreatureControlsById } from "../utils/anim/getControls"
 import {

@@ -1,5 +1,5 @@
 // Core types for the Effect Pipeline System
-import { Creature, AttackPayload } from "../../consts/types/types"
+import { Creature } from "../../consts/types/types"
 
 export type StateChangeType =
   | 'HEALTH_CHANGE'

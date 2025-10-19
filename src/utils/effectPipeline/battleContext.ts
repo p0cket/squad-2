@@ -227,7 +227,6 @@ const applyCreatureMovement = (state: BattleState, change: CreatureMovement): Ba
  * Handles creature death logic
  */
 const applyCreatureDeath = (state: BattleState, change: StateChange): BattleState => {
-  const { creatureId } = change
   // Processing creature death
 
   // Move dead creature to back and update any death-related state

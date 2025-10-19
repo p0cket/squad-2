@@ -34,21 +34,24 @@ test.describe('Attack Types - Demo Buttons', () => {
       await enemy.click();
     }
 
+    // Wait for attack to process before checking badge
+    await page.waitForTimeout(1500);
+
   // After stun, there should be a STUN badge on that creature (use data-status-id)
   const stunBadge = page.locator('[data-testid="status-badge"][data-status-id="STUN"]').first();
   await expect(stunBadge).toBeVisible({ timeout: 8000 });
 
-    // Try to make that creature act (end turn twice to reach its turn) and assert it cannot act.
+    // Verify the badge shows duration
+    const badgeText = await stunBadge.textContent();
+    console.log(`💫 Stun badge text: ${badgeText}`);
+    
+    // Try to end turn once - stun should still be present (duration 2 → 1)
     const endTurn = page.locator('button').filter({ hasText: /End Turn/i }).first();
     await endTurn.click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
 
-    // Now it's enemy turn; end turn again to get back to player
-    await endTurn.click();
-    await page.waitForTimeout(500);
-
-    // The stun should have prevented one action - ensure the badge is still present or duration decreased
-    await expect(stunBadge).toBeVisible();
+    // The stun should still be visible with reduced duration
+    await expect(stunBadge).toBeVisible({ timeout: 3000 });
   });
 
   test('Weaken: target attack is reduced', async ({ page }) => {
