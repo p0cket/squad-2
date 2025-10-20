@@ -355,28 +355,50 @@ export const AttackShowcase: React.FC<AttackShowcaseProps> = ({
   }
 
   const renderAttackButton = (attack: Attack) => (
-    <button
-      key={attack.id}
-      onClick={() => onAttackSelect(attack.id)}
-      disabled={isDisabled}
-      data-testid={attack.testId}
-      title={attack.description}
-      className={`
-        px-3 py-2 text-white rounded text-sm font-medium
-        disabled:opacity-50 disabled:cursor-not-allowed
-        transition-all duration-200
-        ${isSelectingTarget && selectedAction === attack.id
-          ? 'bg-blue-600 ring-2 ring-blue-400 scale-105'
-          : `${attack.color} ${attack.hoverColor}`
-        }
-        hover:scale-105 hover:shadow-lg
-      `}
-    >
-      <span className="flex items-center gap-1">
-        <span>{attack.icon}</span>
-        <span className="hidden sm:inline">{attack.name}</span>
-      </span>
-    </button>
+    <div key={attack.id} className="relative group">
+      <button
+        onClick={() => onAttackSelect(attack.id)}
+        disabled={isDisabled}
+        data-testid={attack.testId}
+        className={`
+          px-3 py-2 text-white rounded text-sm font-medium
+          disabled:opacity-50 disabled:cursor-not-allowed
+          transition-all duration-200
+          ${isSelectingTarget && selectedAction === attack.id
+            ? 'bg-blue-600 ring-2 ring-blue-400 scale-105'
+            : `${attack.color} ${attack.hoverColor}`
+          }
+          hover:scale-105 hover:shadow-lg
+        `}
+      >
+        <span className="flex items-center gap-1">
+          <span>{attack.icon}</span>
+          <span className="hidden sm:inline">{attack.name}</span>
+        </span>
+      </button>
+      
+      {/* Tooltip - shows on hover */}
+      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50 pointer-events-none">
+        <div className="bg-gray-900 text-white text-xs rounded-lg p-3 shadow-xl border border-gray-700 whitespace-nowrap">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-2xl">{attack.icon}</span>
+            <span className="font-bold text-sm">{attack.name}</span>
+          </div>
+          <div className="text-gray-300 text-left">
+            {attack.description}
+          </div>
+          {attack.damage !== undefined && attack.damage > 0 && (
+            <div className="text-red-400 font-semibold mt-1">
+              💥 {attack.damage} damage
+            </div>
+          )}
+        </div>
+        {/* Arrow pointing down */}
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+          <div className="border-8 border-transparent border-t-gray-900"></div>
+        </div>
+      </div>
+    </div>
   )
 
   return (
