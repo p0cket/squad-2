@@ -4,6 +4,7 @@ import { useBattleEngine } from '../hooks/useBattleEngine'
 import { BattleState } from '../types'
 import { useDispatchContext } from '../../../GameContext'
 import { InfoModal } from '../../../components/battle/InfoModal'
+import { AttackShowcase } from '../../../components/battle/AttackShowcase'
 import {
   createStunAttack,
   createWeakeningAttack,
@@ -167,7 +168,7 @@ export const BattleEngineExample: React.FC = () => {
 
   // Target selection state
   const [isSelectingTarget, setIsSelectingTarget] = React.useState(false)
-  const [pendingAction, setPendingAction] = React.useState<'attack' | 'heal' | 'burn' | 'poison' | 'kindle' | 'passive-test' | 'stun' | 'weaken' | 'flameswipe' | 'buff' | null>(null)
+  const [pendingAction, setPendingAction] = React.useState<string | null>(null)
 
   // Info modal state
   const [infoModal, setInfoModal] = useState<{
@@ -413,6 +414,12 @@ export const BattleEngineExample: React.FC = () => {
     setPendingAction('passive-test')
   }
 
+  // Handler for AttackShowcase component
+  const handleAttackSelect = (attackId: string) => {
+    setIsSelectingTarget(true)
+    setPendingAction(attackId)
+  }
+
   const goBackToBattle = () => {
     dispatch({ type: "CHANGE_SCREEN", payload: { screen: "battle" } })
   }
@@ -654,146 +661,19 @@ export const BattleEngineExample: React.FC = () => {
         </div>
       </div>
 
-      {/* Test Actions */}
+      {/* Attack Showcase */}
       <div className="mb-6 p-4 bg-slate-800/60 backdrop-blur-sm border border-purple-500/30 rounded-lg">
-        <h2 className="text-xl font-semibold mb-3 text-purple-200">Test Actions</h2>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={handleAttackTest}
-            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
-            title="Basic physical attack (15 damage, no status effects)"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'attack'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-red-500 hover:bg-red-600'
-            }`}
-          >
-            ⚔️ {isSelectingTarget && pendingAction === 'attack' ? 'Selecting...' : 'Slash'}
-          </button>
+        <h2 className="text-xl font-semibold mb-3 text-purple-200">Attack Showcase</h2>
+        <p className="text-sm text-purple-300 mb-4">Hover over buttons to see attack details • Click to select target</p>
+        
+        <AttackShowcase
+          onAttackSelect={handleAttackSelect}
+          isSelectingTarget={isSelectingTarget}
+          selectedAction={pendingAction}
+          isDisabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+        />
 
-          <button
-            onClick={handleBurnTest}
-            disabled={isProcessingEffects || isSelectingTarget}
-            title="Directly apply burn status (10 damage, 3 turns)"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'burn'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-orange-500 hover:bg-orange-600'
-            }`}
-          >
-            🔥 {isSelectingTarget && pendingAction === 'burn' ? 'Selecting...' : 'Burn'}
-          </button>
-
-          <button
-            onClick={handleKindleTest}
-            disabled={isProcessingEffects || isSelectingTarget}
-            title="Apply burn + spread to one ally (10 dmg primary, 5 dmg spread)"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'kindle'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
-            }`}
-          >
-            🔥✨ {isSelectingTarget && pendingAction === 'kindle' ? 'Selecting...' : 'Kindle'}
-          </button>
-
-          <button
-            onClick={handlePoisonTest}
-            disabled={isProcessingEffects || isSelectingTarget}
-            title="Directly apply poison status (15 damage, 3 turns)"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'poison'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-purple-500 hover:bg-purple-600'
-            }`}
-          >
-            🧪 {isSelectingTarget && pendingAction === 'poison' ? 'Selecting...' : 'Poison'}
-          </button>
-
-          <button
-            onClick={handleHealTest}
-            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
-            title="Heal target for 25 HP (capped at max health)"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'heal'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-green-500 hover:bg-green-600'
-            }`}
-          >
-            💚 {isSelectingTarget && pendingAction === 'heal' ? 'Selecting...' : 'Heal'}
-          </button>
-
-          <button
-            onClick={handlePassiveAbilityTest}
-            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
-            title="Attack to trigger passive abilities: Golem (Stone Thorns: reflects 15 dmg), Basilisk (Poison Skin: 60% chance to poison)"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'passive-test'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-yellow-500 hover:bg-yellow-600'
-            }`}
-          >
-            🌿 {isSelectingTarget && pendingAction === 'passive-test' ? 'Selecting...' : 'Test Passives'}
-          </button>
-
-          {/* New Attack Type Buttons */}
-          <button
-            onClick={() => { setIsSelectingTarget(true); setPendingAction('stun'); }}
-            data-testid="btn-stun"
-            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
-            title="Stunning Blow: 10 damage + stun (prevents action for 1 turn)"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'stun'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-cyan-500 hover:bg-cyan-600'
-            }`}
-          >
-            💫 {isSelectingTarget && pendingAction === 'stun' ? 'Selecting...' : 'Stun'}
-          </button>
-
-
-          <button
-            onClick={() => { setIsSelectingTarget(true); setPendingAction('weaken'); }}
-            data-testid="btn-weaken"
-            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
-            title="Sap Strength: 8 damage + reduce target attack by 5 for 3 turns"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'weaken'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-amber-600 hover:bg-amber-700'
-            }`}
-          >
-            ⚔️↓ {isSelectingTarget && pendingAction === 'weaken' ? 'Selecting...' : 'Weaken'}
-          </button>
-
-          <button
-            onClick={() => { setIsSelectingTarget(true); setPendingAction('flameswipe'); }}
-            data-testid="btn-flameswipe"
-            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
-            title="Flame Swipe: 15 damage + burn (5 dmg/turn for 3 turns)"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'flameswipe'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-orange-500 hover:bg-orange-600'
-            }`}
-          >
-            🔥 {isSelectingTarget && pendingAction === 'flameswipe' ? 'Selecting...' : 'Flame Swipe'}
-          </button>
-
-          <button
-            onClick={() => { setIsSelectingTarget(true); setPendingAction('buff'); }}
-            data-testid="btn-buff"
-            disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
-            title="Power Strike: 12 damage + gain +5 attack for 3 turns"
-            className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'buff'
-                ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-indigo-500 hover:bg-indigo-600'
-            }`}
-          >
-            💪 {isSelectingTarget && pendingAction === 'buff' ? 'Selecting...' : 'Power Up'}
-          </button>
-
+        <div className="flex gap-2 mt-4 pt-4 border-t border-purple-500/30">
           <button
             onClick={() => resetBattle()}
             disabled={isProcessingEffects}
