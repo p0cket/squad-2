@@ -7,7 +7,7 @@ import { InfoModal } from '../../../components/battle/InfoModal'
 import {
   createStunAttack,
   createWeakeningAttack,
-  createCleanseAttack,
+  createBurnAttack,
   createBuffingAttack
 } from '../effects/attackFactories'
 
@@ -167,7 +167,7 @@ export const BattleEngineExample: React.FC = () => {
 
   // Target selection state
   const [isSelectingTarget, setIsSelectingTarget] = React.useState(false)
-  const [pendingAction, setPendingAction] = React.useState<'attack' | 'heal' | 'burn' | 'poison' | 'kindle' | 'passive-test' | 'stun' | 'weaken' | 'cleanse' | 'buff' | null>(null)
+  const [pendingAction, setPendingAction] = React.useState<'attack' | 'heal' | 'burn' | 'poison' | 'kindle' | 'passive-test' | 'stun' | 'weaken' | 'flameswipe' | 'buff' | null>(null)
 
   // Info modal state
   const [infoModal, setInfoModal] = useState<{
@@ -356,9 +356,9 @@ export const BattleEngineExample: React.FC = () => {
     }
   }
 
-  const executeCleanseAttack = async (targetId: number) => {
+  const executeFlameSwipeAttack = async (targetId: number) => {
     if (playerCreatures.length > 0) {
-      const attack = createCleanseAttack("Purifying Strike", 5)
+      const attack = createBurnAttack("Flame Swipe", 15)
       await performAttack(playerCreatures[0].ID, targetId, attack)
       setIsSelectingTarget(false)
       setPendingAction(null)
@@ -394,8 +394,8 @@ export const BattleEngineExample: React.FC = () => {
       await executeStunAttack(creatureId)
     } else if (pendingAction === 'weaken') {
       await executeWeakenAttack(creatureId)
-    } else if (pendingAction === 'cleanse') {
-      await executeCleanseAttack(creatureId)
+    } else if (pendingAction === 'flameswipe') {
+      await executeFlameSwipeAttack(creatureId)
     } else if (pendingAction === 'buff') {
       await executeBuffAttack(creatureId)
     }
@@ -452,7 +452,7 @@ export const BattleEngineExample: React.FC = () => {
                 {pendingAction === 'passive-test' && '🌿 Select a creature to attack (triggers passives)'}
                 {pendingAction === 'stun' && '💫 Select a target to stun (10 dmg + 1 turn disable)'}
                 {pendingAction === 'weaken' && '⚔️↓ Select a target to weaken (8 dmg + reduce attack)'}
-                {pendingAction === 'cleanse' && '✨ Select a target to cleanse (5 dmg + remove debuffs)'}
+                {pendingAction === 'flameswipe' && '🔥 Select a target for flame swipe (15 dmg + burn)'}
                 {pendingAction === 'buff' && '💪 Select a target for power strike (12 dmg + gain attack buff)'}
               </p>
               <p className="text-sm opacity-90">Click on any creature to target them</p>
@@ -767,17 +767,17 @@ export const BattleEngineExample: React.FC = () => {
           </button>
 
           <button
-            onClick={() => { setIsSelectingTarget(true); setPendingAction('cleanse'); }}
-            data-testid="btn-cleanse"
+            onClick={() => { setIsSelectingTarget(true); setPendingAction('flameswipe'); }}
+            data-testid="btn-flameswipe"
             disabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
-            title="Purifying Strike: 5 damage + remove all debuffs from target"
+            title="Flame Swipe: 15 damage + burn (5 dmg/turn for 3 turns)"
             className={`px-4 py-2 text-white rounded disabled:opacity-50 ${
-              isSelectingTarget && pendingAction === 'cleanse'
+              isSelectingTarget && pendingAction === 'flameswipe'
                 ? 'bg-blue-600 ring-2 ring-blue-400'
-                : 'bg-teal-500 hover:bg-teal-600'
+                : 'bg-orange-500 hover:bg-orange-600'
             }`}
           >
-            ✨ {isSelectingTarget && pendingAction === 'cleanse' ? 'Selecting...' : 'Cleanse'}
+            🔥 {isSelectingTarget && pendingAction === 'flameswipe' ? 'Selecting...' : 'Flame Swipe'}
           </button>
 
           <button
