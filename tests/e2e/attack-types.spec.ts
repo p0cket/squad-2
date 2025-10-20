@@ -54,6 +54,64 @@ test.describe('Attack Types - Demo Buttons', () => {
     await expect(stunBadge).toBeVisible({ timeout: 3000 });
   });
 
+  test('Flame Swipe: deals damage and applies burn DoT', async ({ page }) => {
+    // Click Flame Swipe button
+    const flameSwipeButton = page.locator('[data-testid="btn-flameswipe"]').first();
+    await flameSwipeButton.scrollIntoViewIfNeeded();
+    await expect(flameSwipeButton).toBeVisible();
+    await flameSwipeButton.click();
+
+    // Wait for target selection mode
+    await page.waitForSelector('[data-selecting-target="true"]', { timeout: 3000 });
+
+    // Select an enemy creature (first enemy)
+    const enemy = page.locator('[data-testid="creature-card"]').filter({ hasText: /Goblin|Goblin/i }).first();
+    
+    // Capture health before attack
+    const healthLabel = enemy.locator('[data-testid="creature-health"]').first();
+    const healthTextBefore = await healthLabel.textContent();
+    const healthBefore = parseInt((healthTextBefore || '0').replace(/\D/g, ''));
+    
+    // If Goblin selector fails, pick the last creature which is commonly an enemy
+    if (!await enemy.isVisible()) {
+      await page.locator('[data-testid="creature-card"]').last().click();
+    } else {
+      await enemy.click();
+    }
+
+    // Wait for attack to process
+    await page.waitForTimeout(1500);
+
+    // Verify health decreased (15 damage dealt)
+    const healthTextAfter = await healthLabel.textContent();
+    const healthAfter = parseInt((healthTextAfter || '0').replace(/\D/g, ''));
+    expect(healthAfter).toBeLessThan(healthBefore);
+    console.log(`🔥 Flame Swipe damage: ${healthBefore} → ${healthAfter} (${healthBefore - healthAfter} dmg)`);
+
+    // Verify BURN status badge appears
+    const burnBadge = enemy.locator('[data-testid="status-badge"][data-status-id="BURN"]').first();
+    await expect(burnBadge).toBeVisible({ timeout: 8000 });
+
+    // Verify the badge shows duration (should be 3 turns)
+    const badgeText = await burnBadge.textContent();
+    console.log(`🔥 Burn badge text: ${badgeText}`);
+    expect(badgeText).toContain('3');
+
+    // End turn to verify burn deals DoT damage
+    const endTurn = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    await endTurn.click();
+    await page.waitForTimeout(1000);
+
+    // Health should decrease again from burn DoT (5 dmg/turn)
+    const healthAfterBurn = await healthLabel.textContent();
+    const healthAfterBurnValue = parseInt((healthAfterBurn || '0').replace(/\D/g, ''));
+    expect(healthAfterBurnValue).toBeLessThan(healthAfter);
+    console.log(`🔥 Burn DoT tick: ${healthAfter} → ${healthAfterBurnValue} (${healthAfter - healthAfterBurnValue} dmg)`);
+
+    // Burn badge should still be visible with reduced duration
+    await expect(burnBadge).toBeVisible({ timeout: 3000 });
+  });
+
   test('Weaken: target attack is reduced', async ({ page }) => {
   const weakenButton = page.locator('[data-testid="btn-weaken"]').first();
   await weakenButton.scrollIntoViewIfNeeded();
