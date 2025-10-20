@@ -1,0 +1,4236 @@
+
+> squad-version-2@0.1.0 test
+> react-scripts test --coverage --watchAll=false --passWithNoTests
+
+(node:44968) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:44969) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS src/utils/effectPipeline/__tests__/animationEngine.test.ts
+  ● Console
+
+    console.warn
+      Creature element not found for ID: 1
+
+      169 |         }, animation.duration)
+      170 |       } else {
+    > 171 |         console.warn(`Creature element not found for ID: ${animation.targetId}`)
+          |                 ^
+      172 |         if (instance.onComplete) instance.onComplete()
+      173 |       }
+      174 |     }
+
+      at Object.play (src/utils/effectPipeline/animationEngine.ts:171:17)
+      at src/utils/effectPipeline/animationEngine.ts:91:25
+      at executeAnimation (src/utils/effectPipeline/animationEngine.ts:68:10)
+      at executeAnimationsSequentially (src/utils/effectPipeline/animationEngine.ts:34:13)
+      at Object.<anonymous> (src/utils/effectPipeline/__tests__/animationEngine.test.ts:184:40)
+
+(node:44967) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+(node:44966) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:44963) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+(node:44964) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+(node:44961) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+(node:44960) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+PASS src/utils/effectPipeline/effects/__tests__/effectApplicators.test.ts
+  ● Console
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 30 damage (100 → 70)
+
+      at applyAttackEffect (src/utils/effectPipeline/effects/effectApplicators.ts:63:31)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 22 damage (100 → 78)
+
+      at applyAttackEffect (src/utils/effectPipeline/effects/effectApplicators.ts:63:31)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 15 damage (100 → 85)
+
+      at applyAttackEffect (src/utils/effectPipeline/effects/effectApplicators.ts:63:31)
+
+    console.log
+      💚 Healing: Test Creature heals Test Creature for 30 HP (50 → 80)
+
+      at applyHealingEffect (src/utils/effectPipeline/effects/effectApplicators.ts:148:31)
+
+    console.log
+      💚 Healing: Test Creature heals Test Creature for 10 HP (90 → 100)
+
+      at applyHealingEffect (src/utils/effectPipeline/effects/effectApplicators.ts:148:31)
+
+    console.log
+      💚 Healing: Test Creature heals Test Creature for 0 HP (100 → 100)
+
+      at applyHealingEffect (src/utils/effectPipeline/effects/effectApplicators.ts:148:31)
+
+    console.log
+      🔥 Burn effect: Test Creature takes 10 damage (100 → 90)
+
+      at applyBurnDamage (src/utils/effectPipeline/effects/effectApplicators.ts:181:31)
+
+    console.log
+      🔥 Burn effect: Test Creature takes 5 damage (5 → 0)
+
+      at applyBurnDamage (src/utils/effectPipeline/effects/effectApplicators.ts:181:31)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 20 damage (100 → 80)
+
+      at applyAttackEffect (src/utils/effectPipeline/effects/effectApplicators.ts:63:31)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 20 damage (80 → 60)
+
+      at applyAttackEffect (src/utils/effectPipeline/effects/effectApplicators.ts:63:31)
+
+    console.log
+      💚 Healing: Test Creature heals Test Creature for 0 HP (100 → 100)
+
+      at applyHealingEffect (src/utils/effectPipeline/effects/effectApplicators.ts:148:31)
+
+PASS src/utils/effectPipeline/__tests__/effectPipelineEngine.test.ts (5.735 s)
+  ● Console
+
+    console.group
+        🔄 Processing Effect Chain: test-damage
+
+      at processEffectChain (src/utils/effectPipeline/effectPipelineEngine.ts:28:11)
+
+    console.group
+          ⚙️ Executing Effect Pipeline for: test-damage
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:65:11)
+
+    console.log
+          📦 Effect TEST_DAMAGE returned: {
+        stateChangesCount: 1,
+        stateChangeTypes: [ 'HEALTH_CHANGE' ],
+        animationsCount: 1
+      }
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:89:35)
+
+    console.log
+          🔧 Applying state changes to context...
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:97:37)
+
+    console.log
+          🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 2 } ],
+        notify: true,
+        deferNotification: true
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+            🔸 Applying change: HEALTH_CHANGE to creature 2
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+          ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 2, delta: -10, currentHealth: 60 }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+          ❤️❤️❤️ After health change, new health: { creatureId: 2, newHealth: 50 }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 New state health: 50
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 After assignment, context.state health: 50
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+          ✅ State changes applied to context
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:99:37)
+
+    console.group
+        🔄 Processing Effect Chain: initial-effect
+
+      at processEffectChain (src/utils/effectPipeline/effectPipelineEngine.ts:28:11)
+
+    console.group
+          ⚙️ Executing Effect Pipeline for: initial-effect
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:65:11)
+
+    console.log
+          📦 Effect TEST_DAMAGE returned: {
+        stateChangesCount: 1,
+        stateChangeTypes: [ 'HEALTH_CHANGE' ],
+        animationsCount: 1
+      }
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:89:35)
+
+    console.log
+          🔧 Applying state changes to context...
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:97:37)
+
+    console.log
+          🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 2 } ],
+        notify: true,
+        deferNotification: true
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+            🔸 Applying change: HEALTH_CHANGE to creature 2
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+          ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 2, delta: -10, currentHealth: 60 }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+          ❤️❤️❤️ After health change, new health: { creatureId: 2, newHealth: 50 }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 New state health: 50
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 After assignment, context.state health: 50
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+          ✅ State changes applied to context
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:99:37)
+
+    console.log
+          📦 Effect CASCADE returned: {
+        stateChangesCount: 1,
+        stateChangeTypes: [ 'HEALTH_CHANGE' ],
+        animationsCount: 0
+      }
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:89:35)
+
+    console.log
+          🔧 Applying state changes to context...
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:97:37)
+
+    console.log
+          🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 2 } ],
+        notify: true,
+        deferNotification: true
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+            🔸 Applying change: HEALTH_CHANGE to creature 2
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+          ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 2, delta: -5, currentHealth: 50 }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+          ❤️❤️❤️ After health change, new health: { creatureId: 2, newHealth: 45 }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 Old state health: 50
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 New state health: 45
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+            🔸 After assignment, context.state health: 45
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+          ✅ State changes applied to context
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:99:37)
+
+    console.group
+        🔄 Processing Effect Chain: loop-effect
+
+      at processEffectChain (src/utils/effectPipeline/effectPipelineEngine.ts:28:11)
+
+    console.group
+          ⚙️ Executing Effect Pipeline for: loop-effect
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:65:11)
+
+    console.log
+          📦 Effect TRACKING returned: { stateChangesCount: 0, stateChangeTypes: [], animationsCount: 0 }
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:89:35)
+
+    console.group
+        🔄 Processing Effect Chain: error-effect
+
+      at processEffectChain (src/utils/effectPipeline/effectPipelineEngine.ts:28:11)
+
+    console.group
+          ⚙️ Executing Effect Pipeline for: error-effect
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:65:11)
+
+    console.error
+          💥 Error processing effect: error-effect Error: Test error
+          at applicator (/Users/pocket/code2/squad-version-2/src/utils/effectPipeline/__tests__/effectPipelineEngine.test.ts:49:11)
+          at applyEffect (/Users/pocket/code2/squad-version-2/src/utils/effectPipeline/effectApplicatorRegistry.ts:37:10)
+          at executeEffectPipeline (/Users/pocket/code2/squad-version-2/src/utils/effectPipeline/effectPipelineEngine.ts:87:61)
+          at processEffectChain (/Users/pocket/code2/squad-version-2/src/utils/effectPipeline/effectPipelineEngine.ts:41:11)
+          at Object.<anonymous> (/Users/pocket/code2/squad-version-2/src/utils/effectPipeline/__tests__/effectPipelineEngine.test.ts:223:36)
+          at Promise.then.completed (/Users/pocket/code2/squad-version-2/node_modules/jest-circus/build/utils.js:391:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/Users/pocket/code2/squad-version-2/node_modules/jest-circus/build/utils.js:316:10)
+          at _callCircusTest (/Users/pocket/code2/squad-version-2/node_modules/jest-circus/build/run.js:218:40)
+          at _runTest (/Users/pocket/code2/squad-version-2/node_modules/jest-circus/build/run.js:155:3)
+          at _runTestsForDescribeBlock (/Users/pocket/code2/squad-version-2/node_modules/jest-circus/build/run.js:66:9)
+          at _runTestsForDescribeBlock (/Users/pocket/code2/squad-version-2/node_modules/jest-circus/build/run.js:60:9)
+          at run (/Users/pocket/code2/squad-version-2/node_modules/jest-circus/build/run.js:25:3)
+          at runAndTransformResultsToJestFormat (/Users/pocket/code2/squad-version-2/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:170:21)
+          at jestAdapter (/Users/pocket/code2/squad-version-2/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:82:19)
+          at runTestInternal (/Users/pocket/code2/squad-version-2/node_modules/jest-runner/build/runTest.js:389:16)
+          at runTest (/Users/pocket/code2/squad-version-2/node_modules/jest-runner/build/runTest.js:475:34)
+          at Object.worker (/Users/pocket/code2/squad-version-2/node_modules/jest-runner/build/testWorker.js:135:12)
+
+      134 |
+      135 |     } catch (error) {
+    > 136 |       console.error('💥 Error processing effect:', currentEffect.id, error)
+          |                                   ^
+      137 |       // Continue processing other effects
+      138 |     }
+      139 |   }
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:136:35)
+      at processEffectChain (src/utils/effectPipeline/effectPipelineEngine.ts:41:5)
+      at Object.<anonymous> (src/utils/effectPipeline/__tests__/effectPipelineEngine.test.ts:223:5)
+
+    console.group
+        🔄 Processing Effect Chain: low-priority
+
+      at processEffectChain (src/utils/effectPipeline/effectPipelineEngine.ts:28:11)
+
+    console.group
+          ⚙️ Executing Effect Pipeline for: low-priority
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:65:11)
+
+    console.log
+          📦 Effect TRACKING returned: { stateChangesCount: 0, stateChangeTypes: [], animationsCount: 0 }
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:89:35)
+
+    console.group
+        🔄 Processing Effect Chain: high-priority
+
+      at processEffectChain (src/utils/effectPipeline/effectPipelineEngine.ts:28:11)
+
+    console.group
+          ⚙️ Executing Effect Pipeline for: high-priority
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:65:11)
+
+    console.log
+          📦 Effect TRACKING returned: { stateChangesCount: 0, stateChangeTypes: [], animationsCount: 0 }
+
+      at executeEffectPipeline (src/utils/effectPipeline/effectPipelineEngine.ts:89:35)
+
+PASS src/utils/effectPipeline/effects/__tests__/combatEffects.test.ts
+  ● Console
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 25 damage (100 → 75)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:64:31)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 1 damage (100 → 99)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:64:31)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 150 damage (30 → 0)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:64:31)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 20 damage (100 → 80)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:64:31)
+
+    console.log
+      🔥 Attack applies burn effect to Test Creature
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:117:37)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 15 damage (100 → 85)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:64:31)
+
+    console.log
+      🧪 Attack applies poison effect to Test Creature
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:129:37)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 15 damage (100 → 85)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:64:31)
+
+    console.log
+      💫 Attack stuns Test Creature
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:156:37)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 20 damage (100 → 80)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:64:31)
+
+    console.log
+      🔥 Attack applies burn effect to Test Creature
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:117:37)
+
+    console.log
+      ⚔️↓ Attack weakens Test Creature
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:181:37)
+
+    console.log
+      ⚔️ Attack: Test Creature attacks Test Creature for 25 damage (100 → 75)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:64:31)
+
+    console.log
+      💥 True Damage: Test Creature deals 30 true damage to Test Creature (100 → 70)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:301:31)
+
+    console.log
+      💚 Healing: Test Creature heals Test Creature for 30 HP (50 → 80)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:341:31)
+
+    console.log
+      💚 Healing: Test Creature heals Test Creature for 10 HP (90 → 100)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:341:31)
+
+    console.log
+      💚 Healing: Test Creature heals Test Creature for 0 HP (100 → 100)
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:341:31)
+
+    console.log
+      🩸 Life Drain: Test Creature drains 20 HP from Test Creature and heals for 20
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:423:31)
+
+    console.log
+      🩸 Life Drain: Test Creature drains 20 HP from Test Creature and heals for 5
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:423:31)
+
+    console.log
+      💀 Death: Test Creature has died
+
+      at applicator (src/utils/effectPipeline/effects/combatEffects.ts:374:31)
+
+PASS src/utils/effectPipeline/__tests__/battleContext.test.ts (5.654 s)
+  ● Console
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 2 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 2
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 2, delta: -20, currentHealth: 60 }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 2, newHealth: 40 }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 40
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 40
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'STATUS_APPLIED', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: STATUS_APPLIED to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'STATUS_REMOVED', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: STATUS_REMOVED to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'STAT_MODIFIED', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: STAT_MODIFIED to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'CREATURE_MOVED', creatureId: 2 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: CREATURE_MOVED to creature 2
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'CREATURE_DIED', creatureId: 2 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: CREATURE_DIED to creature 2
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -10, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -10, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -10, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -10, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.warn
+      ⚠️ No history available for rollback
+
+      344 | export const rollbackContext = (context: BattleContext): boolean => {
+      345 |   if (context.stateHistory.length === 0) {
+    > 346 |     console.warn('⚠️ No history available for rollback')
+          |             ^
+      347 |     return false
+      348 |   }
+      349 |
+
+      at rollbackContext (src/utils/effectPipeline/battleContext.ts:346:13)
+      at Object.<anonymous> (src/utils/effectPipeline/__tests__/battleContext.test.ts:270:36)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -1, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'INVALID_TYPE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: INVALID_TYPE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      🔄 applyChangesToContext called with 1 changes {
+        changes: [ { type: 'HEALTH_CHANGE', creatureId: 1 } ],
+        notify: true,
+        deferNotification: false
+      }
+
+      at applyChangesToContext (src/utils/effectPipeline/battleContext.ts:40:31)
+
+    console.log
+        🔸 Applying change: HEALTH_CHANGE to creature 1
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:53:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ applyHealthChange in battleContext.ts: { creatureId: 1, delta: -10, currentHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:117:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+      ❤️❤️❤️ After health change, new health: { creatureId: 1, newHealth: undefined }
+
+      at applyHealthChange (src/utils/effectPipeline/battleContext.ts:135:31)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Old state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:56:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 New state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:57:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 Assigning new state to context...
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:58:33)
+          at Array.forEach (<anonymous>)
+
+    console.log
+        🔸 After assignment, context.state health: 60
+
+      at forEach (src/utils/effectPipeline/battleContext.ts:60:33)
+          at Array.forEach (<anonymous>)
+
+PASS src/utils/effectPipeline/__tests__/effectPipeline.test.ts
