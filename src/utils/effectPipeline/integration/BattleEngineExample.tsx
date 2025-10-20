@@ -375,30 +375,97 @@ export const BattleEngineExample: React.FC = () => {
     }
   }
 
+  // Execute cleanse (remove all debuffs from target)
+  const executeCleanse = async (targetId: number) => {
+    // Find the target creature
+    const target = [...battleState.playerCreatures, ...battleState.computerCreatures]
+      .find(c => c.ID === targetId)
+    
+    if (!target) {
+      console.error(`Cleanse failed: Creature ${targetId} not found`)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+      return
+    }
+
+    // Remove all debuff statuses
+    const debuffTypes = ['ATTACK_DEBUFF', 'DEFENSE_DEBUFF', 'STUN', 'FREEZE', 'SLOW', 'SILENCE', 'WEAKEN']
+    const statusesToRemove = target.statuses.filter(status => 
+      debuffTypes.includes(status.id)
+    )
+
+    if (statusesToRemove.length > 0) {
+      console.log(`✨ Cleansing ${statusesToRemove.length} debuff(s) from ${target.name}`)
+      
+      // Remove each debuff status
+      for (const status of statusesToRemove) {
+        await removeStatus(targetId, status.id)
+      }
+    } else {
+      console.log(`✨ ${target.name} has no debuffs to cleanse`)
+    }
+
+    setIsSelectingTarget(false)
+    setPendingAction(null)
+  }
+
   // Handle clicking on a creature during target selection
   const handleCreatureClick = async (creatureId: number) => {
-    if (!isSelectingTarget) return
+    if (!isSelectingTarget || !pendingAction) return
 
-    if (pendingAction === 'attack') {
-      await executeAttack(creatureId)
-    } else if (pendingAction === 'heal') {
-      await executeHeal(creatureId)
-    } else if (pendingAction === 'burn') {
-      await executeBurn(creatureId)
-    } else if (pendingAction === 'kindle') {
-      await executeKindle(creatureId)
-    } else if (pendingAction === 'poison') {
-      await executePoison(creatureId)
-    } else if (pendingAction === 'passive-test') {
-      await executePassiveTest(creatureId)
-    } else if (pendingAction === 'stun') {
-      await executeStunAttack(creatureId)
-    } else if (pendingAction === 'weaken') {
-      await executeWeakenAttack(creatureId)
-    } else if (pendingAction === 'flameswipe') {
-      await executeFlameSwipeAttack(creatureId)
-    } else if (pendingAction === 'buff') {
-      await executeBuffAttack(creatureId)
+    console.log(`🎯 Executing attack: ${pendingAction} on creature ${creatureId}`)
+
+    // Handle implemented attacks
+    switch (pendingAction) {
+      case 'attack':
+      case 'slash':
+        await executeAttack(creatureId)
+        break
+      case 'heal':
+      case 'greater-heal':
+        await executeHeal(creatureId)
+        break
+      case 'burn':
+        await executeBurn(creatureId)
+        break
+      case 'kindle':
+        await executeKindle(creatureId)
+        break
+      case 'poison':
+      case 'toxic-bite':
+        await executePoison(creatureId)
+        break
+      case 'passive-test':
+        await executePassiveTest(creatureId)
+        break
+      case 'stun':
+      case 'freeze':
+        await executeStunAttack(creatureId)
+        break
+      case 'weaken':
+      case 'shatter-armor':
+        await executeWeakenAttack(creatureId)
+        break
+      case 'flameswipe':
+      case 'inferno':
+        await executeFlameSwipeAttack(creatureId)
+        break
+      case 'buff':
+      case 'fortify':
+      case 'haste':
+        await executeBuffAttack(creatureId)
+        break
+      case 'cleanse':
+        await executeCleanse(creatureId)
+        break
+      
+      // Placeholder for unimplemented attacks
+      default:
+        console.log(`⚠️ Attack "${pendingAction}" not yet implemented`)
+        // Still clear the selection so UI doesn't get stuck
+        setIsSelectingTarget(false)
+        setPendingAction(null)
+        break
     }
   }
 
