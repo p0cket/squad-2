@@ -160,7 +160,8 @@ export const BattleEngineExample: React.FC = () => {
     getBattleWinner,
     resetBattle,
     processEndOfTurn,
-    getDebugInfo
+    getDebugInfo,
+    removeStatus
   } = useBattleEngine(exampleBattleState)
 
   const playerCreatures = getAliveCreatures('player')

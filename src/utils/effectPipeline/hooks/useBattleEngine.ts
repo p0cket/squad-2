@@ -279,6 +279,26 @@ export const useBattleEngine = (initialState: BattleState) => {
   }, [applyEffect])
 
   /**
+   * Remove a status effect from a creature
+   */
+  const removeStatus = useCallback(async (targetId: number, statusId: string) => {
+    if (!contextRef.current) return
+
+    const statusRemoval: StateChange = {
+      type: 'STATUS_REMOVED',
+      creatureId: targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId,
+        reason: 'cleanse'
+      }
+    }
+
+    // Apply the state change directly to the context
+    applyChangesToContext(contextRef.current, [statusRemoval], { deferNotification: false })
+  }, [])
+
+  /**
    * Helper function to perform an attack
    */
   const performAttack = useCallback(async (attackerId: number, targetId: number, attack: any) => {
@@ -413,6 +433,7 @@ export const useBattleEngine = (initialState: BattleState) => {
     applyAttackBuff,
     applyDefenseBuff,
     applyStun,
+    removeStatus,
 
     // Combat helpers
     performAttack,
