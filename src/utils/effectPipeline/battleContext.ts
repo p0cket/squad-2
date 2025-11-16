@@ -114,10 +114,14 @@ const applyStateChange = (state: BattleState, change: StateChange): BattleState 
 const applyHealthChange = (state: BattleState, change: HealthChange): BattleState => {
   const { creatureId, data } = change
 
+  const currentCreature = 
+    state.playerCreatures.find(c => c.ID === creatureId) ||
+    state.computerCreatures.find(c => c.ID === creatureId)
+
   console.log('❤️❤️❤️ applyHealthChange in battleContext.ts:', {
     creatureId,
     delta: data.delta,
-    currentHealth: state.computerCreatures.find(c => c.ID === creatureId)?.health
+    currentHealth: currentCreature?.health
   })
 
   const newState = {
@@ -132,9 +136,13 @@ const applyHealthChange = (state: BattleState, change: HealthChange): BattleStat
     }))
   }
 
+  const newCreature = 
+    newState.playerCreatures.find(c => c.ID === creatureId) ||
+    newState.computerCreatures.find(c => c.ID === creatureId)
+
   console.log('❤️❤️❤️ After health change, new health:', {
     creatureId,
-    newHealth: newState.computerCreatures.find(c => c.ID === creatureId)?.health
+    newHealth: newCreature?.health
   })
 
   return newState

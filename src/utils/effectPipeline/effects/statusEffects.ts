@@ -332,59 +332,8 @@ registerEffectApplicator('DEFENSE_BUFF', applyDefenseBuffEffect)
 registerEffectApplicator('STUN', applyStunEffect)
 
 // ============================================================================
-// EFFECT FACTORY FUNCTIONS (Create serializable effects)
+// EFFECT FACTORY FUNCTIONS
 // ============================================================================
-
-export const createBurnEffect = (targetId: number, damage: number = 5): Effect => ({
-  id: 'burn',
-  type: 'BURN',
-  targetId,
-  priority: 10,
-  timestamp: Date.now(),
-  data: { damage }
-})
-
-export const createPoisonEffect = (targetId: number, damage: number = 10): Effect => ({
-  id: 'poison',
-  type: 'POISON',
-  targetId,
-  priority: 10,
-  timestamp: Date.now(),
-  data: { damage }
-})
-
-export const createRegenerationEffect = (targetId: number, healing: number = 5): Effect => ({
-  id: 'regeneration',
-  type: 'REGENERATION',
-  targetId,
-  priority: 5,
-  timestamp: Date.now(),
-  data: { healing }
-})
-
-export const createAttackBuffEffect = (targetId: number, attackBonus: number = 5): Effect => ({
-  id: 'attack-buff',
-  type: 'ATTACK_BUFF',
-  targetId,
-  priority: 15,
-  timestamp: Date.now(),
-  data: { attackBonus }
-})
-
-export const createDefenseBuffEffect = (targetId: number, defenseBonus: number = 5): Effect => ({
-  id: 'defense-buff',
-  type: 'DEFENSE_BUFF',
-  targetId,
-  priority: 15,
-  timestamp: Date.now(),
-  data: { defenseBonus }
-})
-
-export const createStunEffect = (targetId: number, duration: number = 2): Effect => ({
-  id: 'stun',
-  type: 'STUN',
-  targetId,
-  priority: 20,
-  timestamp: Date.now(),
-  data: { duration }
-})
+// NOTE: Factory functions have been moved to factories.ts
+// Import from there instead: import { buildBurnEffect, ... } from '../factories'
+// Backwards-compatible exports remain in factories.ts: createBurnEffect, etc.

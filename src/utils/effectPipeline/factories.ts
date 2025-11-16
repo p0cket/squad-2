@@ -4,6 +4,10 @@
 import { Effect } from './types'
 import { Attack } from '../../consts/types/types'
 
+// Import effect files to ensure applicators are registered
+import './effects/combatEffects'
+import './effects/statusEffects'
+
 /**
  * Helper to generate unique effect IDs
  */

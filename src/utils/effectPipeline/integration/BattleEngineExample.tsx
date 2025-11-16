@@ -155,7 +155,7 @@ export const BattleEngineExample: React.FC = () => {
     applyBurn,
     applyPoison,
     performAttack,
-    performHealing,
+    performHeal,
     getAliveCreatures,
     isBattleOver,
     getBattleWinner,
@@ -265,7 +265,7 @@ export const BattleEngineExample: React.FC = () => {
   // Execute heal on selected target
   const executeHeal = async (targetId: number) => {
     if (playerCreatures.length > 0) {
-      await performHealing(playerCreatures[0].ID, targetId, 25)
+      await performHeal(playerCreatures[0].ID, targetId, 25)
       setIsSelectingTarget(false)
       setPendingAction(null)
     }
@@ -713,6 +713,7 @@ export const BattleEngineExample: React.FC = () => {
           isSelectingTarget={isSelectingTarget}
           selectedAction={pendingAction}
           isDisabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+          attacker={playerCreatures[0]}
         />
 
         <div className="flex gap-2 mt-4 pt-4 border-t border-purple-500/30">

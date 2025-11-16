@@ -1,8 +1,13 @@
 // Migration Helper - Helps integrate Effect Pipeline with existing battle system
 import { Creature, AttackPayload, State } from '../../../consts/types/types'
 import { BattleState, Effect } from '../types'
-import { createAttackEffect, createLifeDrainEffect } from '../effects/combatEffects'
-import { createBurnEffect, createPoisonEffect, createRegenerationEffect } from '../effects/statusEffects'
+import { 
+  createAttackEffect, 
+  createLifeDrainEffect,
+  createBurnEffect, 
+  createPoisonEffect, 
+  createRegenerationEffect 
+} from '../factories'
 
 /**
  * Converts your existing State to the new BattleState format

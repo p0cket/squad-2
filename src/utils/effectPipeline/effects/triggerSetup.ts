@@ -1,9 +1,21 @@
 // Trigger Setup - Configures all the default trigger rules for effect cascading
 import { registerEffectTrigger, getCreatureFromContext, getAliveCreaturesByOwner, clearAllTriggers } from '../effectResolver'
-import { createBurnEffect, createPoisonEffect } from './statusEffects'
-import { createDeathEffect } from './combatEffects'
+import { createBurnEffect, createPoisonEffect } from '../factories'
+import { createDeathEffect } from '../factories'
 import { resolveTargets, TargetSelector } from '../targetResolver'
 import { Effect } from '../types'
+
+// Battle-wide tracking flags
+// NOTE: These persist across trigger re-registrations but reset on module reload
+let firstBloodTriggered = false
+
+/**
+ * Resets battle-wide tracking flags (call when starting a new battle)
+ */
+export const resetBattleTracking = (): void => {
+  firstBloodTriggered = false
+  console.log('🔄 Battle tracking flags reset')
+}
 
 /**
  * Sets up all default trigger rules for effect cascading
@@ -239,19 +251,18 @@ const setupCombatTriggers = (): void => {
     priority: 10
   })
 
-  // First blood trigger (first creature to take damage in battle)
-  // This is a tracking/logging trigger, doesn't create an actual effect
-  let firstBloodTriggered = false
+  // First blood trigger - tracks the FIRST damage dealt to ANY creature in the battle
+  // Purely for logging/tracking, no gameplay effect (yet)
   registerEffectTrigger('HEALTH_CHANGE', {
     condition: (change, context) => {
-      return !firstBloodTriggered && change.data.delta < 0 // First damage dealt
+      return !firstBloodTriggered && change.data.delta < 0 // First damage dealt in entire battle
     },
     createEffect: (change, context) => {
       firstBloodTriggered = true
       const creature = getCreatureFromContext(context, change.creatureId)
-      console.log(`🩸 First blood: ${creature.name} takes the first damage!`)
+      console.log(`🩸 First blood: ${creature.name} takes the first damage in this battle!`)
 
-      // Return a no-op effect instead of FIRST_BLOOD type (no applicator exists)
+      // Return a no-op effect (no gameplay effect, just tracking)
       return {
         id: 'first-blood-marker',
         type: 'NO_OP',
