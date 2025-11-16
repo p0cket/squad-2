@@ -37,6 +37,10 @@ export type ShieldEffectData = {
   shieldAmount: number
 }
 
+export type BleedEffectData = {
+  damage: number
+}
+
 // ============================================================================
 // EFFECT APPLICATORS (Pure functions)
 // ============================================================================
@@ -444,6 +448,74 @@ const applyShieldEffect = async (
   }
 }
 
+/**
+ * Apply a bleed effect that deals damage over time
+ * Bleed represents damage from open wounds that cause continuous bleeding
+ */
+const applyBleedEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { damage } = effect.data as BleedEffectData
+  const creature = getCreatureFromContext(context, effect.targetId)
+
+  // Check if the creature already has bleed status
+  const hasBleedStatus = creature.statuses.some(s => s.id === 'BLEED')
+
+  if (hasBleedStatus) {
+    // This is a tick - deal damage only
+    const actualDamage = Math.min(damage, creature.health)
+    const newHealth = creature.health - actualDamage
+
+    console.log(`🩸 Bleed tick: ${creature.name} takes ${actualDamage} bleed damage (${creature.health} → ${newHealth})`)
+
+    const healthChange: HealthChange = {
+      type: 'HEALTH_CHANGE',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: -actualDamage,
+        newHealth,
+        source: 'bleed'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'bleed', targetId: effect.targetId, duration: 500 },
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+    ]
+
+    return {
+      stateChanges: [healthChange],
+      animations
+    }
+  } else {
+    // First application - only apply status, no damage
+    console.log(`🩸 Applying bleed status to ${creature.name} (${damage} dmg/turn for 3 turns)`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'BLEED',
+        duration: 3,
+        damagePerTurn: damage,  // Store damage value in status data
+        source: 'bleed'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'BLEED' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
+  }
+}
+
 // ============================================================================
 // REGISTER APPLICATORS
 // ============================================================================
@@ -460,6 +532,8 @@ registerEffectApplicator('DEFENSE_BUFF', applyDefenseBuffEffect)
 registerEffectApplicator('STUN', applyStunEffect)
 registerEffectApplicator('SHIELD', applyShieldEffect)
 console.log('✅ SHIELD applicator registered')
+registerEffectApplicator('BLEED', applyBleedEffect)
+console.log('✅ BLEED applicator registered')
 
 // ============================================================================
 // EFFECT FACTORY FUNCTIONS

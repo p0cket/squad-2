@@ -215,6 +215,22 @@ export const buildShieldEffect = (
 })
 
 /**
+ * Build a bleed effect
+ * Creates a DoT effect from open wounds that cause continuous bleeding
+ */
+export const buildBleedEffect = (
+  targetId: number,
+  damage: number = 8
+): Effect => ({
+  id: generateEffectId('bleed'),
+  type: 'BLEED',
+  targetId,
+  priority: 40,
+  timestamp: Date.now(),
+  data: { damage }
+})
+
+/**
  * Build an attack buff effect
  * Renamed from: createAttackBuffEffect
  */

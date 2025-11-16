@@ -15,6 +15,7 @@ import {
   buildBurnEffect,
   buildPoisonEffect,
   buildRegenerationEffect,
+  buildBleedEffect,
   buildAttackBuffEffect,
   buildDefenseBuffEffect,
   buildStunEffect,
@@ -201,6 +202,13 @@ export const useBattleEngine = (initialState: BattleState) => {
           }
           console.log(`💚 Creating regen tick effect for ${creature.name} (${healing} heal)`)
           effectsToApply.push(buildRegenerationEffect(creature.ID, healing))
+        } else if (sid === 'BLEED') {
+          const damage = status.damagePerTurn ?? 8  // Use stored value or default
+          if (status.damagePerTurn === undefined) {
+            console.warn(`⚠️ BLEED status on ${creature.name} missing damagePerTurn! Using fallback: 8`)
+          }
+          console.log(`🩸 Creating bleed tick effect for ${creature.name} (${damage} dmg)`)
+          effectsToApply.push(buildBleedEffect(creature.ID, damage))
         } else if (sid === 'SHIELD') {
           // Shield doesn't tick - it passively absorbs damage
           // Duration will be decremented below, no tick effect needed

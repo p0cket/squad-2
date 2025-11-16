@@ -42,6 +42,17 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     id: `BURN`,
     notes: "Deals fire damage over time.",
   },
+  BLEED: {
+    name: "Bleed",
+    type: "debuff",
+    timing: "afterAttack",
+    duration: 3,
+    effectFuncName: "applyBleed",
+    chance: 1,
+    icon: "🩸",
+    id: `BLEED`,
+    notes: "Loses HP per turn from open wounds.",
+  },
   STUN: {
     name: "Stun",
     type: "debuff",
