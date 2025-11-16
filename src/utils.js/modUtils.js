@@ -40,6 +40,9 @@ export const applyTurnModEffects = (creature) => {
             if (updatedCreature.health > updatedCreature.maxHealth) {
               updatedCreature.health = updatedCreature.maxHealth // Prevent overhealing
             }
+          } else if (mod.name === "Shield") {
+            // Shield doesn't need per-turn logic, it absorbs damage when attacked
+            // The shield amount is tracked and decremented when damage is taken
           }
           break
         case "buff":
@@ -100,6 +103,9 @@ export const applyTurnEnhancementEffects = (creature) => {
             updatedCreature.health = updatedCreature.maxHealth // Prevent overhealing
           }
         }
+
+        // Shield doesn't need per-turn logic, it absorbs damage when attacked
+        // The shield amount is tracked and decremented when damage is taken
 
         // Reduce remaining duration
         effect.remainingDuration -= 1

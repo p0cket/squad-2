@@ -43,6 +43,15 @@ const STATUS_EFFECTS = {
       creature.health = Math.min(creature.maxHealth, creature.health + 5) // Heals per turn
     },
   },
+  SHIELD: {
+    name: "Shield",
+    type: "buff",
+    duration: 3,
+    applyEffect: (creature) => {
+      // Shield doesn't have a per-turn effect, it absorbs damage when attacked
+      // This is handled in the damage calculation logic
+    },
+  },
 }
 
 export const handleEndOfTurnEffects = (creatures) => {

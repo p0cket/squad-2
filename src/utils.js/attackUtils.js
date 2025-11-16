@@ -1,3 +1,31 @@
+// Helper function to apply damage with Shield absorption
+export const applyDamageWithShield = (target, incomingDamage) => {
+  let damageToApply = incomingDamage;
+
+  // Check for Shield effect in mods or statusEffects
+  const shields = [
+    ...(target.mods || []).filter(mod => mod.name === "Shield"),
+    ...(target.statusEffects || []).filter(effect => effect.name === "Shield")
+  ];
+
+  shields.forEach(shield => {
+    if (shield.shieldAmount > 0) {
+      const damageAbsorbed = Math.min(damageToApply, shield.shieldAmount);
+      shield.shieldAmount -= damageAbsorbed;
+      damageToApply -= damageAbsorbed;
+      console.log(`Shield absorbed ${damageAbsorbed} damage. Remaining shield: ${shield.shieldAmount}`);
+
+      // If shield is depleted, mark for removal by setting duration to 0
+      if (shield.shieldAmount <= 0) {
+        shield.duration = 0;
+        shield.remainingDuration = 0;
+      }
+    }
+  });
+
+  return damageToApply;
+};
+
 export const calcDamage = (attacker, target) => {
   console.group("calcDamage");
   if (!attacker || !target) {
@@ -27,8 +55,13 @@ export const calcDamage = (attacker, target) => {
   // const randomFactor = 1; // Random factor between 0.9 and 1.1
   // const randomFactor = Math.random() * 0.2 + 0.9; // Random factor between 0.9 and 1.1
   // const damage = totalDamage * randomFactor;
-  const damage = totalDamage
+  let damage = totalDamage
   console.log("Total Damage after Random Factor:", damage);
+
+  // Apply Shield absorption
+  damage = applyDamageWithShield(target, damage);
+  console.log("Damage after Shield absorption:", damage);
+
   console.groupEnd();
 
   return Math.floor(damage);

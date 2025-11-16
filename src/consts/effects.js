@@ -15,5 +15,11 @@ export const STATUS_EFFECTS = {
         creature.health += 5; // Apply regeneration healing
       },
     },
+    Shield: {
+      applyEffect: (creature) => {
+        // Shield absorbs damage - handled in damage calculation
+        // The shield amount is tracked in the status effect data
+      },
+    },
   };
   

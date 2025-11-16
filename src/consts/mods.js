@@ -26,6 +26,15 @@ export const BASE_ENHANCEMENTS = [
       healPerTurn: 5,
       icon: "🌿",
     },
+    {
+      id: 4,
+      name: "Shield",
+      type: "Temporary",
+      effect: "Absorbs up to 20 damage for 3 turns.",
+      duration: 3,
+      shieldAmount: 20,
+      icon: "🛡️",
+    },
   ]
 
   // Auras (passive effects that apply automatically or enhance the creature's abilities)
@@ -72,6 +81,15 @@ export const auras = {
       duration: 5,
       defenseBoost: 10,
       description: "Boosts the creature's defense by 10 for 5 turns.",
+    },
+    protectiveBarrier: {
+      name: "Protective Barrier",
+      effect: "Shield",
+      type: "buff",
+      duration: 3,
+      shieldAmount: 20,
+      description: "Creates a protective shield that absorbs up to 20 damage for 3 turns.",
+      icon: "🛡️",
     },
   }
   
