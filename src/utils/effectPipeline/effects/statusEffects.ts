@@ -188,30 +188,61 @@ const applyRegenerationEffect = async (
 ): Promise<EffectApplicationResult> => {
   const { healing } = effect.data as RegenerationEffectData
   const creature = getCreatureFromContext(context, effect.targetId)
-  const actualHealing = Math.min(healing, creature.maxHealth - creature.health)
-  const newHealth = creature.health + actualHealing
 
-  console.log(`💚 Regeneration effect: ${creature.name} heals ${actualHealing} HP (${creature.health} → ${newHealth})`)
+  // Check if the creature already has regeneration status
+  const hasRegenStatus = creature.statuses.some(s => s.id === 'REGENERATION')
 
-  const healthChange: HealthChange = {
-    type: 'HEALTH_CHANGE',
-    creatureId: effect.targetId,
-    timestamp: Date.now(),
-    data: {
-      delta: actualHealing,
-      newHealth,
-      source: 'regeneration'
+  if (hasRegenStatus) {
+    // This is a tick - heal only
+    const actualHealing = Math.min(healing, creature.maxHealth - creature.health)
+    const newHealth = creature.health + actualHealing
+
+    console.log(`💚 Regeneration tick: ${creature.name} heals ${actualHealing} HP (${creature.health} → ${newHealth})`)
+
+    const healthChange: HealthChange = {
+      type: 'HEALTH_CHANGE',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: actualHealing,
+        newHealth,
+        source: 'regeneration'
+      }
     }
-  }
 
-  const animations: Animation[] = [
-    { type: 'healing', targetId: effect.targetId, duration: 800 },
-    { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: healing } }
-  ]
+    const animations: Animation[] = [
+      { type: 'healing', targetId: effect.targetId, duration: 800 },
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: healing } }
+    ]
 
-  return {
-    stateChanges: [healthChange],
-    animations
+    return {
+      stateChanges: [healthChange],
+      animations
+    }
+  } else {
+    // First application - only apply status, no healing
+    console.log(`💚 Applying regeneration status to ${creature.name} (${healing} HP/turn for 3 turns)`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'REGENERATION',
+        duration: 3,
+        healingPerTurn: healing,  // Store healing value in status data
+        source: 'regeneration'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'REGENERATION' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
   }
 }
 
