@@ -61,20 +61,23 @@ const applyAttackEffect = async (
   const actualDamage = Math.max(1, totalDamage - defense)
   const newHealth = Math.max(0, target.health - actualDamage)
 
-  console.log(`⚔️ Attack: ${attacker.name} attacks ${target.name} for ${actualDamage} damage (${target.health} → ${newHealth})`)
-
   // Build damage breakdown for display
   const damageBreakdown: Array<{ label: string; value: number }> = []
   if (baseAttackDamage > 0) {
     damageBreakdown.push({ label: `${attack.name}`, value: baseAttackDamage })
   }
   if (attackerBonus > 0) {
-    damageBreakdown.push({ label: 'Attack Bonus', value: attackerBonus })
+    damageBreakdown.push({ label: `+${attacker.name} ATK`, value: attackerBonus })
   }
   if (defense > 0) {
-    damageBreakdown.push({ label: 'Defense', value: -defense })
+    damageBreakdown.push({ label: `-${target.name} DEF`, value: -defense })
   }
-  damageBreakdown.push({ label: 'Total Damage', value: actualDamage })
+  damageBreakdown.push({ label: 'Total', value: actualDamage })
+
+  // Enhanced console log with breakdown
+  console.log(`⚔️ Attack: ${attacker.name} attacks ${target.name}`)
+  console.log(`  📊 Breakdown: ${damageBreakdown.map(b => `${b.label} ${b.value >= 0 ? '+' : ''}${b.value}`).join(' | ')}`)
+  console.log(`  💔 Result: ${target.health} → ${newHealth} (-${actualDamage} damage)`)
 
   // Create animations
   const animations: Animation[] = [

@@ -51,8 +51,19 @@ export const useBattleEngine = (initialState: BattleState) => {
       console.log('📦 Using native BattleContext')
       contextRef.current = createBattleContext(initialState)
     }
-    setupDefaultTriggers()
   }
+
+  // Setup triggers in useEffect to ensure proper lifecycle management
+  // This runs once on mount and cleans up on unmount
+  useEffect(() => {
+    console.log('🎯 Initializing effect triggers')
+    setupDefaultTriggers()
+    
+    return () => {
+      console.log('🧹 Cleaning up effect triggers')
+      // Triggers will be cleared on next setup call
+    }
+  }, [])
 
   // Subscribe to context changes
   // IMPORTANT: Subscription must happen in useEffect, separate from context creation

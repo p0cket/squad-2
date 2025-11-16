@@ -14,24 +14,24 @@ export const resolveTriggeredEffects = (
 ): Effect[] => {
   const triggeredEffects: Effect[] = []
 
-  // Resolving triggered effects
+  console.log(`🔍 Checking ${stateChanges.length} state changes for triggers`)
 
   stateChanges.forEach(change => {
     const rules = triggerRules.get(change.type) || []
-    // Found trigger rules
+    console.log(`  📋 Change type: ${change.type}, Found ${rules.length} trigger rules`)
 
     rules.forEach((rule, index) => {
       try {
         if (rule.condition(change, context)) {
-          // Trigger condition met
+          console.log(`    ✅ Trigger rule ${index + 1} condition MET`)
           const newEffect = rule.createEffect(change, context)
 
           if (newEffect) {
             triggeredEffects.push(newEffect)
-            // Created triggered effect
+            console.log(`    📤 Created effect: ${newEffect.type} (id: ${newEffect.id})`)
           }
         } else {
-          // Trigger condition not met
+          console.log(`    ❌ Trigger rule ${index + 1} condition NOT met`)
         }
       } catch (error) {
         console.error(`💥 Error in trigger rule for ${change.type}:`, error)
@@ -39,7 +39,7 @@ export const resolveTriggeredEffects = (
     })
   })
 
-  // Total triggered effects calculated
+  console.log(`📊 Total triggered effects: ${triggeredEffects.length}`)
   return triggeredEffects
 }
 
@@ -60,7 +60,7 @@ export const registerEffectTrigger = (
   // Sort by priority (higher priority first)
   rules.sort((a, b) => (b.priority || 0) - (a.priority || 0))
 
-  // Registered trigger rule
+  console.log(`✅ Registered trigger for ${changeType} (total: ${rules.length} rules)`)
 }
 
 /**
@@ -68,15 +68,16 @@ export const registerEffectTrigger = (
  */
 export const clearTriggersForChangeType = (changeType: string): void => {
   triggerRules.delete(changeType)
-  // Cleared triggers
+  console.log(`🧹 Cleared triggers for: ${changeType}`)
 }
 
 /**
  * Removes all trigger rules (useful for testing)
  */
 export const clearAllTriggers = (): void => {
+  const count = Array.from(triggerRules.values()).reduce((sum, rules) => sum + rules.length, 0)
   triggerRules.clear()
-  // Cleared all trigger rules
+  console.log(`🧹 Cleared all triggers (removed ${count} rules from registry)`)
 }
 
 /**

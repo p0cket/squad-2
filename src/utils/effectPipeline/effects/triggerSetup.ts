@@ -1,14 +1,20 @@
 // Trigger Setup - Configures all the default trigger rules for effect cascading
-import { registerEffectTrigger, getCreatureFromContext, getAliveCreaturesByOwner } from '../effectResolver'
+import { registerEffectTrigger, getCreatureFromContext, getAliveCreaturesByOwner, clearAllTriggers } from '../effectResolver'
 import { createBurnEffect, createPoisonEffect } from './statusEffects'
 import { createDeathEffect } from './combatEffects'
 
 /**
  * Sets up all default trigger rules for effect cascading
  * Call this once when initializing the battle system
+ * 
+ * IMPORTANT: Clears all existing triggers first to prevent duplicates
+ * when called multiple times (e.g., React Strict Mode, hot reload)
  */
 export const setupDefaultTriggers = (): void => {
   console.log('🎯 Setting up default effect triggers')
+  
+  // Clear any previously registered triggers to prevent duplicates
+  clearAllTriggers()
 
   setupDeathTriggers()
   setupStatusSpreadTriggers()
