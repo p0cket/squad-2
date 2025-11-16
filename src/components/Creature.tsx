@@ -111,20 +111,18 @@ const Creature: FC<CreatureProps> = ({
         </div>
         <div className="mt-1" data-testid="creature-health">
           {health} / {maxHealth}{" "}
-          <span>
+          <span className="inline-flex gap-1">
             {statuses?.map((status) => (
               <span
                 key={status.id}
                 data-testid="status-badge"
                 data-status-id={status.id}
-                className="relative group"
-                style={{ cursor: "pointer" }}
+                className="inline-flex items-center"
               >
-                {status.icon}
-                {status.duration !== undefined && ` ${status.duration}`}
-                <span className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1">
-                  {status.description}
-                </span>
+                <span className="text-base">{status.icon}</span>
+                {status.duration !== undefined && (
+                  <span className="text-xs ml-0.5">({status.duration})</span>
+                )}
               </span>
             ))}
           </span>

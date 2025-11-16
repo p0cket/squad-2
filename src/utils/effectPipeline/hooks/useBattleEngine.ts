@@ -176,16 +176,29 @@ export const useBattleEngine = (initialState: BattleState) => {
 
       for (const status of creature.statuses) {
         const sid = status.id
-        // Create appropriate effect using the existing factories (defaults handle values)
+        console.log(`🔍 Processing status ${sid} on ${creature.name}:`, status)
+        // Create appropriate effect using the stored damage/heal values from status
         if (sid === 'BURN') {
-          console.log(`🔥 Creating burn tick effect for ${creature.name}`)
-          effectsToApply.push(buildBurnEffect(creature.ID, undefined))
+          const damage = status.damagePerTurn ?? 5  // Use stored value or default
+          if (status.damagePerTurn === undefined) {
+            console.warn(`⚠️ BURN status on ${creature.name} missing damagePerTurn! Using fallback: 5`)
+          }
+          console.log(`🔥 Creating burn tick effect for ${creature.name} (${damage} dmg)`)
+          effectsToApply.push(buildBurnEffect(creature.ID, damage))
         } else if (sid === 'POISON') {
-          console.log(`🧪 Creating poison tick effect for ${creature.name}`)
-          effectsToApply.push(buildPoisonEffect(creature.ID, undefined))
+          const damage = status.damagePerTurn ?? 3  // Use stored value or default
+          if (status.damagePerTurn === undefined) {
+            console.warn(`⚠️ POISON status on ${creature.name} missing damagePerTurn! Using fallback: 3`)
+          }
+          console.log(`🧪 Creating poison tick effect for ${creature.name} (${damage} dmg) [status.damagePerTurn = ${status.damagePerTurn}]`)
+          effectsToApply.push(buildPoisonEffect(creature.ID, damage))
         } else if (sid === 'REGENERATION') {
-          console.log(`💚 Creating regen tick effect for ${creature.name}`)
-          effectsToApply.push(buildRegenerationEffect(creature.ID, undefined))
+          const healing = status.healPerTurn ?? 5  // Use stored value or default
+          if (status.healPerTurn === undefined) {
+            console.warn(`⚠️ REGENERATION status on ${creature.name} missing healPerTurn! Using fallback: 5`)
+          }
+          console.log(`💚 Creating regen tick effect for ${creature.name} (${healing} heal)`)
+          effectsToApply.push(buildRegenerationEffect(creature.ID, healing))
         } else {
           // Unknown status: skip or extend here
         }

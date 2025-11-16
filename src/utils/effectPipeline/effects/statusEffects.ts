@@ -122,29 +122,65 @@ const applyPoisonEffect = async (
   const { damage } = effect.data as PoisonEffectData
   const creature = getCreatureFromContext(context, effect.targetId)
 
-  console.log(`🧪 Applying poison status to ${creature.name} (${damage} dmg/turn for 3 turns)`)
+  console.log(`🧪🔍 applyPoisonEffect called - damage value: ${damage}, effect.data:`, effect.data)
 
-  // Only apply the status, no immediate damage
-  // Damage will be dealt during end-of-turn tick
-  const statusChange: StateChange = {
-    type: 'STATUS_APPLIED',
-    creatureId: effect.targetId,
-    timestamp: Date.now(),
-    data: {
-      statusId: 'POISON',
-      duration: 3,
-      damagePerTurn: damage,  // Store damage value in status data
-      source: 'poison'
+  // Check if the creature already has poison status
+  const hasPoisonStatus = creature.statuses.some(s => s.id === 'POISON')
+  
+  if (hasPoisonStatus) {
+    // This is a tick - deal damage only
+    const actualDamage = Math.min(damage, creature.health)
+    const newHealth = creature.health - actualDamage
+
+    console.log(`🧪 Poison tick: ${creature.name} takes ${actualDamage} poison damage (${creature.health} → ${newHealth})`)
+
+    const healthChange: HealthChange = {
+      type: 'HEALTH_CHANGE',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: -actualDamage,
+        newHealth,
+        source: 'poison'
+      }
     }
-  }
 
-  const animations: Animation[] = [
-    { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'POISON' } }
-  ]
+    const animations: Animation[] = [
+      { type: 'shake', targetId: effect.targetId, duration: 300 },
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+    ]
 
-  return {
-    stateChanges: [statusChange],
-    animations
+    return {
+      stateChanges: [healthChange],
+      animations
+    }
+  } else {
+    // First application - only apply status, no damage
+    console.log(`🧪 Applying poison status to ${creature.name} (${damage} dmg/turn for 3 turns)`)
+    console.log(`🧪💾 Storing damagePerTurn: ${damage}`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'POISON',
+        duration: 3,
+        damagePerTurn: damage,  // Store damage value in status data
+        source: 'poison'
+      }
+    }
+
+    console.log(`🧪📦 STATUS_APPLIED change data:`, statusChange.data)
+
+    const animations: Animation[] = [
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'POISON' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
   }
 }
 

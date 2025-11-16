@@ -118,6 +118,9 @@ export type StatusEffect = {
   icon: string
   id: string
   notes?: string
+  damagePerTurn?: number  // Dynamic value from effect data
+  healPerTurn?: number    // Dynamic value from effect data
+  description?: string    // Optional description for tooltips
 }
 
 export type Effect = {

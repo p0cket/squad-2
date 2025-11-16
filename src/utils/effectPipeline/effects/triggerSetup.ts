@@ -140,7 +140,9 @@ const setupStatusSpreadTriggers = (): void => {
     priority: 20
   })
 
-  // Poison spread in certain conditions
+  // DISABLED: Poison spread trigger - causes infinite loops
+  // TODO: Add cooldown/limit to prevent chain spreading
+  /*
   registerEffectTrigger('STATUS_APPLIED', {
     condition: (change, context) => {
       return change.data.statusId === 'POISON' && Math.random() < 0.15 // 15% chance
@@ -165,6 +167,7 @@ const setupStatusSpreadTriggers = (): void => {
     },
     priority: 20
   })
+  */
 }
 
 /**
