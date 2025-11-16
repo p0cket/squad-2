@@ -20,12 +20,24 @@ test.describe('Turn System - Status Effects', () => {
       // Log EVERYTHING for debugging
       console.log(`[BROWSER] ${text}`);
     });
-    
+
     // Navigate to the app
-    await page.goto('/');
-    
-    // Wait for battle to be ready
-    await page.waitForSelector('[data-testid="creature-card"]', { timeout: 10000 });
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    // Verify we're on the BattleEngineExample component (not the old Battle component)
+    const battleEngineExample = await page.waitForSelector('[data-testid="battle-engine-example"]', { timeout: 30000 });
+    if (!battleEngineExample) {
+      throw new Error('BattleEngineExample component not found! Wrong component is loading.');
+    }
+
+    // Wait for React to finish rendering - look for the battle status section first
+    await page.waitForSelector('[data-testid="turn-counter"]', { timeout: 30000 });
+
+    // Now wait for creature cards to appear
+    await page.waitForSelector('[data-testid="creature-card"]', { timeout: 30000 });
+
+    // Extra wait to ensure all animations/renders complete
+    await page.waitForTimeout(1000);
   });
 
   test('should apply burn status and show duration badge', async ({ page }) => {

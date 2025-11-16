@@ -512,7 +512,7 @@ export const BattleEngineExample: React.FC = () => {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto" data-testid="battle-engine-example">
       {/* Target Selection Banner */}
       {isSelectingTarget && (
         <div className="mb-4 p-4 bg-blue-900/80 backdrop-blur-sm border border-blue-500/50 text-blue-100 rounded-lg shadow-lg shadow-blue-500/20">
