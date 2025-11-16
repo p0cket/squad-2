@@ -217,10 +217,19 @@ export const useBattleEngine = (initialState: BattleState) => {
       }
     }
 
+    // ⚠️ CRITICAL: Re-fetch creatures from CURRENT state after effects applied
+    // This ensures we have the updated health values and avoid stale closure bugs
+    const freshCreatures = [
+      ...(contextRef.current.state.playerCreatures || []),
+      ...(contextRef.current.state.computerCreatures || [])
+    ]
+
+    console.log('🔄 Re-fetched fresh creature state after applying tick effects')
+
     // After applying ticks, decrement durations (batch update)
     const durationChanges: StateChange[] = []
 
-    for (const creature of allCreatures) {
+    for (const creature of freshCreatures) {  // ← Use FRESH data to avoid overwriting health!
       if (!creature || creature.health <= 0) continue
 
       for (const status of creature.statuses) {

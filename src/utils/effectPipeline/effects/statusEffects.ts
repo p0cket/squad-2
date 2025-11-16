@@ -38,49 +38,52 @@ export type StunEffectData = {
 
 /**
  * Apply a burn effect that deals damage over time
+ * 
+ * TODO: Differentiate burn from poison in the future
+ * Current: Same as poison (status on initial, damage on tick)
+ * Future ideas: Burn could spread to nearby enemies, stack intensity, etc.
  */
 const applyBurnEffect = async (
   effect: Effect,
   context: BattleContext
 ): Promise<EffectApplicationResult> => {
-  console.log('🚨🚨🚨 BURN APPLICATOR CALLED! 🚨🚨🚨')
-  console.group(`🔥 APPLY BURN EFFECT`)
-  console.log('Effect:', effect)
-  console.log('Effect type:', effect.type)
-  console.log('Effect data:', effect.data)
-  
   const { damage } = effect.data as BurnEffectData
   const creature = getCreatureFromContext(context, effect.targetId)
-  
-  console.log(`Target creature:`, { name: creature.name, health: creature.health, statuses: creature.statuses })
-  console.log(`🔥 BURN DAMAGE VALUE: ${damage}`)
-  
-  const actualDamage = Math.min(damage, creature.health)
-  const newHealth = creature.health - actualDamage
-
-  console.log(`💥 Damage calculation: ${damage} → ${actualDamage} (capped by health)`)
-  console.log(`❤️ Health: ${creature.health} → ${newHealth}`)
-  console.log(`📉 Health delta: -${actualDamage}`)
-
-  const healthChange: HealthChange = {
-    type: 'HEALTH_CHANGE',
-    creatureId: effect.targetId,
-    timestamp: Date.now(),
-    data: {
-      delta: -actualDamage,
-      newHealth,
-      source: 'burn'
-    }
-  }
-
-  console.log('📝 Creating HEALTH_CHANGE:', healthChange)
 
   // Check if the creature already has burn status
   const hasBurnStatus = creature.statuses.some(s => s.id === 'BURN')
-  const stateChanges: StateChange[] = [healthChange]
+  
+  if (hasBurnStatus) {
+    // This is a tick - deal damage only
+    const actualDamage = Math.min(damage, creature.health)
+    const newHealth = creature.health - actualDamage
 
-  // Only add STATUS_APPLIED if this is the first application (not a tick)
-  if (!hasBurnStatus) {
+    console.log(`🔥 Burn tick: ${creature.name} takes ${actualDamage} burn damage (${creature.health} → ${newHealth})`)
+
+    const healthChange: HealthChange = {
+      type: 'HEALTH_CHANGE',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: -actualDamage,
+        newHealth,
+        source: 'burn'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'burn', targetId: effect.targetId, duration: 500 },
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+    ]
+
+    return {
+      stateChanges: [healthChange],
+      animations
+    }
+  } else {
+    // First application - only apply status, no damage
+    console.log(`🔥 Applying burn status to ${creature.name} (${damage} dmg/turn for 3 turns)`)
+
     const statusChange: StateChange = {
       type: 'STATUS_APPLIED',
       creatureId: effect.targetId,
@@ -88,27 +91,19 @@ const applyBurnEffect = async (
       data: {
         statusId: 'BURN',
         duration: 3,
+        damagePerTurn: damage,  // Store damage value in status data
         source: 'burn'
       }
     }
-    stateChanges.push(statusChange)
-    console.log('📝 Creating STATUS_APPLIED (first application):', statusChange)
-  } else {
-    console.log('⏭️ Burn status already exists, skipping STATUS_APPLIED (tick)')
-  }
 
-  const animations: Animation[] = [
-    { type: 'burn', targetId: effect.targetId, duration: 500 },
-    { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
-  ]
+    const animations: Animation[] = [
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'BURN' } }
+    ]
 
-  console.log('🎬 Animations:', animations)
-  console.log('📤 Returning state changes:', stateChanges)
-  console.groupEnd()
-
-  return {
-    stateChanges,
-    animations
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
   }
 }
 
