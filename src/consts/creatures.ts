@@ -127,7 +127,7 @@ export const CREATURES: { [key: string]: BaseCreature } = {
       trigger: 'on_damaged',
       effect: {
         type: 'burn',
-        targetType: 'attacker',
+        targetSelector: 'trigger_source',
         value: 6,
         chance: 0.75
       },
@@ -196,7 +196,7 @@ export const CREATURES: { [key: string]: BaseCreature } = {
       trigger: 'on_damaged',
       effect: {
         type: 'damage',
-        targetType: 'attacker',
+        targetSelector: 'trigger_source',
         value: 15,
         chance: 1.0
       },
@@ -333,7 +333,7 @@ export const CREATURES: { [key: string]: BaseCreature } = {
       trigger: 'on_damaged',
       effect: {
         type: 'poison',
-        targetType: 'attacker',
+        targetSelector: 'trigger_source',
         value: 8,
         chance: 0.6
       },

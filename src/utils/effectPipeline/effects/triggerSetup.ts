@@ -2,6 +2,8 @@
 import { registerEffectTrigger, getCreatureFromContext, getAliveCreaturesByOwner, clearAllTriggers } from '../effectResolver'
 import { createBurnEffect, createPoisonEffect } from './statusEffects'
 import { createDeathEffect } from './combatEffects'
+import { resolveTargets, TargetSelector } from '../targetResolver'
+import { Effect } from '../types'
 
 /**
  * Sets up all default trigger rules for effect cascading
@@ -267,7 +269,12 @@ const setupCombatTriggers = (): void => {
  * Sets up triggers for passive abilities (thorns, counter-attack, etc.)
  */
 const setupPassiveAbilityTriggers = (): void => {
-  // Thorns/Counter-attack trigger - when damaged, retaliate against attacker
+  
+  // ============================================================================
+  // ON_DAMAGED TRIGGERS - When THIS creature takes damage
+  // ============================================================================
+  // Examples: Stone Thorns (counter-attack), Poison Skin (apply poison to attacker)
+  // Condition: change.creatureId must be the creature with the passive
   registerEffectTrigger('HEALTH_CHANGE', {
     condition: (change, context) => {
       // Only trigger on damage (negative delta)
@@ -278,14 +285,13 @@ const setupPassiveAbilityTriggers = (): void => {
       
       const damagedCreature = getCreatureFromContext(context, change.creatureId)
       
-      // Check if creature has any on_damaged passive abilities
+      // Check if THIS creature (the one damaged) has on_damaged passive abilities
       return damagedCreature.passiveAbilities?.some(ability => 
         ability.trigger === 'on_damaged'
       ) ?? false
     },
     createEffect: (change, context) => {
       const damagedCreature = getCreatureFromContext(context, change.creatureId)
-      const attackerId = change.data.sourceCreatureId!
       
       // Find the first on_damaged passive ability
       const passiveAbility = damagedCreature.passiveAbilities?.find(ability => 
@@ -293,7 +299,6 @@ const setupPassiveAbilityTriggers = (): void => {
       )
       
       if (!passiveAbility) {
-        // Fallback - should not happen due to condition check
         return {
           id: 'no-op',
           type: 'NO_OP',
@@ -320,54 +325,185 @@ const setupPassiveAbilityTriggers = (): void => {
       
       console.log(`🌿 ${damagedCreature.name}'s ${passiveAbility.name} triggered!`)
       
-      // Determine target based on targetType
-      let targetId: number
-      switch (passiveAbility.effect.targetType) {
-        case 'attacker':
-          targetId = attackerId
-          break
-        case 'self':
-          targetId = change.creatureId
-          break
-        // Add more target types as needed
-        default:
-          targetId = attackerId
-      }
+      // Map old targetType to new targetSelector for backward compatibility
+      const selector: TargetSelector = passiveAbility.effect.targetSelector 
+        ?? mapTargetTypeToSelector(passiveAbility.effect.targetType, 'on_damaged')
       
-      // Create effect based on ability type
-      switch (passiveAbility.effect.type) {
-        case 'poison':
-          return createPoisonEffect(targetId, passiveAbility.effect.value ?? 5)
-        
-        case 'damage':
-          return {
-            id: 'counter-damage',
-            type: 'TRUE_DAMAGE',
-            targetId,
-            priority: 55,
-            timestamp: Date.now(),
-            data: {
-              attackerId: change.creatureId,
-              damage: passiveAbility.effect.value ?? 10
+      // Resolve targets using universal resolver
+      const targetIds = resolveTargets({
+        selector,
+        context,
+        sourceCreatureId: damagedCreature.ID,
+        triggerChange: change
+      })
+      
+      // Create effects for each target
+      const effects: Effect[] = targetIds.map(targetId => {
+        // Create effect based on ability type
+        switch (passiveAbility.effect.type) {
+          case 'poison':
+            return createPoisonEffect(targetId, passiveAbility.effect.value ?? 5)
+          
+          case 'damage':
+            return {
+              id: 'counter-damage',
+              type: 'TRUE_DAMAGE',
+              targetId,
+              priority: 55,
+              timestamp: Date.now(),
+              data: {
+                attackerId: damagedCreature.ID,
+                damage: passiveAbility.effect.value ?? 10
+              }
             }
-          }
-        
-        case 'burn':
-          return createBurnEffect(targetId, passiveAbility.effect.value ?? 5)
-        
-        default:
-          console.warn(`⚠️ Unknown passive ability effect type: ${passiveAbility.effect.type}`)
-          return {
-            id: 'no-op',
-            type: 'NO_OP',
-            targetId: change.creatureId,
-            priority: 0,
-            timestamp: Date.now(),
-            data: {}
-          }
+          
+          case 'burn':
+            return createBurnEffect(targetId, passiveAbility.effect.value ?? 5)
+          
+          default:
+            console.warn(`⚠️ Unknown passive ability effect type: ${passiveAbility.effect.type}`)
+            return {
+              id: 'no-op',
+              type: 'NO_OP',
+              targetId,
+              priority: 0,
+              timestamp: Date.now(),
+              data: {}
+            }
+        }
+      })
+      
+      // Return first effect (for now, multi-effect support can be added later)
+      return effects[0] ?? {
+        id: 'no-op',
+        type: 'NO_OP',
+        targetId: change.creatureId,
+        priority: 0,
+        timestamp: Date.now(),
+        data: {}
       }
     },
     priority: 60 // High priority to trigger soon after damage
+  })
+
+  // ============================================================================
+  // ON_ATTACK TRIGGERS - When THIS creature deals damage
+  // ============================================================================
+  // Examples: Lifesteal (heal when attacking), Poison on Hit (apply poison when attacking)
+  // Condition: change.data.sourceCreatureId must be the creature with the passive
+  registerEffectTrigger('HEALTH_CHANGE', {
+    condition: (change, context) => {
+      // Only trigger on damage (negative delta)
+      if (change.data.delta >= 0) return false
+      
+      // Must have a source creature ID (attacker)
+      if (!change.data.sourceCreatureId) return false
+      
+      const attackerCreature = getCreatureFromContext(context, change.data.sourceCreatureId)
+      
+      // Check if the ATTACKER (not the damaged creature) has on_attack passive abilities
+      return attackerCreature.passiveAbilities?.some(ability => 
+        ability.trigger === 'on_attack'
+      ) ?? false
+    },
+    createEffect: (change, context) => {
+      const attackerId = change.data.sourceCreatureId!
+      const attackerCreature = getCreatureFromContext(context, attackerId)
+      
+      // Find the first on_attack passive ability
+      const passiveAbility = attackerCreature.passiveAbilities?.find(ability => 
+        ability.trigger === 'on_attack'
+      )
+      
+      if (!passiveAbility) {
+        return {
+          id: 'no-op',
+          type: 'NO_OP',
+          targetId: attackerId,
+          priority: 0,
+          timestamp: Date.now(),
+          data: {}
+        }
+      }
+      
+      // Check if ability triggers (based on chance)
+      const chance = passiveAbility.effect.chance ?? 1.0
+      if (Math.random() > chance) {
+        console.log(`🎲 ${attackerCreature.name}'s ${passiveAbility.name} failed to trigger (${Math.round(chance * 100)}% chance)`)
+        return {
+          id: 'no-op',
+          type: 'NO_OP',
+          targetId: attackerId,
+          priority: 0,
+          timestamp: Date.now(),
+          data: {}
+        }
+      }
+      
+      console.log(`⚔️ ${attackerCreature.name}'s ${passiveAbility.name} triggered!`)
+      
+      // Map old targetType to new targetSelector for backward compatibility
+      const selector: TargetSelector = passiveAbility.effect.targetSelector 
+        ?? mapTargetTypeToSelector(passiveAbility.effect.targetType, 'on_attack')
+      
+      // Resolve targets using universal resolver
+      const targetIds = resolveTargets({
+        selector,
+        context,
+        sourceCreatureId: attackerId,
+        triggerChange: change
+      })
+      
+      // Create effects for each target
+      const effects: Effect[] = targetIds.map(targetId => {
+        // Create effect based on ability type
+        switch (passiveAbility.effect.type) {
+          case 'heal':
+            // Lifesteal - heal based on damage dealt
+            const damageDealt = Math.abs(change.data.delta)
+            const healAmount = Math.floor(damageDealt * (passiveAbility.effect.value ?? 0.3))
+            return {
+              id: 'lifesteal-heal',
+              type: 'HEAL',
+              targetId,
+              priority: 50,
+              timestamp: Date.now(),
+              data: {
+                casterId: attackerId,
+                healingAmount: healAmount
+              }
+            }
+          
+          case 'poison':
+            return createPoisonEffect(change.creatureId, passiveAbility.effect.value ?? 5)
+          
+          case 'burn':
+            return createBurnEffect(change.creatureId, passiveAbility.effect.value ?? 5)
+          
+          default:
+            console.warn(`⚠️ Unknown on_attack passive ability effect type: ${passiveAbility.effect.type}`)
+            return {
+              id: 'no-op',
+              type: 'NO_OP',
+              targetId,
+              priority: 0,
+              timestamp: Date.now(),
+              data: {}
+            }
+        }
+      })
+      
+      // Return first effect (for now, multi-effect support can be added later)
+      return effects[0] ?? {
+        id: 'no-op',
+        type: 'NO_OP',
+        targetId: attackerId,
+        priority: 0,
+        timestamp: Date.now(),
+        data: {}
+      }
+    },
+    priority: 55 // Slightly lower priority than on_damaged
   })
   
   console.log('✅ Passive ability triggers configured')
@@ -379,6 +515,38 @@ const setupPassiveAbilityTriggers = (): void => {
 export const resetTriggers = (): void => {
   // You would implement clearAllTriggers in effectResolver.ts
   console.log('🗑️ Resetting all triggers')
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Maps old targetType to new TargetSelector for backward compatibility
+ */
+const mapTargetTypeToSelector = (
+  targetType: 'attacker' | 'self' | 'all_enemies' | 'all_allies' | 'random_enemy' | undefined,
+  triggerContext: 'on_damaged' | 'on_attack'
+): TargetSelector => {
+  if (!targetType) {
+    // Default based on trigger context
+    return triggerContext === 'on_damaged' ? 'trigger_source' : 'self'
+  }
+  
+  switch (targetType) {
+    case 'attacker':
+      return 'trigger_source'
+    case 'self':
+      return 'self'
+    case 'all_enemies':
+      return 'all_enemies'
+    case 'all_allies':
+      return 'all_allies'
+    case 'random_enemy':
+      return 'random_enemy'
+    default:
+      return 'self'
+  }
 }
 
 /**

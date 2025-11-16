@@ -1,6 +1,7 @@
 import { RefObject } from "react"
 import { Actions } from "./actionTypes"
 import { AnimationQueue } from "../../utils/anim/AnimationQueue"
+import { TargetSelector } from "../../utils/effectPipeline/targetResolver"
 
 export type Rune = {
   id: number
@@ -52,6 +53,7 @@ export type Attack = {
   icon: string
   notes: string
   cooldown: number
+  targetSelector?: TargetSelector // Default: 'manual' for single-target attacks
 }
 
 export type PassiveAbilityTrigger = 
@@ -71,7 +73,10 @@ export type PassiveAbility = {
   trigger: PassiveAbilityTrigger
   effect: {
     type: string // 'poison', 'damage', 'heal', 'status', etc.
-    targetType: 'attacker' | 'self' | 'all_enemies' | 'all_allies' | 'random_enemy'
+    // DEPRECATED: Use targetSelector instead
+    targetType?: 'attacker' | 'self' | 'all_enemies' | 'all_allies' | 'random_enemy'
+    // NEW: Universal target selector (supports 30+ options)
+    targetSelector?: TargetSelector
     value?: number // Amount of damage/heal/etc
     statusId?: string // If applying a status
     duration?: number // Duration if applicable
