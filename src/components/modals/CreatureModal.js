@@ -1,6 +1,6 @@
 // replaceCreatureModal.js
-import React from "react"
-import { Modal, Box, Typography, Card, CardContent } from "@mui/material"
+import React from "react";
+import { Modal, Box, Typography, Card, CardContent } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -14,16 +14,27 @@ const style = {
   boxShadow: 24,
   p: 4,
   borderRadius: "10px",
-}
+};
 
-const replaceCreatureModal = ({ open, handleClose, creature, creatureData }) => {
-  if (!creature) return null
+type ReplaceCreatureModalProps = {
+  open: boolean,
+  handleClose: () => void,
+  creature: Creature,
+};
+
+const ReplaceCreatureModal = ({
+  open,
+  handleClose,
+  creature,
+  creatureData,
+}) => {
+  if (!creature) return null;
 
   // Define properties to exclude or handle specially
-  const excludedProperties = ["image", "name", "maxHealth"] // Add any properties you don't want to display
+  const excludedProperties = ["image", "name", "maxHealth"]; // Add any properties you don't want to display
   const creatureProperties = Object.keys(creature).filter(
     (prop) => !excludedProperties.includes(prop)
-  )
+  );
 
   return (
     <Modal
@@ -36,9 +47,8 @@ const replaceCreatureModal = ({ open, handleClose, creature, creatureData }) => 
         <Card sx={{ bgcolor: "transparent", boxShadow: "none" }}>
           <CardContent>
             <Typography id="creature-modal-title" variant="h4" component="h2">
-              {creature.name}
+              <span className="text-blue-200">{creature.name}</span>
             </Typography>
-
             {/* Loop through the creature's properties */}
             <Typography id="creature-modal-description" sx={{ mt: 2 }}>
               {/* Display Health separately to include maxHealth */}
@@ -46,9 +56,8 @@ const replaceCreatureModal = ({ open, handleClose, creature, creatureData }) => 
                 <strong>Health:</strong> {creature.health} /{" "}
                 {creature.maxHealth}
               </div>
-
               {/* Loop through other properties */}
-              {creatureProperties.map((prop) => {
+              {/* {creatureProperties.map((prop) => {
                 // Format the property name (capitalize first letter)
                 const formattedPropName =
                   prop.charAt(0).toUpperCase() + prop.slice(1)
@@ -76,13 +85,13 @@ const replaceCreatureModal = ({ open, handleClose, creature, creatureData }) => 
                     <strong >{formattedPropName}:</strong> {value}
                   </div>
                 )
-              })}
+              })} */}
             </Typography>
           </CardContent>
         </Card>
       </Box>
     </Modal>
-  )
-}
+  );
+};
 
-export default replaceCreatureModal
+export default ReplaceCreatureModal;

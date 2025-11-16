@@ -1,6 +1,45 @@
-# Getting Started with Create React App
+# Squad - Strategic Creature Battle Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React/TypeScript turn-based battle game featuring creature collection and tactical combat.
+
+## 🚀 Quick Start
+
+```bash
+npm install
+npm start
+```
+
+Open [http://localhost:3000](http://localhost:3000) to play.
+
+## � Development Roadmap
+
+**Main Development Guide**: **[BATTLE_SYSTEM_ROADMAP.md](BATTLE_SYSTEM_ROADMAP.md)**
+
+Follow our phased development plan with playable builds at each milestone:
+- **Phase 1**: ✅ Core battle engine, effects, and passives (COMPLETE)
+- **Phase 2**: 🔄 Turn system and status effect ticking (IN PROGRESS)
+- **Phase 3-8**: Attack variety, items, AI, polish, and advanced features
+
+## 📚 Documentation
+
+All documentation has been organized into `/docs/`:
+- **[/docs/README.md](docs/README.md)** - Documentation index
+- **[/docs/technical/](docs/technical/)** - Architecture and implementation guides
+- **[/docs/planning/](docs/planning/)** - Active checklists and todos
+- **[/docs/archive/](docs/archive/)** - Historical documents and completed work
+
+## 📊 Current Status
+
+- ✅ **Effect Pipeline**: Complete with trigger system
+- ✅ **Passive Abilities**: Stone Thorns, Poison Skin, Outbreak (LOCAL scope)
+- ✅ **Status Effects**: Burn, Poison with target selection
+- ✅ **Zustand Integration**: State management working
+- � **Next**: Turn-based system with status ticking
+
+## 📋 Project Documentation
+
+- **[Master Plan](plans/MASTER_PLAN.md)** - Comprehensive development strategy and roadmap
+- **[Battle Engine](plans/BATTLE_ENGINE.md)** - Technical implementation and testing guide
 
 ## Available Scripts
 

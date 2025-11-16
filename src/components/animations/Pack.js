@@ -51,11 +51,11 @@ const Pack = ({ variation, onApplyAura }) => {
 
   // Mock card data for demonstration
   const cardDataList = [
-    { name: 'Epic Dragon', description: 'A powerful dragon with fiery breath.', rarity: 'epic', image: `https://picsum.photos/seed/picsum/200/300` },
-    { name: 'Mystic Phoenix', description: 'A mythical phoenix reborn from its ashes.', rarity: 'rare', image: `https://picsum.photos/seed/pheonix/200/300` },
-    { name: 'Golden Knight', description: 'A valiant knight clad in shining armor.', rarity: 'common', image: 'https://picsum.photos/seed/knight/200/300' },
-    { name: 'Shadow Assassin', description: 'A deadly assassin who strikes from the shadows.', rarity: 'rare', image: 'https://picsum.photos/seed/assassin/200/300' },
-    { name: 'Forest Spirit', description: 'A gentle spirit protecting the ancient woods.', rarity: 'common', image: 'https://picsum.photos/200/300' }
+    { name: 'Creature Voucher', description: 'A powerful dragon with fiery breath.', rarity: 'epic', image: `https://picsum.photos/seed/picsum/200/300` },
+    { name: '35 Coins', description: 'A mythical phoenix reborn from its ashes.', rarity: 'rare', image: `https://picsum.photos/seed/pheonix/200/300` },
+    { name: 'Upgrade Health', description: 'A valiant knight clad in shining armor.', rarity: 'common', image: 'https://picsum.photos/seed/knight/200/300' },
+    { name: 'Electofy Creature', description: 'A deadly assassin who strikes from the shadows.', rarity: 'rare', image: 'https://picsum.photos/seed/assassin/200/300' },
+    { name: 'Revive Creature', description: 'A gentle spirit protecting the ancient woods.', rarity: 'common', image: 'https://picsum.photos/200/300' }
   ];
 
   return (

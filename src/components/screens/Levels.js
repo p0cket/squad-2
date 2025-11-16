@@ -94,7 +94,7 @@ const Levels = () => {
                         <strong>Attack:</strong> {creature.attack}
                       </Typography>
                       <Typography variant="body2" sx={{ mb: 1 }}>
-                        <strong>Defence:</strong> {creature.defence}
+                        <strong>Defence:</strong> {creature.defense}
                       </Typography>
 
                       {/* Display creature's mods */}

@@ -1,9 +1,10 @@
 // Hud.js
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useStateContext } from '../GameContext';
-import Levels from './screens/Levels';
-import ShopModal from './Modal';
+import React from "react";
+import { motion } from "framer-motion";
+import { useStateContext } from "../GameContext";
+import Levels from "./screens/Levels";
+import ShopModal from "./Modal";
+import Login from "./Login";
 
 function Hud() {
   const state = useStateContext();
@@ -16,7 +17,7 @@ function Hud() {
         <div className="w-32 bg-gray-700 h-4 rounded-full overflow-hidden">
           <motion.div
             className="bg-blue-500 h-full"
-            initial={{ width: '0%' }}
+            initial={{ width: "0%" }}
             animate={{ width: `${(mp / maxMp) * 100}%` }}
             transition={{ duration: 0.5 }}
           />
@@ -25,7 +26,7 @@ function Hud() {
           MP: {mp} / {maxMp} (+{mpPerTurn}/turn)
         </div>
       </div>
-
+      <Login />
       {/* Gold Display */}
       <div className="flex items-center space-x-2">
         <div className="text-yellow-400 font-bold">Gold: {gold}</div>
@@ -33,6 +34,7 @@ function Hud() {
       <Levels numLevels={10} />
       <ShopModal />
       {/* Turn Display */}
+      <>About</>
       <div className="flex items-center space-x-2">
         <div className="text-gray-300">Turn: {turn}</div>
       </div>
