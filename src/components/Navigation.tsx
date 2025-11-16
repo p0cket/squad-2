@@ -9,6 +9,8 @@ type Page = 'zustand-battle' | 'legacy-battle' | 'animations'
 const Navigation: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('zustand-battle')
 
+  console.log('🚀🚀🚀 Navigation RENDERING, currentPage:', currentPage)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <nav className="bg-slate-950/80 backdrop-blur-sm border-b border-purple-500/30 sticky top-0 z-50">

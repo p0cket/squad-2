@@ -147,6 +147,8 @@ const exampleBattleState: BattleState = {
  * Example component demonstrating the Effect Pipeline System
  */
 export const BattleEngineExample: React.FC = () => {
+  console.log('🎮🎮🎮 BattleEngineExample RENDERING 🎮🎮🎮')
+
   const dispatch = useDispatchContext()
   const {
     battleState,
@@ -163,6 +165,8 @@ export const BattleEngineExample: React.FC = () => {
     getDebugInfo,
     removeStatus
   } = useBattleEngine(exampleBattleState)
+
+  console.log('📍 BattleEngineExample hooks initialized')
 
   const playerCreatures = getAliveCreatures('player')
   // const computerCreatures = getAliveCreatures('computer') // Not currently used
