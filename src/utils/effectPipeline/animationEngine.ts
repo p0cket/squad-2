@@ -213,19 +213,25 @@ const createDamageNumberAnimation = (animation: Animation): AnimationInstance =>
 
           damageElement.textContent = displayText
           damageElement.style.position = 'absolute'
-          damageElement.style.fontWeight = isTotal ? 'bold' : 'normal'
-          damageElement.style.fontSize = isTotal ? '28px' : '20px'
+          damageElement.style.fontWeight = isTotal ? 'bold' : '600'
+          damageElement.style.fontSize = isTotal ? '32px' : '18px'
           damageElement.style.zIndex = '1000'
           damageElement.style.pointerEvents = 'none'
-          damageElement.style.textShadow = '2px 2px 4px rgba(0,0,0,0.8)'
+          damageElement.style.textShadow = '2px 2px 6px rgba(0,0,0,0.9)'
+          damageElement.style.fontFamily = 'monospace'
+          damageElement.style.letterSpacing = '0.5px'
+          damageElement.style.padding = isTotal ? '4px 8px' : '2px 6px'
+          damageElement.style.borderRadius = '4px'
+          damageElement.style.backgroundColor = isTotal ? 'rgba(0,0,0,0.7)' : 'rgba(0,0,0,0.5)'
+          damageElement.style.border = isTotal ? '2px solid rgba(255,255,255,0.3)' : 'none'
 
           // Color based on value type
           if (isTotal) {
-            damageElement.style.color = damageValue < 0 ? '#ff3333' : '#33ff33'
+            damageElement.style.color = damageValue < 0 ? '#ff4444' : '#44ff44'
           } else if (damageValue < 0) {
-            damageElement.style.color = '#ffaa00' // Orange for damage components
+            damageElement.style.color = '#ffbb33' // Orange for damage components (defense)
           } else {
-            damageElement.style.color = '#66ff66' // Light green for healing/bonuses
+            damageElement.style.color = '#88ff88' // Light green for bonuses
           }
 
           // Position relative to creature (using pre-calculated position + scroll offset)

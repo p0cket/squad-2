@@ -5,12 +5,12 @@ import { applyEffect } from '../../effectApplicatorRegistry'
 
 // Import the effect creators
 import {
-  createAttackEffect,
-  createTrueDamageAttackEffect,
-  createHealingEffect,
-  createDeathEffect,
-  createLifeDrainEffect
-} from '../combatEffects'
+  buildAttackEffect,
+  buildTrueDamageEffect,
+  buildHealEffect,
+  buildDeathEffect,
+  buildLifeDrainEffect
+} from '../../factories'
 
 // Helper to create a mock creature
 const createMockCreature = (overrides: Partial<Creature> = {}): Creature => ({
@@ -67,10 +67,10 @@ const createBasicAttack = (damage: number, effects: string[] = []): Attack => ({
 })
 
 describe('Combat Effects', () => {
-  describe('createAttackEffect', () => {
+  describe('buildAttackEffect', () => {
     test('creates attack effect with correct structure', () => {
       const attack = createBasicAttack(20)
-      const effect = createAttackEffect(1, 2, attack)
+      const effect = buildAttackEffect(1, 2, attack)
 
       expect(effect.type).toBe('ATTACK')
       expect(effect.targetId).toBe(2)
@@ -88,7 +88,7 @@ describe('Combat Effects', () => {
       const context = createMockContext([attacker], [target])
 
       const attack = createBasicAttack(20) // Base damage: 20
-      const effect = createAttackEffect(1, 2, attack)
+      const effect = buildAttackEffect(1, 2, attack)
 
       const result = await applyEffect(effect, context)
 
@@ -105,7 +105,7 @@ describe('Combat Effects', () => {
       const context = createMockContext([attacker], [target])
 
       const attack = createBasicAttack(5) // (5 + 0) - 50 should be 1, not negative
-      const effect = createAttackEffect(1, 2, attack)
+      const effect = buildAttackEffect(1, 2, attack)
 
       const result = await applyEffect(effect, context)
 
@@ -120,7 +120,7 @@ describe('Combat Effects', () => {
       const context = createMockContext([attacker], [target])
 
       const attack = createBasicAttack(100) // (100 + 50) = 150 damage
-      const effect = createAttackEffect(1, 2, attack)
+      const effect = buildAttackEffect(1, 2, attack)
 
       const result = await applyEffect(effect, context)
 
@@ -134,7 +134,7 @@ describe('Combat Effects', () => {
       const context = createMockContext([attacker], [target])
 
       const attack = createBasicAttack(15, ['BURN'])
-      const effect = createAttackEffect(1, 2, attack)
+      const effect = buildAttackEffect(1, 2, attack)
 
       const result = await applyEffect(effect, context)
 
@@ -152,7 +152,7 @@ describe('Combat Effects', () => {
       const context = createMockContext([attacker], [target])
 
       const attack = createBasicAttack(10, ['POISON'])
-      const effect = createAttackEffect(1, 2, attack)
+      const effect = buildAttackEffect(1, 2, attack)
 
       const result = await applyEffect(effect, context)
 
@@ -170,7 +170,7 @@ describe('Combat Effects', () => {
       const context = createMockContext([attacker], [target])
 
       const attack = createBasicAttack(10, ['STUN'])
-      const effect = createAttackEffect(1, 2, attack)
+      const effect = buildAttackEffect(1, 2, attack)
 
       const result = await applyEffect(effect, context)
 
@@ -187,7 +187,7 @@ describe('Combat Effects', () => {
       const context = createMockContext([attacker], [target])
 
       const attack = createBasicAttack(15, ['BURN', 'WEAKEN'])
-      const effect = createAttackEffect(1, 2, attack)
+      const effect = buildAttackEffect(1, 2, attack)
 
       const result = await applyEffect(effect, context)
 
@@ -208,7 +208,7 @@ describe('Combat Effects', () => {
       const context = createMockContext([attacker], [target])
 
       const attack = createBasicAttack(20)
-      const effect = createAttackEffect(1, 2, attack)
+      const effect = buildAttackEffect(1, 2, attack)
 
       const result = await applyEffect(effect, context)
 
@@ -224,7 +224,7 @@ describe('Combat Effects', () => {
 
   describe('True Damage Attack', () => {
     test('creates true damage effect correctly', () => {
-      const effect = createTrueDamageAttackEffect(1, 2, 30)
+      const effect = buildTrueDamageEffect(1, 2, 30)
 
       expect(effect.type).toBe('TRUE_DAMAGE')
       expect(effect.targetId).toBe(2)
@@ -239,7 +239,7 @@ describe('Combat Effects', () => {
       const target = createMockCreature({ ID: 2, defense: 50, health: 100 })
       const context = createMockContext([attacker], [target])
 
-      const effect = createTrueDamageAttackEffect(1, 2, 30)
+      const effect = buildTrueDamageEffect(1, 2, 30)
       const result = await applyEffect(effect, context)
 
       const healthChange = result.stateChanges.find(sc => sc.type === 'HEALTH_CHANGE')
@@ -250,7 +250,7 @@ describe('Combat Effects', () => {
 
   describe('Healing Effect', () => {
     test('creates healing effect correctly', () => {
-      const effect = createHealingEffect(1, 2, 25)
+      const effect = buildHealEffect(1, 2, 25)
 
       expect(effect.type).toBe('HEALING')
       expect(effect.targetId).toBe(2)
@@ -265,7 +265,7 @@ describe('Combat Effects', () => {
       const target = createMockCreature({ ID: 2, health: 50, maxHealth: 100 })
       const context = createMockContext([caster], [target])
 
-      const effect = createHealingEffect(1, 2, 30)
+      const effect = buildHealEffect(1, 2, 30)
       const result = await applyEffect(effect, context)
 
       const healthChange = result.stateChanges.find(sc => sc.type === 'HEALTH_CHANGE')
@@ -278,7 +278,7 @@ describe('Combat Effects', () => {
       const target = createMockCreature({ ID: 2, health: 90, maxHealth: 100 })
       const context = createMockContext([caster], [target])
 
-      const effect = createHealingEffect(1, 2, 50) // Would overheal
+      const effect = buildHealEffect(1, 2, 50) // Would overheal
       const result = await applyEffect(effect, context)
 
       const healthChange = result.stateChanges.find(sc => sc.type === 'HEALTH_CHANGE')
@@ -291,7 +291,7 @@ describe('Combat Effects', () => {
       const target = createMockCreature({ ID: 2, health: 100, maxHealth: 100 })
       const context = createMockContext([caster], [target])
 
-      const effect = createHealingEffect(1, 2, 25)
+      const effect = buildHealEffect(1, 2, 25)
       const result = await applyEffect(effect, context)
 
       const healthChange = result.stateChanges.find(sc => sc.type === 'HEALTH_CHANGE')
@@ -302,7 +302,7 @@ describe('Combat Effects', () => {
 
   describe('Life Drain Effect', () => {
     test('creates life drain effect correctly', () => {
-      const effect = createLifeDrainEffect(1, 2, 20)
+      const effect = buildLifeDrainEffect(1, 2, 20)
 
       expect(effect.type).toBe('LIFE_DRAIN')
       expect(effect.targetId).toBe(2)
@@ -317,7 +317,7 @@ describe('Combat Effects', () => {
       const target = createMockCreature({ ID: 2, health: 80, maxHealth: 100 })
       const context = createMockContext([attacker], [target])
 
-      const effect = createLifeDrainEffect(1, 2, 20)
+      const effect = buildLifeDrainEffect(1, 2, 20)
       const result = await applyEffect(effect, context)
 
       const targetDamage = result.stateChanges.find(
@@ -338,7 +338,7 @@ describe('Combat Effects', () => {
       const target = createMockCreature({ ID: 2, health: 80 })
       const context = createMockContext([attacker], [target])
 
-      const effect = createLifeDrainEffect(1, 2, 20)
+      const effect = buildLifeDrainEffect(1, 2, 20)
       const result = await applyEffect(effect, context)
 
       const attackerHeal = result.stateChanges.find(
@@ -352,7 +352,7 @@ describe('Combat Effects', () => {
 
   describe('Death Effect', () => {
     test('creates death effect correctly', () => {
-      const effect = createDeathEffect(1)
+      const effect = buildDeathEffect(1)
 
       expect(effect.type).toBe('DEATH')
       expect(effect.targetId).toBe(1)
@@ -362,7 +362,7 @@ describe('Combat Effects', () => {
       const creature = createMockCreature({ ID: 1, health: 0 })
       const context = createMockContext([creature], [])
 
-      const effect = createDeathEffect(1)
+      const effect = buildDeathEffect(1)
       const result = await applyEffect(effect, context)
 
       const deathChange = result.stateChanges.find(sc => sc.type === 'CREATURE_DIED')

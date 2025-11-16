@@ -61,20 +61,23 @@ const applyAttackEffect = async (
   const actualDamage = Math.max(1, totalDamage - defense)
   const newHealth = Math.max(0, target.health - actualDamage)
 
-  console.log(`⚔️ Attack: ${attacker.name} attacks ${target.name} for ${actualDamage} damage (${target.health} → ${newHealth})`)
-
   // Build damage breakdown for display
   const damageBreakdown: Array<{ label: string; value: number }> = []
   if (baseAttackDamage > 0) {
     damageBreakdown.push({ label: `${attack.name}`, value: baseAttackDamage })
   }
   if (attackerBonus > 0) {
-    damageBreakdown.push({ label: 'Attack Bonus', value: attackerBonus })
+    damageBreakdown.push({ label: `+${attacker.name} ATK`, value: attackerBonus })
   }
   if (defense > 0) {
-    damageBreakdown.push({ label: 'Defense', value: -defense })
+    damageBreakdown.push({ label: `-${target.name} DEF`, value: -defense })
   }
-  damageBreakdown.push({ label: 'Total Damage', value: actualDamage })
+  damageBreakdown.push({ label: 'Total', value: actualDamage })
+
+  // Enhanced console log with breakdown
+  console.log(`⚔️ Attack: ${attacker.name} attacks ${target.name}`)
+  console.log(`  📊 Breakdown: ${damageBreakdown.map(b => `${b.label} ${b.value >= 0 ? '+' : ''}${b.value}`).join(' | ')}`)
+  console.log(`  💔 Result: ${target.health} → ${newHealth} (-${actualDamage} damage)`)
 
   // Create animations
   const animations: Animation[] = [
@@ -101,7 +104,8 @@ const applyAttackEffect = async (
       delta: -actualDamage,
       newHealth,
       source: `attack-${attack.name}`,
-      sourceCreatureId: attackerId // Track attacker for counter-attack triggers
+      sourceCreatureId: attackerId, // Track attacker for counter-attack triggers
+      damageBreakdown: damageBreakdown.map(b => `${b.label} ${b.value >= 0 ? '+' : ''}${b.value}`).join(' | ')
     }
   }
 
@@ -519,95 +523,8 @@ registerEffectApplicator('LIFE_DRAIN', applyLifeDrainEffect)
 registerEffectApplicator('AOE_ATTACK', applyAoeAttackEffect)
 
 // ============================================================================
-// EFFECT FACTORY FUNCTIONS (Create serializable effects)
+// EFFECT FACTORY FUNCTIONS
 // ============================================================================
-
-export const createAttackEffect = (
-  attackerId: number,
-  targetId: number,
-  attack: Attack
-): Effect => ({
-  id: 'attack',
-  type: 'ATTACK',
-  targetId,
-  priority: 50,
-  timestamp: Date.now(),
-  data: {
-    attackerId,
-    attack
-  }
-})
-
-export const createTrueDamageAttackEffect = (
-  attackerId: number,
-  targetId: number,
-  damage: number
-): Effect => ({
-  id: 'true-damage-attack',
-  type: 'TRUE_DAMAGE',
-  targetId,
-  priority: 55,
-  timestamp: Date.now(),
-  data: {
-    attackerId,
-    damage
-  }
-})
-
-export const createHealingEffect = (
-  casterId: number,
-  targetId: number,
-  healingAmount: number
-): Effect => ({
-  id: 'healing',
-  type: 'HEALING',
-  targetId,
-  priority: 30,
-  timestamp: Date.now(),
-  data: {
-    casterId,
-    healingAmount
-  }
-})
-
-export const createDeathEffect = (creatureId: number): Effect => ({
-  id: 'death',
-  type: 'DEATH',
-  targetId: creatureId,
-  priority: 100,
-  timestamp: Date.now(),
-  data: {}
-})
-
-export const createLifeDrainEffect = (
-  attackerId: number,
-  targetId: number,
-  drainAmount: number
-): Effect => ({
-  id: 'life-drain',
-  type: 'LIFE_DRAIN',
-  targetId,
-  priority: 40,
-  timestamp: Date.now(),
-  data: {
-    attackerId,
-    drainAmount
-  }
-})
-
-export const createAoeAttackEffect = (
-  attackerId: number,
-  targetIds: number[],
-  damage: number
-): Effect => ({
-  id: 'aoe-attack',
-  type: 'AOE_ATTACK',
-  targetId: targetIds[0],
-  priority: 45,
-  timestamp: Date.now(),
-  data: {
-    attackerId,
-    targetIds,
-    damage
-  }
-})
+// NOTE: Factory functions have been moved to factories.ts
+// Import from there instead: import { buildAttackEffect, ... } from '../factories'
+// Backwards-compatible exports remain in factories.ts: createAttackEffect, etc.

@@ -5,6 +5,7 @@
  */
 
 import React from 'react'
+import { Creature } from '../../consts/types/types'
 
 interface Attack {
   id: string
@@ -23,14 +24,39 @@ interface AttackShowcaseProps {
   isSelectingTarget: boolean
   selectedAction: string | null
   isDisabled: boolean
+  attacker?: Creature  // Optional: for calculating actual damage
+  target?: Creature    // Optional: for calculating damage vs specific target
 }
 
 export const AttackShowcase: React.FC<AttackShowcaseProps> = ({
   onAttackSelect,
   isSelectingTarget,
   selectedAction,
-  isDisabled
+  isDisabled,
+  attacker,
+  target
 }) => {
+  
+  // Helper to calculate actual damage if attacker is provided
+  const calculateDamage = (baseDamage: number): { total: number; breakdown: string } => {
+    if (!attacker) {
+      return { total: baseDamage, breakdown: '' }
+    }
+    
+    const attackBonus = attacker.attack
+    const totalBeforeDef = baseDamage + attackBonus
+    
+    if (target) {
+      const defense = target.defense
+      const actualDamage = Math.max(1, totalBeforeDef - defense)
+      const breakdown = `${baseDamage} + ${attackBonus} ATK - ${defense} DEF = ${actualDamage}`
+      return { total: actualDamage, breakdown }
+    }
+    
+    const breakdown = `${baseDamage} + ${attackBonus} ATK`
+    return { total: totalBeforeDef, breakdown }
+  }
+
   const attacks: Attack[] = [
     // Direct Damage Attacks
     {
@@ -387,11 +413,19 @@ export const AttackShowcase: React.FC<AttackShowcaseProps> = ({
           <div className="text-gray-300 text-left">
             {attack.description}
           </div>
-          {attack.damage !== undefined && attack.damage > 0 && (
-            <div className="text-red-400 font-semibold mt-1">
-              💥 {attack.damage} damage
-            </div>
-          )}
+          {attack.damage !== undefined && attack.damage > 0 && (() => {
+            const { total, breakdown } = calculateDamage(attack.damage)
+            return (
+              <div className="text-red-400 font-semibold mt-1">
+                💥 {total} damage
+                {breakdown && (
+                  <div className="text-gray-400 text-xs font-normal mt-0.5">
+                    ({breakdown})
+                  </div>
+                )}
+              </div>
+            )
+          })()}
         </div>
         {/* Arrow pointing down */}
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">

@@ -38,49 +38,52 @@ export type StunEffectData = {
 
 /**
  * Apply a burn effect that deals damage over time
+ * 
+ * TODO: Differentiate burn from poison in the future
+ * Current: Same as poison (status on initial, damage on tick)
+ * Future ideas: Burn could spread to nearby enemies, stack intensity, etc.
  */
 const applyBurnEffect = async (
   effect: Effect,
   context: BattleContext
 ): Promise<EffectApplicationResult> => {
-  console.log('🚨🚨🚨 BURN APPLICATOR CALLED! 🚨🚨🚨')
-  console.group(`🔥 APPLY BURN EFFECT`)
-  console.log('Effect:', effect)
-  console.log('Effect type:', effect.type)
-  console.log('Effect data:', effect.data)
-  
   const { damage } = effect.data as BurnEffectData
   const creature = getCreatureFromContext(context, effect.targetId)
-  
-  console.log(`Target creature:`, { name: creature.name, health: creature.health, statuses: creature.statuses })
-  console.log(`🔥 BURN DAMAGE VALUE: ${damage}`)
-  
-  const actualDamage = Math.min(damage, creature.health)
-  const newHealth = creature.health - actualDamage
-
-  console.log(`💥 Damage calculation: ${damage} → ${actualDamage} (capped by health)`)
-  console.log(`❤️ Health: ${creature.health} → ${newHealth}`)
-  console.log(`📉 Health delta: -${actualDamage}`)
-
-  const healthChange: HealthChange = {
-    type: 'HEALTH_CHANGE',
-    creatureId: effect.targetId,
-    timestamp: Date.now(),
-    data: {
-      delta: -actualDamage,
-      newHealth,
-      source: 'burn'
-    }
-  }
-
-  console.log('📝 Creating HEALTH_CHANGE:', healthChange)
 
   // Check if the creature already has burn status
   const hasBurnStatus = creature.statuses.some(s => s.id === 'BURN')
-  const stateChanges: StateChange[] = [healthChange]
+  
+  if (hasBurnStatus) {
+    // This is a tick - deal damage only
+    const actualDamage = Math.min(damage, creature.health)
+    const newHealth = creature.health - actualDamage
 
-  // Only add STATUS_APPLIED if this is the first application (not a tick)
-  if (!hasBurnStatus) {
+    console.log(`🔥 Burn tick: ${creature.name} takes ${actualDamage} burn damage (${creature.health} → ${newHealth})`)
+
+    const healthChange: HealthChange = {
+      type: 'HEALTH_CHANGE',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: -actualDamage,
+        newHealth,
+        source: 'burn'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'burn', targetId: effect.targetId, duration: 500 },
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+    ]
+
+    return {
+      stateChanges: [healthChange],
+      animations
+    }
+  } else {
+    // First application - only apply status, no damage
+    console.log(`🔥 Applying burn status to ${creature.name} (${damage} dmg/turn for 3 turns)`)
+
     const statusChange: StateChange = {
       type: 'STATUS_APPLIED',
       creatureId: effect.targetId,
@@ -88,27 +91,19 @@ const applyBurnEffect = async (
       data: {
         statusId: 'BURN',
         duration: 3,
+        damagePerTurn: damage,  // Store damage value in status data
         source: 'burn'
       }
     }
-    stateChanges.push(statusChange)
-    console.log('📝 Creating STATUS_APPLIED (first application):', statusChange)
-  } else {
-    console.log('⏭️ Burn status already exists, skipping STATUS_APPLIED (tick)')
-  }
 
-  const animations: Animation[] = [
-    { type: 'burn', targetId: effect.targetId, duration: 500 },
-    { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
-  ]
+    const animations: Animation[] = [
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'BURN' } }
+    ]
 
-  console.log('🎬 Animations:', animations)
-  console.log('📤 Returning state changes:', stateChanges)
-  console.groupEnd()
-
-  return {
-    stateChanges,
-    animations
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
   }
 }
 
@@ -121,41 +116,66 @@ const applyPoisonEffect = async (
 ): Promise<EffectApplicationResult> => {
   const { damage } = effect.data as PoisonEffectData
   const creature = getCreatureFromContext(context, effect.targetId)
-  const actualDamage = Math.min(damage, creature.health)
-  const newHealth = creature.health - actualDamage
 
-  console.log(`🧪 Poison effect: ${creature.name} takes ${actualDamage} poison damage (${creature.health} → ${newHealth})`)
+  console.log(`🧪🔍 applyPoisonEffect called - damage value: ${damage}, effect.data:`, effect.data)
 
-  const healthChange: HealthChange = {
-    type: 'HEALTH_CHANGE',
-    creatureId: effect.targetId,
-    timestamp: Date.now(),
-    data: {
-      delta: -actualDamage,
-      newHealth,
-      source: 'poison'
+  // Check if the creature already has poison status
+  const hasPoisonStatus = creature.statuses.some(s => s.id === 'POISON')
+  
+  if (hasPoisonStatus) {
+    // This is a tick - deal damage only
+    const actualDamage = Math.min(damage, creature.health)
+    const newHealth = creature.health - actualDamage
+
+    console.log(`🧪 Poison tick: ${creature.name} takes ${actualDamage} poison damage (${creature.health} → ${newHealth})`)
+
+    const healthChange: HealthChange = {
+      type: 'HEALTH_CHANGE',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: -actualDamage,
+        newHealth,
+        source: 'poison'
+      }
     }
-  }
 
-  const statusChange: StateChange = {
-    type: 'STATUS_APPLIED',
-    creatureId: effect.targetId,
-    timestamp: Date.now(),
-    data: {
-      statusId: 'POISON',
-      duration: 3,
-      source: 'poison'
+    const animations: Animation[] = [
+      { type: 'shake', targetId: effect.targetId, duration: 300 },
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+    ]
+
+    return {
+      stateChanges: [healthChange],
+      animations
     }
-  }
+  } else {
+    // First application - only apply status, no damage
+    console.log(`🧪 Applying poison status to ${creature.name} (${damage} dmg/turn for 3 turns)`)
+    console.log(`🧪💾 Storing damagePerTurn: ${damage}`)
 
-  const animations: Animation[] = [
-    { type: 'shake', targetId: effect.targetId, duration: 300 },
-    { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
-  ]
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'POISON',
+        duration: 3,
+        damagePerTurn: damage,  // Store damage value in status data
+        source: 'poison'
+      }
+    }
 
-  return {
-    stateChanges: [healthChange, statusChange],
-    animations
+    console.log(`🧪📦 STATUS_APPLIED change data:`, statusChange.data)
+
+    const animations: Animation[] = [
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'POISON' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
   }
 }
 
@@ -332,59 +352,8 @@ registerEffectApplicator('DEFENSE_BUFF', applyDefenseBuffEffect)
 registerEffectApplicator('STUN', applyStunEffect)
 
 // ============================================================================
-// EFFECT FACTORY FUNCTIONS (Create serializable effects)
+// EFFECT FACTORY FUNCTIONS
 // ============================================================================
-
-export const createBurnEffect = (targetId: number, damage: number = 5): Effect => ({
-  id: 'burn',
-  type: 'BURN',
-  targetId,
-  priority: 10,
-  timestamp: Date.now(),
-  data: { damage }
-})
-
-export const createPoisonEffect = (targetId: number, damage: number = 10): Effect => ({
-  id: 'poison',
-  type: 'POISON',
-  targetId,
-  priority: 10,
-  timestamp: Date.now(),
-  data: { damage }
-})
-
-export const createRegenerationEffect = (targetId: number, healing: number = 5): Effect => ({
-  id: 'regeneration',
-  type: 'REGENERATION',
-  targetId,
-  priority: 5,
-  timestamp: Date.now(),
-  data: { healing }
-})
-
-export const createAttackBuffEffect = (targetId: number, attackBonus: number = 5): Effect => ({
-  id: 'attack-buff',
-  type: 'ATTACK_BUFF',
-  targetId,
-  priority: 15,
-  timestamp: Date.now(),
-  data: { attackBonus }
-})
-
-export const createDefenseBuffEffect = (targetId: number, defenseBonus: number = 5): Effect => ({
-  id: 'defense-buff',
-  type: 'DEFENSE_BUFF',
-  targetId,
-  priority: 15,
-  timestamp: Date.now(),
-  data: { defenseBonus }
-})
-
-export const createStunEffect = (targetId: number, duration: number = 2): Effect => ({
-  id: 'stun',
-  type: 'STUN',
-  targetId,
-  priority: 20,
-  timestamp: Date.now(),
-  data: { duration }
-})
+// NOTE: Factory functions have been moved to factories.ts
+// Import from there instead: import { buildBurnEffect, ... } from '../factories'
+// Backwards-compatible exports remain in factories.ts: createBurnEffect, etc.

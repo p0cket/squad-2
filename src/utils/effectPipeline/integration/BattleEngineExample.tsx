@@ -9,7 +9,8 @@ import {
   createStunAttack,
   createWeakeningAttack,
   createBurnAttack,
-  createBuffingAttack
+  createBuffingAttack,
+  createCleanseAttack
 } from '../effects/attackFactories'
 
 // Example initial battle state
@@ -154,7 +155,7 @@ export const BattleEngineExample: React.FC = () => {
     applyBurn,
     applyPoison,
     performAttack,
-    performHealing,
+    performHeal,
     getAliveCreatures,
     isBattleOver,
     getBattleWinner,
@@ -264,7 +265,7 @@ export const BattleEngineExample: React.FC = () => {
   // Execute heal on selected target
   const executeHeal = async (targetId: number) => {
     if (playerCreatures.length > 0) {
-      await performHealing(playerCreatures[0].ID, targetId, 25)
+      await performHeal(playerCreatures[0].ID, targetId, 25)
       setIsSelectingTarget(false)
       setPendingAction(null)
     }
@@ -377,39 +378,13 @@ export const BattleEngineExample: React.FC = () => {
 
   // Execute cleanse (remove all debuffs from target)
   const executeCleanse = async (targetId: number) => {
-    // Find the target creature
-    const target = [...battleState.playerCreatures, ...battleState.computerCreatures]
-      .find(c => c.ID === targetId)
-    
-    if (!target) {
-      console.error(`Cleanse failed: Creature ${targetId} not found`)
+    if (playerCreatures.length > 0) {
+      const attack = createCleanseAttack("Cleanse", 0, "✨", 4)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
       setIsSelectingTarget(false)
       setPendingAction(null)
-      return
     }
-
-    // Remove all debuff statuses
-    const debuffTypes = ['ATTACK_DEBUFF', 'DEFENSE_DEBUFF', 'STUN', 'FREEZE', 'SLOW', 'SILENCE', 'WEAKEN']
-    const statusesToRemove = target.statuses.filter(status => 
-      debuffTypes.includes(status.id)
-    )
-
-    if (statusesToRemove.length > 0) {
-      console.log(`✨ Cleansing ${statusesToRemove.length} debuff(s) from ${target.name}`)
-      
-      // Remove each debuff status
-      for (const status of statusesToRemove) {
-        await removeStatus(targetId, status.id)
-      }
-    } else {
-      console.log(`✨ ${target.name} has no debuffs to cleanse`)
-    }
-
-    setIsSelectingTarget(false)
-    setPendingAction(null)
-  }
-
-  // Handle clicking on a creature during target selection
+  }  // Handle clicking on a creature during target selection
   const handleCreatureClick = async (creatureId: number) => {
     if (!isSelectingTarget || !pendingAction) return
 
@@ -738,6 +713,7 @@ export const BattleEngineExample: React.FC = () => {
           isSelectingTarget={isSelectingTarget}
           selectedAction={pendingAction}
           isDisabled={isProcessingEffects || playerCreatures.length === 0 || isSelectingTarget}
+          attacker={playerCreatures[0]}
         />
 
         <div className="flex gap-2 mt-4 pt-4 border-t border-purple-500/30">

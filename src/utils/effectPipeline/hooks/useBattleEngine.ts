@@ -10,23 +10,21 @@ import {
   zustandToBattleContext
 } from '../zustandAdapter'
 import { processEffectChain } from '../effectPipelineEngine'
-import { setupDefaultTriggers } from '../effects/triggerSetup'
+import { setupDefaultTriggers, resetBattleTracking } from '../effects/triggerSetup'
 import {
-  createBurnEffect,
-  createPoisonEffect,
-  createRegenerationEffect,
-  createAttackBuffEffect,
-  createDefenseBuffEffect,
-  createStunEffect
-} from '../effects/statusEffects'
-import {
-  createAttackEffect,
-  createTrueDamageAttackEffect,
-  createHealingEffect,
-  createDeathEffect,
-  createLifeDrainEffect,
-  createAoeAttackEffect
-} from '../effects/combatEffects'
+  buildBurnEffect,
+  buildPoisonEffect,
+  buildRegenerationEffect,
+  buildAttackBuffEffect,
+  buildDefenseBuffEffect,
+  buildStunEffect,
+  buildAttackEffect,
+  buildTrueDamageEffect,
+  buildHealEffect,
+  buildDeathEffect,
+  buildLifeDrainEffect,
+  buildAoeAttackEffect
+} from '../factories'
 
 // Feature flag: Set to true to use Zustand adapter instead of native BattleContext
 const USE_ZUSTAND_ADAPTER = true // ✅ ZUSTAND ENABLED FOR TESTING
@@ -51,8 +49,19 @@ export const useBattleEngine = (initialState: BattleState) => {
       console.log('📦 Using native BattleContext')
       contextRef.current = createBattleContext(initialState)
     }
-    setupDefaultTriggers()
   }
+
+  // Setup triggers in useEffect to ensure proper lifecycle management
+  // This runs once on mount and cleans up on unmount
+  useEffect(() => {
+    console.log('🎯 Initializing effect triggers')
+    setupDefaultTriggers()
+    
+    return () => {
+      console.log('🧹 Cleaning up effect triggers')
+      // Triggers will be cleared on next setup call
+    }
+  }, [])
 
   // Subscribe to context changes
   // IMPORTANT: Subscription must happen in useEffect, separate from context creation
@@ -133,7 +142,7 @@ export const useBattleEngine = (initialState: BattleState) => {
    * Helper function to apply a burn effect
    */
   const applyBurn = useCallback(async (targetId: number, damage?: number) => {
-    const effect = createBurnEffect(targetId, damage)
+    const effect = buildBurnEffect(targetId, damage)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -167,16 +176,29 @@ export const useBattleEngine = (initialState: BattleState) => {
 
       for (const status of creature.statuses) {
         const sid = status.id
-        // Create appropriate effect using the existing factories (defaults handle values)
+        console.log(`🔍 Processing status ${sid} on ${creature.name}:`, status)
+        // Create appropriate effect using the stored damage/heal values from status
         if (sid === 'BURN') {
-          console.log(`🔥 Creating burn tick effect for ${creature.name}`)
-          effectsToApply.push(createBurnEffect(creature.ID, undefined))
+          const damage = status.damagePerTurn ?? 5  // Use stored value or default
+          if (status.damagePerTurn === undefined) {
+            console.warn(`⚠️ BURN status on ${creature.name} missing damagePerTurn! Using fallback: 5`)
+          }
+          console.log(`🔥 Creating burn tick effect for ${creature.name} (${damage} dmg)`)
+          effectsToApply.push(buildBurnEffect(creature.ID, damage))
         } else if (sid === 'POISON') {
-          console.log(`🧪 Creating poison tick effect for ${creature.name}`)
-          effectsToApply.push(createPoisonEffect(creature.ID, undefined))
+          const damage = status.damagePerTurn ?? 3  // Use stored value or default
+          if (status.damagePerTurn === undefined) {
+            console.warn(`⚠️ POISON status on ${creature.name} missing damagePerTurn! Using fallback: 3`)
+          }
+          console.log(`🧪 Creating poison tick effect for ${creature.name} (${damage} dmg) [status.damagePerTurn = ${status.damagePerTurn}]`)
+          effectsToApply.push(buildPoisonEffect(creature.ID, damage))
         } else if (sid === 'REGENERATION') {
-          console.log(`💚 Creating regen tick effect for ${creature.name}`)
-          effectsToApply.push(createRegenerationEffect(creature.ID, undefined))
+          const healing = status.healPerTurn ?? 5  // Use stored value or default
+          if (status.healPerTurn === undefined) {
+            console.warn(`⚠️ REGENERATION status on ${creature.name} missing healPerTurn! Using fallback: 5`)
+          }
+          console.log(`💚 Creating regen tick effect for ${creature.name} (${healing} heal)`)
+          effectsToApply.push(buildRegenerationEffect(creature.ID, healing))
         } else {
           // Unknown status: skip or extend here
         }
@@ -195,10 +217,19 @@ export const useBattleEngine = (initialState: BattleState) => {
       }
     }
 
+    // ⚠️ CRITICAL: Re-fetch creatures from CURRENT state after effects applied
+    // This ensures we have the updated health values and avoid stale closure bugs
+    const freshCreatures = [
+      ...(contextRef.current.state.playerCreatures || []),
+      ...(contextRef.current.state.computerCreatures || [])
+    ]
+
+    console.log('🔄 Re-fetched fresh creature state after applying tick effects')
+
     // After applying ticks, decrement durations (batch update)
     const durationChanges: StateChange[] = []
 
-    for (const creature of allCreatures) {
+    for (const creature of freshCreatures) {  // ← Use FRESH data to avoid overwriting health!
       if (!creature || creature.health <= 0) continue
 
       for (const status of creature.statuses) {
@@ -242,7 +273,7 @@ export const useBattleEngine = (initialState: BattleState) => {
    * Helper function to apply a poison effect
    */
   const applyPoison = useCallback(async (targetId: number, damage?: number) => {
-    const effect = createPoisonEffect(targetId, damage)
+    const effect = buildPoisonEffect(targetId, damage)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -250,7 +281,7 @@ export const useBattleEngine = (initialState: BattleState) => {
    * Helper function to apply regeneration
    */
   const applyRegeneration = useCallback(async (targetId: number, healing?: number) => {
-    const effect = createRegenerationEffect(targetId, healing)
+    const effect = buildRegenerationEffect(targetId, healing)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -258,7 +289,7 @@ export const useBattleEngine = (initialState: BattleState) => {
    * Helper function to apply attack buff
    */
   const applyAttackBuff = useCallback(async (targetId: number, attackBonus?: number) => {
-    const effect = createAttackBuffEffect(targetId, attackBonus)
+    const effect = buildAttackBuffEffect(targetId, attackBonus ?? 5)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -266,15 +297,15 @@ export const useBattleEngine = (initialState: BattleState) => {
    * Helper function to apply defense buff
    */
   const applyDefenseBuff = useCallback(async (targetId: number, defenseBonus?: number) => {
-    const effect = createDefenseBuffEffect(targetId, defenseBonus)
+    const effect = buildDefenseBuffEffect(targetId, defenseBonus ?? 5)
     await applyEffect(effect)
   }, [applyEffect])
 
   /**
    * Helper function to apply stun
    */
-  const applyStun = useCallback(async (targetId: number, duration?: number) => {
-    const effect = createStunEffect(targetId, duration)
+  const applyStun = useCallback(async (targetId: number, duration: number) => {
+    const effect = buildStunEffect(targetId, duration)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -282,7 +313,7 @@ export const useBattleEngine = (initialState: BattleState) => {
    * Helper function to perform an attack
    */
   const performAttack = useCallback(async (attackerId: number, targetId: number, attack: any) => {
-    const effect = createAttackEffect(attackerId, targetId, attack)
+    const effect = buildAttackEffect(attackerId, targetId, attack)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -290,23 +321,23 @@ export const useBattleEngine = (initialState: BattleState) => {
    * Helper function to perform true damage attack
    */
   const performTrueDamageAttack = useCallback(async (attackerId: number, targetId: number, damage: number) => {
-    const effect = createTrueDamageAttackEffect(attackerId, targetId, damage)
+    const effect = buildTrueDamageEffect(attackerId, targetId, damage)
     await applyEffect(effect)
   }, [applyEffect])
 
   /**
    * Helper function to perform healing
    */
-  const performHealing = useCallback(async (casterId: number, targetId: number, healingAmount: number) => {
-    const effect = createHealingEffect(casterId, targetId, healingAmount)
+  const performHeal = useCallback(async (casterId: number, targetId: number, healingAmount: number) => {
+    const effect = buildHealEffect(casterId, targetId, healingAmount)
     await applyEffect(effect)
   }, [applyEffect])
 
   /**
    * Helper function to trigger death effect
    */
-  const triggerDeath = useCallback(async (creatureId: number) => {
-    const effect = createDeathEffect(creatureId)
+  const performDeath = useCallback(async (creatureId: number) => {
+    const effect = buildDeathEffect(creatureId)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -314,7 +345,7 @@ export const useBattleEngine = (initialState: BattleState) => {
    * Helper function to perform life drain attack
    */
   const performLifeDrain = useCallback(async (attackerId: number, targetId: number, drainAmount: number) => {
-    const effect = createLifeDrainEffect(attackerId, targetId, drainAmount)
+    const effect = buildLifeDrainEffect(attackerId, targetId, drainAmount)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -322,7 +353,7 @@ export const useBattleEngine = (initialState: BattleState) => {
    * Helper function to perform AoE attack
    */
   const performAoeAttack = useCallback(async (attackerId: number, targetIds: number[], damage: number) => {
-    const effect = createAoeAttackEffect(attackerId, targetIds, damage)
+    const effect = buildAoeAttackEffect(attackerId, targetIds, damage)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -380,7 +411,9 @@ export const useBattleEngine = (initialState: BattleState) => {
       contextRef.current.state = stateToUse
       contextRef.current.stateHistory = []
     }
-    // Battle state reset
+    // Reset battle-wide tracking flags (e.g., first blood)
+    resetBattleTracking()
+    console.log('🔄 Battle state reset')
   }, [initialState])
 
   /**
@@ -417,8 +450,8 @@ export const useBattleEngine = (initialState: BattleState) => {
     // Combat helpers
     performAttack,
     performTrueDamageAttack,
-    performHealing,
-    triggerDeath,
+    performHeal,
+    performDeath,
     performLifeDrain,
     performAoeAttack,
 

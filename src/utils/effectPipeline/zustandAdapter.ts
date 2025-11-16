@@ -394,24 +394,39 @@ const applyStatusChange = (state: BattleState, change: any): BattleState => {
 
   const updateStatuses = (creature: Creature): Creature => {
     if (type === 'STATUS_APPLIED') {
+      console.log(`🔍 updateStatuses called for ${creature.name}, current statuses:`, creature.statuses.map(s => s.id))
       const existingStatusIndex = creature.statuses.findIndex(s => s.id === data.statusId)
+      console.log(`🔍 existingStatusIndex for ${data.statusId}: ${existingStatusIndex}`)
 
       if (existingStatusIndex >= 0) {
         console.log(`🔄 Updating existing ${data.statusId} on ${creature.name} - duration: ${creature.statuses[existingStatusIndex].duration} → ${data.duration}`)
+        console.log(`⚠️ UPDATING EXISTING STATUS - need to preserve damagePerTurn!`)
         const updatedStatuses = [...creature.statuses]
         updatedStatuses[existingStatusIndex] = {
           ...updatedStatuses[existingStatusIndex],
-          duration: data.duration || updatedStatuses[existingStatusIndex].duration
+          duration: data.duration || updatedStatuses[existingStatusIndex].duration,
+          damagePerTurn: data.damagePerTurn ?? updatedStatuses[existingStatusIndex].damagePerTurn,
+          healPerTurn: data.healPerTurn ?? updatedStatuses[existingStatusIndex].healPerTurn
         }
         return { ...creature, statuses: updatedStatuses }
       } else {
         console.log(`➕ Adding new ${data.statusId} to ${creature.name} with duration ${data.duration}`)
+        console.log(`📊 Status data received:`, data)
         const statusEffect = getStatusEffectById(data.statusId)
+        console.log(`📦 getStatusEffectById returned:`, statusEffect)
         if (statusEffect) {
+          console.log(`💾 Storing damagePerTurn: ${data.damagePerTurn}, healPerTurn: ${data.healPerTurn}`)
           return {
             ...creature,
-            statuses: [...creature.statuses, statusEffect]
+            statuses: [...creature.statuses, {
+              ...statusEffect,
+              duration: data.duration,
+              damagePerTurn: data.damagePerTurn,  // Include dynamic damage value
+              healPerTurn: data.healPerTurn,      // Include dynamic heal value
+            }]
           }
+        } else {
+          console.error(`❌ getStatusEffectById returned undefined for ${data.statusId}!`)
         }
       }
     } else {

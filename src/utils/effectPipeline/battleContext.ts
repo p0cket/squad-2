@@ -114,10 +114,14 @@ const applyStateChange = (state: BattleState, change: StateChange): BattleState 
 const applyHealthChange = (state: BattleState, change: HealthChange): BattleState => {
   const { creatureId, data } = change
 
+  const currentCreature = 
+    state.playerCreatures.find(c => c.ID === creatureId) ||
+    state.computerCreatures.find(c => c.ID === creatureId)
+
   console.log('❤️❤️❤️ applyHealthChange in battleContext.ts:', {
     creatureId,
     delta: data.delta,
-    currentHealth: state.computerCreatures.find(c => c.ID === creatureId)?.health
+    currentHealth: currentCreature?.health
   })
 
   const newState = {
@@ -132,9 +136,13 @@ const applyHealthChange = (state: BattleState, change: HealthChange): BattleStat
     }))
   }
 
+  const newCreature = 
+    newState.playerCreatures.find(c => c.ID === creatureId) ||
+    newState.computerCreatures.find(c => c.ID === creatureId)
+
   console.log('❤️❤️❤️ After health change, new health:', {
     creatureId,
-    newHealth: newState.computerCreatures.find(c => c.ID === creatureId)?.health
+    newHealth: newCreature?.health
   })
 
   return newState
@@ -154,21 +162,29 @@ const applyStatusChange = (state: BattleState, change: StatusChange): BattleStat
 
       if (existingStatusIndex >= 0) {
         // Update existing status duration
+        console.log(`🔄 battleContext: Updating existing ${data.statusId} on ${creature.name}`)
         const updatedStatuses = [...creature.statuses]
         updatedStatuses[existingStatusIndex] = {
           ...updatedStatuses[existingStatusIndex],
-          duration: data.duration || updatedStatuses[existingStatusIndex].duration
+          duration: data.duration || updatedStatuses[existingStatusIndex].duration,
+          damagePerTurn: data.damagePerTurn ?? updatedStatuses[existingStatusIndex].damagePerTurn,
+          healPerTurn: data.healPerTurn ?? updatedStatuses[existingStatusIndex].healPerTurn
         }
         return { ...creature, statuses: updatedStatuses }
       } else {
         // Add new status (you'll need to implement getStatusEffectById)
+        console.log(`➕ battleContext: Adding new ${data.statusId} to ${creature.name}`)
+        console.log(`📊 battleContext: Status data:`, data)
         const statusEffect = getStatusEffectById(data.statusId)
         if (statusEffect) {
+          console.log(`💾 battleContext: Storing damagePerTurn: ${data.damagePerTurn}, healPerTurn: ${data.healPerTurn}`)
           return {
             ...creature,
             statuses: [...creature.statuses, {
               ...statusEffect,
-              duration: data.duration || statusEffect.duration
+              duration: data.duration || statusEffect.duration,
+              damagePerTurn: data.damagePerTurn,  // Store dynamic damage value
+              healPerTurn: data.healPerTurn        // Store dynamic heal value
             }]
           }
         }
