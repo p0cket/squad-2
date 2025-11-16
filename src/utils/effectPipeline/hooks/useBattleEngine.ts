@@ -148,6 +148,7 @@ export const useBattleEngine = (initialState: BattleState) => {
 
   /**
    * Process end-of-turn: apply status ticks (burn/poison/regeneration) and decrement durations.
+   * 📋 See docs/STATUS_EFFECT_CHECKLIST.md for status effect implementation guidelines
    */
   const processEndOfTurn = useCallback(async () => {
     if (!contextRef.current) return

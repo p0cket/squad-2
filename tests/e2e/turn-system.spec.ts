@@ -58,10 +58,11 @@ test.describe('Turn System - Status Effects', () => {
     console.log(`🔥 Burn badge text: ${burnText}`);
     expect(burnText).toMatch(/[0-9]/); // Should contain a number
 
-    // Note: Burn applies damage immediately, so health should be lower
+    // ✅ Two-phase pattern: Burn does NOT deal damage on initial application
+    // Damage only applies on tick (at end of turn)
     const newHealth = await getCreatureHealth(page, 'Goblin');
-    console.log(`📊 Goblin health after burn: ${newHealth}`);
-    expect(newHealth).toBeLessThan(initialHealth);
+    console.log(`📊 Goblin health after burn application: ${newHealth}`);
+    expect(newHealth).toBe(initialHealth); // Health should be unchanged until turn end
   });
 
   test('should tick burn damage on turn end', async ({ page }) => {

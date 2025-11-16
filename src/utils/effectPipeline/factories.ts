@@ -1,5 +1,6 @@
 // Effect Factories - Create serializable effect objects
 // Renamed from: create*Effect → build*Effect
+// 📋 See STATUS_EFFECT_CHECKLIST.md for implementation guidelines
 
 import { Effect } from './types'
 import { Attack } from '../../consts/types/types'
@@ -171,14 +172,14 @@ export const buildPoisonEffect = (
  */
 export const buildRegenerationEffect = (
   targetId: number,
-  healAmount: number = 5
+  healing: number = 5
 ): Effect => ({
   id: generateEffectId('regen'),
   type: 'REGENERATION',
   targetId,
   priority: 35,
   timestamp: Date.now(),
-  data: { healAmount }
+  data: { healing }  // Changed from healAmount to healing to match applicator
 })
 
 /**
@@ -322,9 +323,9 @@ export const createPoisonEffect = (targetId: number, damage?: number): Effect =>
 /**
  * @deprecated Use buildRegenerationEffect() instead
  */
-export const createRegenerationEffect = (targetId: number, healAmount?: number): Effect => {
+export const createRegenerationEffect = (targetId: number, healing?: number): Effect => {
   console.warn('⚠️ createRegenerationEffect() is deprecated. Use buildRegenerationEffect() instead.')
-  return buildRegenerationEffect(targetId, healAmount)
+  return buildRegenerationEffect(targetId, healing)
 }
 
 /**
