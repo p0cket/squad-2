@@ -18,6 +18,7 @@ import {
   buildAttackBuffEffect,
   buildDefenseBuffEffect,
   buildStunEffect,
+  buildShieldEffect,
   buildAttackEffect,
   buildTrueDamageEffect,
   buildHealEffect,
@@ -200,6 +201,10 @@ export const useBattleEngine = (initialState: BattleState) => {
           }
           console.log(`💚 Creating regen tick effect for ${creature.name} (${healing} heal)`)
           effectsToApply.push(buildRegenerationEffect(creature.ID, healing))
+        } else if (sid === 'SHIELD') {
+          // Shield doesn't tick - it passively absorbs damage
+          // Duration will be decremented below, no tick effect needed
+          console.log(`🛡️ Shield on ${creature.name}: ${status.shieldAmount ?? 0} remaining (no tick, passive absorption)`)
         } else {
           // Unknown status: skip or extend here
         }
@@ -307,6 +312,14 @@ export const useBattleEngine = (initialState: BattleState) => {
    */
   const applyStun = useCallback(async (targetId: number, duration: number) => {
     const effect = buildStunEffect(targetId, duration)
+    await applyEffect(effect)
+  }, [applyEffect])
+
+  /**
+   * Helper function to apply shield
+   */
+  const applyShield = useCallback(async (targetId: number, shieldAmount?: number) => {
+    const effect = buildShieldEffect(targetId, shieldAmount)
     await applyEffect(effect)
   }, [applyEffect])
 
@@ -447,6 +460,7 @@ export const useBattleEngine = (initialState: BattleState) => {
     applyAttackBuff,
     applyDefenseBuff,
     applyStun,
+    applyShield,
 
     // Combat helpers
     performAttack,

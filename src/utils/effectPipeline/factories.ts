@@ -199,6 +199,22 @@ export const buildStunEffect = (
 })
 
 /**
+ * Build a shield effect
+ * Creates a protective barrier that absorbs incoming damage
+ */
+export const buildShieldEffect = (
+  targetId: number,
+  shieldAmount: number = 20
+): Effect => ({
+  id: generateEffectId('shield'),
+  type: 'SHIELD',
+  targetId,
+  priority: 28,
+  timestamp: Date.now(),
+  data: { shieldAmount }
+})
+
+/**
  * Build an attack buff effect
  * Renamed from: createAttackBuffEffect
  */

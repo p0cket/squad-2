@@ -120,6 +120,7 @@ export type StatusEffect = {
   notes?: string
   damagePerTurn?: number  // Dynamic value from effect data
   healPerTurn?: number    // Dynamic value from effect data
+  shieldAmount?: number   // Shield absorption amount
   description?: string    // Optional description for tooltips
 }
 

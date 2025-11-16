@@ -351,19 +351,61 @@ Results:
 ## 🎯 Current Implementation Status
 
 ### ✅ Fully Implemented (Correct Pattern)
-- **BURN**: Two-phase pattern, stores `damagePerTurn`, ticks at end of turn
-- **POISON**: Two-phase pattern, stores `damagePerTurn`, ticks at end of turn
-
-### ⚠️ Needs Fixing
-- **REGENERATION**: Missing two-phase pattern (always heals immediately)
-  - Factory uses wrong field name (`healAmount` → should be `healing`)
-  - Applicator missing `hasRegenStatus` check
-  - Doesn't store `healPerTurn` on initial application
+- **BURN**: Two-phase pattern, stores `damagePerTurn`, ticks at end of turn ✅ E2E tested
+- **POISON**: Two-phase pattern, stores `damagePerTurn`, ticks at end of turn ✅ E2E tested
+- **REGENERATION**: Two-phase pattern, stores `healPerTurn`, ticks at end of turn ⏳ E2E test pending
+- **SHIELD**: Passive absorption pattern, stores `shieldAmount`, duration decrements ✅ E2E tested
 
 ### 📝 Partially Implemented
 - **ATTACK_BUFF**: Stat modification works, but could benefit from verification
 - **DEFENSE_BUFF**: Stat modification works, but could benefit from verification
 - **STUN**: Basic implementation exists, needs action-prevention logic
+
+### 🚧 Not Implemented
+- **BLEED**: Template ready, awaiting implementation
+- **FREEZE**: Action prevention + stat modification
+- **SLOW**: Speed reduction mechanic
+- **SILENCE**: Ability prevention
+- **CLEANSE**: Remove debuffs utility
+
+---
+
+## 📚 Pattern Variations
+
+### DoT/HoT Pattern (Damage/Healing Over Time)
+Examples: BURN, POISON, REGENERATION
+
+**Behavior**:
+- Initial application: Stores value (`damagePerTurn` or `healPerTurn`), NO immediate effect
+- Tick (end of turn): Applies damage/healing based on stored value
+- Duration: Decrements each turn, expires at 0
+
+### Passive Absorption Pattern
+Examples: SHIELD
+
+**Behavior**:
+- Initial application: Stores `shieldAmount`, NO immediate effect
+- Passive: Absorbs incoming damage (handled in damage calculation)
+- Tick: NO effect (shield doesn't tick)
+- Duration: Decrements each turn, expires at 0
+
+**Note**: Shield requires integration with damage calculation logic to actually absorb damage.
+
+### Stat Modification Pattern
+Examples: ATTACK_BUFF, DEFENSE_BUFF
+
+**Behavior**:
+- Application: Modifies creature stats immediately
+- Tick: No effect
+- Duration: Decrements each turn, stats revert on expiration
+
+### Action Prevention Pattern
+Examples: STUN, FREEZE, SILENCE
+
+**Behavior**:
+- Application: Sets flag preventing actions
+- Tick: No effect (prevention is checked before actions)
+- Duration: Decrements each turn, flag removed on expiration
 
 ---
 

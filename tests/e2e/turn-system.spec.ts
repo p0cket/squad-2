@@ -218,6 +218,77 @@ test.describe('Turn System - Status Effects', () => {
     
     console.log('✅ Burn ticked correctly across turn');
   });
+
+  test('should apply shield status and show duration badge', async ({ page }) => {
+    console.log('🧪 TEST: Apply shield status');
+
+    // Find Dragon (player creature - we want to shield our own creature)
+    const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
+    await expect(dragon).toBeVisible();
+
+    // Get initial health
+    const initialHealth = await getCreatureHealth(page, 'Dragon');
+    console.log(`📊 Dragon initial health: ${initialHealth}`);
+
+    // Click Shield button to start target selection (scroll into view if needed)
+    const shieldButton = page.locator('button').filter({ hasText: /🛡️.*Shield/i }).first();
+    await shieldButton.scrollIntoViewIfNeeded();
+    await expect(shieldButton).toBeVisible();
+    await shieldButton.click();
+
+    // Click Dragon as target
+    await dragon.click();
+    await page.waitForTimeout(1000);
+
+    // Verify shield status appears
+    const shieldBadge = dragon.locator('[data-testid="status-badge"]').filter({ hasText: /🛡️|shield/i });
+    await expect(shieldBadge).toBeVisible({ timeout: 5000 });
+
+    // Verify duration is shown (should be 3)
+    const shieldText = await shieldBadge.textContent();
+    console.log(`🛡️ Shield badge text: ${shieldText}`);
+    expect(shieldText).toMatch(/[0-9]/); // Should contain a number
+
+    // Shield does not affect health on application (it's passive absorption)
+    const newHealth = await getCreatureHealth(page, 'Dragon');
+    console.log(`📊 Dragon health after shield application: ${newHealth}`);
+    expect(newHealth).toBe(initialHealth); // Health unchanged
+  });
+
+  test('should decrement shield duration on turn end', async ({ page }) => {
+    console.log('🧪 TEST: Shield duration decrements');
+
+    // Apply shield to Dragon
+    const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
+    const shieldButton = page.locator('button').filter({ hasText: /🛡️.*Shield/i }).first();
+    await shieldButton.scrollIntoViewIfNeeded();
+    await shieldButton.click();
+    await dragon.click();
+    await page.waitForTimeout(1000);
+
+    // Get shield badge and initial duration
+    const shieldBadge = dragon.locator('[data-testid="status-badge"]').filter({ hasText: /🛡️|shield/i });
+    await expect(shieldBadge).toBeVisible();
+    const initialDuration = await extractDuration(shieldBadge);
+    console.log(`🛡️ Initial shield duration: ${initialDuration}`);
+
+    // End turn
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    await endTurnButton.click();
+    await page.waitForTimeout(3000);
+
+    // Check if shield still exists (should be visible with duration - 1)
+    const stillVisible = await shieldBadge.isVisible();
+    if (stillVisible) {
+      const newDuration = await extractDuration(shieldBadge);
+      console.log(`🛡️ Shield duration after turn: ${newDuration}`);
+      expect(newDuration).toBe(initialDuration - 1);
+    } else {
+      // Shield expired
+      console.log('🛡️ Shield expired after turn');
+      expect(initialDuration).toBe(1); // Only expired if it was 1
+    }
+  });
 });
 
 // ============================================================================

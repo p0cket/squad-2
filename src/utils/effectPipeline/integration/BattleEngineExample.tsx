@@ -154,6 +154,8 @@ export const BattleEngineExample: React.FC = () => {
     isProcessingEffects,
     applyBurn,
     applyPoison,
+    applyRegeneration,
+    applyShield,
     performAttack,
     performHeal,
     getAliveCreatures,
@@ -430,6 +432,16 @@ export const BattleEngineExample: React.FC = () => {
       case 'haste':
         await executeBuffAttack(creatureId)
         break
+      case 'regeneration':
+        await applyRegeneration(creatureId, 10)
+        setIsSelectingTarget(false)
+        setPendingAction(null)
+        break
+      case 'shield':
+        await applyShield(creatureId, 20)
+        setIsSelectingTarget(false)
+        setPendingAction(null)
+        break
       case 'cleanse':
         await executeCleanse(creatureId)
         break
@@ -503,6 +515,8 @@ export const BattleEngineExample: React.FC = () => {
                 {pendingAction === 'weaken' && '⚔️↓ Select a target to weaken (8 dmg + reduce attack)'}
                 {pendingAction === 'flameswipe' && '🔥 Select a target for flame swipe (15 dmg + burn)'}
                 {pendingAction === 'buff' && '💪 Select a target for power strike (12 dmg + gain attack buff)'}
+                {pendingAction === 'regeneration' && '💚 Select a target to grant regeneration (10 HP/turn for 3 turns)'}
+                {pendingAction === 'shield' && '🛡️ Select a target to grant shield (20 shield for 3 turns)'}
               </p>
               <p className="text-sm opacity-90">Click on any creature to target them</p>
             </div>

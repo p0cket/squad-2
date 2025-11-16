@@ -86,6 +86,17 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     id: `REGENERATION`,
     notes: "Restores health over time.",
   },
+  SHIELD: {
+    name: "Shield",
+    type: "buff",
+    timing: "beforeAttack",
+    duration: 3,
+    effectFuncName: "applyShield",
+    chance: 1,
+    icon: "🛡️",
+    id: `SHIELD`,
+    notes: "Absorbs incoming damage for a few turns.",
+  },
 }
 // Function to log and apply poison effect, reducing health by 10
 // export const applyPoison = (

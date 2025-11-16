@@ -33,6 +33,10 @@ export type StunEffectData = {
   duration: number
 }
 
+export type ShieldEffectData = {
+  shieldAmount: number
+}
+
 // ============================================================================
 // EFFECT APPLICATORS (Pure functions)
 // ============================================================================
@@ -369,6 +373,77 @@ const applyStunEffect = async (
   }
 }
 
+/**
+ * Apply a shield effect that absorbs incoming damage
+ * Shield is unique: it doesn't tick damage/healing, but stores shieldAmount that reduces incoming damage
+ * Duration still decrements each turn
+ */
+const applyShieldEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { shieldAmount } = effect.data as ShieldEffectData
+  const creature = getCreatureFromContext(context, effect.targetId)
+
+  // Check if the creature already has shield status
+  const hasShieldStatus = creature.statuses.some(s => s.id === 'SHIELD')
+  
+  if (hasShieldStatus) {
+    // Shield already exists - this could be a refresh or stack
+    // For now, we'll just refresh the duration and add to shield amount
+    console.log(`🛡️ Shield refresh: ${creature.name} gains ${shieldAmount} more shield`)
+
+    const existingShield = creature.statuses.find(s => s.id === 'SHIELD')
+    const currentShield = existingShield?.shieldAmount ?? 0
+    const newShieldAmount = currentShield + shieldAmount
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'SHIELD',
+        duration: 3,
+        shieldAmount: newShieldAmount,
+        source: 'shield'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'SHIELD' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
+  } else {
+    // First application - apply shield status with shieldAmount
+    console.log(`🛡️ Applying shield to ${creature.name} (${shieldAmount} shield for 3 turns)`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'SHIELD',
+        duration: 3,
+        shieldAmount: shieldAmount,  // Store shield amount in status data
+        source: 'shield'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'SHIELD' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
+  }
+}
+
 // ============================================================================
 // REGISTER APPLICATORS
 // ============================================================================
@@ -383,6 +458,8 @@ console.log('✅ REGENERATION applicator registered')
 registerEffectApplicator('ATTACK_BUFF', applyAttackBuffEffect)
 registerEffectApplicator('DEFENSE_BUFF', applyDefenseBuffEffect)
 registerEffectApplicator('STUN', applyStunEffect)
+registerEffectApplicator('SHIELD', applyShieldEffect)
+console.log('✅ SHIELD applicator registered')
 
 // ============================================================================
 // EFFECT FACTORY FUNCTIONS

@@ -168,7 +168,8 @@ const applyStatusChange = (state: BattleState, change: StatusChange): BattleStat
           ...updatedStatuses[existingStatusIndex],
           duration: data.duration || updatedStatuses[existingStatusIndex].duration,
           damagePerTurn: data.damagePerTurn ?? updatedStatuses[existingStatusIndex].damagePerTurn,
-          healPerTurn: data.healPerTurn ?? updatedStatuses[existingStatusIndex].healPerTurn
+          healPerTurn: data.healPerTurn ?? updatedStatuses[existingStatusIndex].healPerTurn,
+          shieldAmount: data.shieldAmount ?? updatedStatuses[existingStatusIndex].shieldAmount
         }
         return { ...creature, statuses: updatedStatuses }
       } else {
@@ -177,14 +178,15 @@ const applyStatusChange = (state: BattleState, change: StatusChange): BattleStat
         console.log(`📊 battleContext: Status data:`, data)
         const statusEffect = getStatusEffectById(data.statusId)
         if (statusEffect) {
-          console.log(`💾 battleContext: Storing damagePerTurn: ${data.damagePerTurn}, healPerTurn: ${data.healPerTurn}`)
+          console.log(`💾 battleContext: Storing damagePerTurn: ${data.damagePerTurn}, healPerTurn: ${data.healPerTurn}, shieldAmount: ${data.shieldAmount}`)
           return {
             ...creature,
             statuses: [...creature.statuses, {
               ...statusEffect,
               duration: data.duration || statusEffect.duration,
               damagePerTurn: data.damagePerTurn,  // Store dynamic damage value
-              healPerTurn: data.healPerTurn        // Store dynamic heal value
+              healPerTurn: data.healPerTurn,       // Store dynamic heal value
+              shieldAmount: data.shieldAmount      // Store dynamic shield value
             }]
           }
         }
@@ -462,6 +464,17 @@ const getStatusEffectById = (statusId: string) => {
       icon: "🛡️",
       id: "DEFENSE_BUFF",
       notes: "Increases defense.",
+    },
+    SHIELD: {
+      name: "Shield",
+      type: "buff",
+      timing: "beforeAttack",
+      duration: 3,
+      effectFuncName: "applyShield",
+      chance: 1,
+      icon: "🛡️",
+      id: "SHIELD",
+      notes: "Absorbs incoming damage for a few turns.",
     }
   }
 

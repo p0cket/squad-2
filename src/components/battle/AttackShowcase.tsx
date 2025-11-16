@@ -272,6 +272,16 @@ export const AttackShowcase: React.FC<AttackShowcaseProps> = ({
       color: 'bg-emerald-500',
       hoverColor: 'hover:bg-emerald-600'
     },
+    {
+      id: 'shield',
+      name: 'Shield',
+      icon: '🛡️',
+      damage: 0,
+      description: 'Grant target a protective barrier (20 shield for 3 turns)',
+      category: 'buff',
+      color: 'bg-blue-500',
+      hoverColor: 'hover:bg-blue-600'
+    },
 
     // Healing
     {
