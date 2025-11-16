@@ -1,7 +1,6 @@
 // Trigger Setup - Configures all the default trigger rules for effect cascading
 import { registerEffectTrigger, getCreatureFromContext, getAliveCreaturesByOwner, clearAllTriggers } from '../effectResolver'
-import { createBurnEffect, createPoisonEffect } from '../factories'
-import { createDeathEffect } from '../factories'
+import { buildBurnEffect, buildPoisonEffect, buildDeathEffect } from '../factories'
 import { resolveTargets, TargetSelector } from '../targetResolver'
 import { Effect } from '../types'
 
@@ -51,7 +50,7 @@ const setupDeathTriggers = (): void => {
     },
     createEffect: (change, context) => {
       console.log(`💀 Death trigger activated for creature ${change.creatureId}`)
-      return createDeathEffect(change.creatureId)
+      return buildDeathEffect(change.creatureId)
     },
     priority: 100
   })
@@ -114,7 +113,7 @@ const setupStatusSpreadTriggers = (): void => {
       const owner = creature.owner
 
       if (!owner || (owner !== 'player' && owner !== 'computer')) {
-        return createBurnEffect(change.creatureId, 0) // No effect if invalid owner
+        return buildBurnEffect(change.creatureId, 0) // No effect if invalid owner
       }
 
       const allies = getAliveCreaturesByOwner(context, owner)
@@ -133,10 +132,10 @@ const setupStatusSpreadTriggers = (): void => {
         const outbreakAbility = creature.passiveAbilities?.find(a => a.id === 'outbreak')
         const spreadDamage = outbreakAbility?.effect.value ?? 3
         
-        return createBurnEffect(randomTarget.ID, spreadDamage)
+        return buildBurnEffect(randomTarget.ID, spreadDamage)
       }
 
-      return createBurnEffect(change.creatureId, 0) // No effect if no valid targets
+      return buildBurnEffect(change.creatureId, 0) // No effect if no valid targets
     },
     priority: 20
   })
@@ -150,7 +149,7 @@ const setupStatusSpreadTriggers = (): void => {
       const creature = getCreatureFromContext(context, change.creatureId)
 
       if (!creature.owner || (creature.owner !== 'player' && creature.owner !== 'computer')) {
-        return createPoisonEffect(change.creatureId, 0) // No effect if invalid owner
+        return buildPoisonEffect(change.creatureId, 0) // No effect if invalid owner
       }
 
       const owner = creature.owner === 'player' ? 'computer' : 'player' // Spread to enemies
@@ -159,10 +158,10 @@ const setupStatusSpreadTriggers = (): void => {
       if (enemies.length > 0) {
         const randomEnemy = enemies[Math.floor(Math.random() * enemies.length)]
         console.log(`🧪 Poison spreads from ${creature.name} to enemy ${randomEnemy.name}`)
-        return createPoisonEffect(randomEnemy.ID, 5)
+        return buildPoisonEffect(randomEnemy.ID, 5)
       }
 
-      return createPoisonEffect(change.creatureId, 0) // No effect if no valid targets
+      return buildPoisonEffect(change.creatureId, 0) // No effect if no valid targets
     },
     priority: 20
   })
@@ -353,7 +352,7 @@ const setupPassiveAbilityTriggers = (): void => {
         // Create effect based on ability type
         switch (passiveAbility.effect.type) {
           case 'poison':
-            return createPoisonEffect(targetId, passiveAbility.effect.value ?? 5)
+            return buildPoisonEffect(targetId, passiveAbility.effect.value ?? 5)
           
           case 'damage':
             return {
@@ -369,7 +368,7 @@ const setupPassiveAbilityTriggers = (): void => {
             }
           
           case 'burn':
-            return createBurnEffect(targetId, passiveAbility.effect.value ?? 5)
+            return buildBurnEffect(targetId, passiveAbility.effect.value ?? 5)
           
           default:
             console.warn(`⚠️ Unknown passive ability effect type: ${passiveAbility.effect.type}`)
@@ -486,10 +485,10 @@ const setupPassiveAbilityTriggers = (): void => {
             }
           
           case 'poison':
-            return createPoisonEffect(change.creatureId, passiveAbility.effect.value ?? 5)
+            return buildPoisonEffect(change.creatureId, passiveAbility.effect.value ?? 5)
           
           case 'burn':
-            return createBurnEffect(change.creatureId, passiveAbility.effect.value ?? 5)
+            return buildBurnEffect(change.creatureId, passiveAbility.effect.value ?? 5)
           
           default:
             console.warn(`⚠️ Unknown on_attack passive ability effect type: ${passiveAbility.effect.type}`)

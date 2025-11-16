@@ -121,22 +121,11 @@ const applyPoisonEffect = async (
 ): Promise<EffectApplicationResult> => {
   const { damage } = effect.data as PoisonEffectData
   const creature = getCreatureFromContext(context, effect.targetId)
-  const actualDamage = Math.min(damage, creature.health)
-  const newHealth = creature.health - actualDamage
 
-  console.log(`🧪 Poison effect: ${creature.name} takes ${actualDamage} poison damage (${creature.health} → ${newHealth})`)
+  console.log(`🧪 Applying poison status to ${creature.name} (${damage} dmg/turn for 3 turns)`)
 
-  const healthChange: HealthChange = {
-    type: 'HEALTH_CHANGE',
-    creatureId: effect.targetId,
-    timestamp: Date.now(),
-    data: {
-      delta: -actualDamage,
-      newHealth,
-      source: 'poison'
-    }
-  }
-
+  // Only apply the status, no immediate damage
+  // Damage will be dealt during end-of-turn tick
   const statusChange: StateChange = {
     type: 'STATUS_APPLIED',
     creatureId: effect.targetId,
@@ -144,17 +133,17 @@ const applyPoisonEffect = async (
     data: {
       statusId: 'POISON',
       duration: 3,
+      damagePerTurn: damage,  // Store damage value in status data
       source: 'poison'
     }
   }
 
   const animations: Animation[] = [
-    { type: 'shake', targetId: effect.targetId, duration: 300 },
-    { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+    { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'POISON' } }
   ]
 
   return {
-    stateChanges: [healthChange, statusChange],
+    stateChanges: [statusChange],
     animations
   }
 }
