@@ -231,6 +231,71 @@ export const buildBleedEffect = (
 })
 
 /**
+ * Build a freeze effect
+ * Prevents actions and reduces defense - hybrid pattern
+ */
+export const buildFreezeEffect = (
+  targetId: number,
+  defenseReduction: number = 5
+): Effect => ({
+  id: generateEffectId('freeze'),
+  type: 'FREEZE',
+  targetId,
+  priority: 30,
+  timestamp: Date.now(),
+  data: { defenseReduction }
+})
+
+/**
+ * Build a slow effect
+ * Reduces speed stat affecting turn order
+ */
+export const buildSlowEffect = (
+  targetId: number,
+  speedReduction: number = 10
+): Effect => ({
+  id: generateEffectId('slow'),
+  type: 'SLOW',
+  targetId,
+  priority: 25,
+  timestamp: Date.now(),
+  data: { speedReduction }
+})
+
+/**
+ * Build a silence effect
+ * Prevents abilities and spells
+ */
+export const buildSilenceEffect = (
+  targetId: number,
+  duration: number = 2
+): Effect => ({
+  id: generateEffectId('silence'),
+  type: 'SILENCE',
+  targetId,
+  priority: 30,
+  timestamp: Date.now(),
+  data: { duration }
+})
+
+/**
+ * Build a confusion effect
+ * Chance to cause self-damage each turn
+ */
+export const buildConfusionEffect = (
+  targetId: number,
+  damage: number = 6,
+  selfDamageChance: number = 0.5
+): Effect => ({
+  id: generateEffectId('confusion'),
+  type: 'CONFUSION',
+  targetId,
+  priority: 40,
+  timestamp: Date.now(),
+  data: { damage, selfDamageChance }
+})
+
+/**
  * Build an attack buff effect
  * Renamed from: createAttackBuffEffect
  */

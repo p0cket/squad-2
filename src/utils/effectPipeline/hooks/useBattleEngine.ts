@@ -16,6 +16,10 @@ import {
   buildPoisonEffect,
   buildRegenerationEffect,
   buildBleedEffect,
+  buildFreezeEffect,
+  buildSlowEffect,
+  buildSilenceEffect,
+  buildConfusionEffect,
   buildAttackBuffEffect,
   buildDefenseBuffEffect,
   buildStunEffect,
@@ -213,6 +217,24 @@ export const useBattleEngine = (initialState: BattleState) => {
           // Shield doesn't tick - it passively absorbs damage
           // Duration will be decremented below, no tick effect needed
           console.log(`🛡️ Shield on ${creature.name}: ${status.shieldAmount ?? 0} remaining (no tick, passive absorption)`)
+        } else if (sid === 'FREEZE') {
+          // Freeze doesn't tick - it's a passive effect that prevents actions
+          console.log(`❄️ ${creature.name} is frozen (no tick, passive action prevention + defense reduction)`)
+        } else if (sid === 'SLOW') {
+          // Slow doesn't tick - it's a passive stat modification
+          console.log(`🐌 ${creature.name} is slowed (no tick, passive speed reduction)`)
+        } else if (sid === 'SILENCE') {
+          // Silence doesn't tick - it's a passive prevention effect
+          console.log(`🤐 ${creature.name} is silenced (no tick, passive ability prevention)`)
+        } else if (sid === 'CONFUSION') {
+          // Confusion DOES tick - chance for self-damage each turn
+          const damage = status.damage ?? 6
+          const selfDamageChance = status.selfDamageChance ?? 0.5
+          if (status.damage === undefined || status.selfDamageChance === undefined) {
+            console.warn(`⚠️ CONFUSION status on ${creature.name} missing damage or selfDamageChance! Using fallbacks: ${damage} dmg, ${selfDamageChance} chance`)
+          }
+          console.log(`😵 Creating confusion tick effect for ${creature.name} (${damage} dmg, ${Math.round(selfDamageChance * 100)}% chance)`)
+          effectsToApply.push(buildConfusionEffect(creature.ID, damage, selfDamageChance))
         } else {
           // Unknown status: skip or extend here
         }
