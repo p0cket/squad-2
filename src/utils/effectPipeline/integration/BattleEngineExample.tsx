@@ -280,6 +280,28 @@ export const BattleEngineExample: React.FC = () => {
     setPendingAction(null)
   }
 
+  // Execute bleed on selected target
+  const executeBleedAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = {
+        ID: 'bleed-attack',
+        name: "Bleed",
+        template: 'bleed',
+        attackType: 'physical',
+        damage: 12,
+        effects: ['bleed'], // This will apply the BLEED status
+        chanceToLand: 1,
+        trueDamage: 0,
+        icon: "🩸",
+        notes: "Physical attack dealing 12 damage and causing bleeding (7 dmg/turn for 3 turns)",
+        cooldown: 0
+      }
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
   // Execute kindle (burn with spread) on selected target
   const executeKindle = async (targetId: number) => {
     // Apply burn to the primary target
@@ -411,6 +433,10 @@ export const BattleEngineExample: React.FC = () => {
       case 'poison':
       case 'toxic-bite':
         await executePoison(creatureId)
+        break
+      case 'bleed':
+      case 'lacerate':
+        await executeBleedAttack(creatureId)
         break
       case 'passive-test':
         await executePassiveTest(creatureId)

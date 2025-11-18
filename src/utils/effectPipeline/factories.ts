@@ -167,6 +167,22 @@ export const buildPoisonEffect = (
 })
 
 /**
+ * Build a bleed effect
+ * Creates a bleeding damage-over-time effect
+ */
+export const buildBleedEffect = (
+  targetId: number,
+  damage: number = 7
+): Effect => ({
+  id: generateEffectId('bleed'),
+  type: 'BLEED',
+  targetId,
+  priority: 40,
+  timestamp: Date.now(),
+  data: { damage }
+})
+
+/**
  * Build a regeneration effect
  * Renamed from: createRegenerationEffect
  */

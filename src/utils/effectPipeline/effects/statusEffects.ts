@@ -113,7 +113,79 @@ const applyBurnEffect = async (
 }
 
 /**
- * Apply a poison effect that deals damage over time
+ * Apply a bleed effect that deals damage over time
+ */
+const applyBleedEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { damage } = effect.data as { damage: number }
+  const creature = getCreatureFromContext(context, effect.targetId)
+
+  console.log(`🩸🔍 applyBleedEffect called - damage value: ${damage}, effect.data:`, effect.data)
+
+  // Check if the creature already has bleed status
+  const hasBleedStatus = creature.statuses.some(s => s.id === 'BLEED')
+  
+  if (hasBleedStatus) {
+    // This is a tick - deal damage only
+    const actualDamage = Math.min(damage, creature.health)
+    const newHealth = creature.health - actualDamage
+
+    console.log(`🩸 Bleed tick: ${creature.name} takes ${actualDamage} bleed damage (${creature.health} → ${newHealth})`)
+
+    const healthChange: HealthChange = {
+      type: 'HEALTH_CHANGE',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: -actualDamage,
+        newHealth,
+        source: 'bleed'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'shake', targetId: effect.targetId, duration: 300 },
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+    ]
+
+    return {
+      stateChanges: [healthChange],
+      animations
+    }
+  } else {
+    // First application - only apply status, no damage
+    console.log(`🩸 Applying bleed status to ${creature.name} (${damage} dmg/turn for 3 turns)`)
+    console.log(`🩸💾 Storing damagePerTurn: ${damage}`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'BLEED',
+        duration: 3,
+        damagePerTurn: damage,  // Store damage value in status data
+        source: 'bleed'
+      }
+    }
+
+    console.log(`🩸📦 STATUS_APPLIED change data:`, statusChange.data)
+
+    const animations: Animation[] = [
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'BLEED' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
+  }
+}
+
+/**
+ * Apply a regeneration effect that heals over time
  */
 const applyPoisonEffect = async (
   effect: Effect,
@@ -453,6 +525,8 @@ registerEffectApplicator('BURN', applyBurnEffect)
 console.log('✅ BURN applicator registered')
 registerEffectApplicator('POISON', applyPoisonEffect)
 console.log('✅ POISON applicator registered')
+registerEffectApplicator('BLEED', applyBleedEffect)
+console.log('✅ BLEED applicator registered')
 registerEffectApplicator('REGENERATION', applyRegenerationEffect)
 console.log('✅ REGENERATION applicator registered')
 registerEffectApplicator('ATTACK_BUFF', applyAttackBuffEffect)

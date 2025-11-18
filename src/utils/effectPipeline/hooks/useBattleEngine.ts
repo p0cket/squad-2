@@ -14,6 +14,7 @@ import { setupDefaultTriggers, resetBattleTracking } from '../effects/triggerSet
 import {
   buildBurnEffect,
   buildPoisonEffect,
+  buildBleedEffect,
   buildRegenerationEffect,
   buildAttackBuffEffect,
   buildDefenseBuffEffect,
@@ -194,6 +195,13 @@ export const useBattleEngine = (initialState: BattleState) => {
           }
           console.log(`🧪 Creating poison tick effect for ${creature.name} (${damage} dmg) [status.damagePerTurn = ${status.damagePerTurn}]`)
           effectsToApply.push(buildPoisonEffect(creature.ID, damage))
+        } else if (sid === 'BLEED') {
+          const damage = status.damagePerTurn ?? 7  // Use stored value or default
+          if (status.damagePerTurn === undefined) {
+            console.warn(`⚠️ BLEED status on ${creature.name} missing damagePerTurn! Using fallback: 7`)
+          }
+          console.log(`🩸 Creating bleed tick effect for ${creature.name} (${damage} dmg) [status.damagePerTurn = ${status.damagePerTurn}]`)
+          effectsToApply.push(buildBleedEffect(creature.ID, damage))
         } else if (sid === 'REGENERATION') {
           const healing = status.healPerTurn ?? 5  // Use stored value or default
           if (status.healPerTurn === undefined) {

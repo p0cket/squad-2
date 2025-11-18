@@ -421,6 +421,17 @@ const getStatusEffectById = (statusId: string) => {
       id: "STUN",
       notes: "Prevents enemy from acting.",
     },
+    BLEED: {
+      name: "Bleed",
+      type: "debuff",
+      timing: "onTurnEnd",
+      duration: 3,
+      effectFuncName: "applyBleed",
+      chance: 1,
+      icon: "🩸",
+      id: "BLEED",
+      notes: "Loses HP per turn from open wounds.",
+    },
     ATTACK_BUFF: {
       name: "Attack Buff",
       type: "buff",

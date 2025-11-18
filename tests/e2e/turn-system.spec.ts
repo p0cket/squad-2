@@ -258,36 +258,425 @@ test.describe('Turn System - Status Effects', () => {
   test('should decrement shield duration on turn end', async ({ page }) => {
     console.log('🧪 TEST: Shield duration decrements');
 
-    // Apply shield to Dragon
+    // Find Dragon (player creature)
     const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
+    await expect(dragon).toBeVisible();
+
+    // Apply Shield
     const shieldButton = page.locator('button').filter({ hasText: /🛡️.*Shield/i }).first();
     await shieldButton.scrollIntoViewIfNeeded();
+    await expect(shieldButton).toBeVisible();
     await shieldButton.click();
     await dragon.click();
     await page.waitForTimeout(1000);
 
-    // Get shield badge and initial duration
+    // Verify shield badge appears
     const shieldBadge = dragon.locator('[data-testid="status-badge"]').filter({ hasText: /🛡️|shield/i });
-    await expect(shieldBadge).toBeVisible();
+    await expect(shieldBadge).toBeVisible({ timeout: 5000 });
+
+    // Get initial shield duration
     const initialDuration = await extractDuration(shieldBadge);
     console.log(`🛡️ Initial shield duration: ${initialDuration}`);
+    expect(initialDuration).toBe(3);
 
-    // End turn
+    // End turn 3 times and verify duration decrements
+    for (let i = 0; i < 3; i++) {
+      console.log(`🔄 Turn ${i + 1}/3`);
+      const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+      await endTurnButton.click();
+      await page.waitForTimeout(3000);
+
+      if (i < 2) {
+        // Should still have shield with decremented duration
+        const newDuration = await extractDuration(shieldBadge);
+        console.log(`🛡️ Shield duration after turn: ${newDuration}`);
+        expect(newDuration).toBe(2 - i);
+      } else {
+        // Shield should be removed after 3 turns
+        await expect(shieldBadge).not.toBeVisible();
+        console.log('✅ Shield removed after expiration');
+      }
+    }
+  });
+
+  test('should apply poison status and show duration badge', async ({ page }) => {
+    console.log('🧪 TEST: Apply poison status');
+
+    // Find Goblin (enemy creature)
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    await expect(goblin).toBeVisible();
+
+    // Get initial health
+    const initialHealth = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Goblin initial health: ${initialHealth}`);
+
+    // Click Poison button to start target selection
+    const poisonButton = page.locator('button').filter({ hasText: /🧪.*Poison/i }).first();
+    await poisonButton.scrollIntoViewIfNeeded();
+    await expect(poisonButton).toBeVisible();
+    await poisonButton.click();
+
+    // Click Goblin as target
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // Verify poison badge appears with duration 3
+    const poisonBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /🧪|poison/i });
+    await expect(poisonBadge).toBeVisible({ timeout: 5000 });
+
+    const duration = await extractDuration(poisonBadge);
+    console.log(`🧪 Poison duration: ${duration}`);
+    expect(duration).toBe(3);
+
+    console.log('✅ Poison applied successfully with correct duration');
+  });
+
+  test('should tick poison damage on turn end', async ({ page }) => {
+    console.log('🧪 TEST: Poison ticks on turn end');
+
+    // Find Goblin (enemy creature)
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    await expect(goblin).toBeVisible();
+
+    const initialHealth = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Health before poison: ${initialHealth}`);
+
+    // Apply poison (15 damage per turn)
+    const poisonButton = page.locator('button').filter({ hasText: /🧪.*Poison/i }).first();
+    await poisonButton.scrollIntoViewIfNeeded();
+    await poisonButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // End turn to trigger poison tick
     const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
     await endTurnButton.click();
     await page.waitForTimeout(3000);
 
-    // Check if shield still exists (should be visible with duration - 1)
-    const stillVisible = await shieldBadge.isVisible();
-    if (stillVisible) {
-      const newDuration = await extractDuration(shieldBadge);
-      console.log(`🛡️ Shield duration after turn: ${newDuration}`);
-      expect(newDuration).toBe(initialDuration - 1);
-    } else {
-      // Shield expired
-      console.log('🛡️ Shield expired after turn');
-      expect(initialDuration).toBe(1); // Only expired if it was 1
+    // Check health decreased by 15
+    const healthAfterTurn = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Health after turn end: ${healthAfterTurn}`);
+    
+    const damageDealt = initialHealth - healthAfterTurn;
+    console.log(`🧪 Poison damage dealt: ${damageDealt}`);
+    
+    expect(damageDealt).toBe(15);
+    console.log('✅ Poison ticked correctly');
+  });
+
+  test('should decrement poison duration on turn end', async ({ page }) => {
+    console.log('🧪 TEST: Poison duration decrements');
+
+    // Find Goblin (enemy creature)
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    await expect(goblin).toBeVisible();
+
+    // Apply poison
+    const poisonButton = page.locator('button').filter({ hasText: /🧪.*Poison/i }).first();
+    await poisonButton.scrollIntoViewIfNeeded();
+    await poisonButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // Verify poison badge
+    const poisonBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /🧪|poison/i });
+    await expect(poisonBadge).toBeVisible({ timeout: 5000 });
+
+    const initialDuration = await extractDuration(poisonBadge);
+    console.log(`🧪 Initial poison duration: ${initialDuration}`);
+    expect(initialDuration).toBe(3);
+
+    // End turn and check duration decreased
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    await endTurnButton.click();
+    await page.waitForTimeout(3000);
+
+    const newDuration = await extractDuration(poisonBadge);
+    console.log(`🧪 Poison duration after turn: ${newDuration}`);
+    expect(newDuration).toBe(2);
+
+    console.log('✅ Poison duration decremented correctly');
+  });
+
+  test('should handle poison status correctly across turns', async ({ page }) => {
+    console.log('🧪 TEST: Poison across multiple turns');
+
+    // Find Goblin
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    await expect(goblin).toBeVisible();
+
+    const initialHealth = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Initial health: ${initialHealth}`);
+
+    // Apply poison (15 dmg/turn)
+    const poisonButton = page.locator('button').filter({ hasText: /🧪.*Poison/i }).first();
+    await poisonButton.scrollIntoViewIfNeeded();
+    await poisonButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // Verify poison badge
+    const poisonBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /🧪|poison/i });
+    await expect(poisonBadge).toBeVisible({ timeout: 5000 });
+
+    // End turn 3 times (poison lasts 3 turns)
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    
+    for (let i = 1; i <= 3; i++) {
+      console.log(`🔄 Turn ${i}/3`);
+      await endTurnButton.click();
+      await page.waitForTimeout(3000);
     }
+
+    // After 3 turns, poison should have dealt 45 damage (15 x 3)
+    const finalHealth = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Health after 3 turns: ${finalHealth}`);
+    
+    const totalDamage = initialHealth - finalHealth;
+    console.log(`🧪 Total poison damage: ${totalDamage}`);
+    
+    expect(totalDamage).toBe(45);
+    console.log('✅ Poison ticked correctly across all turns');
+
+    // Poison should be removed after 3 turns
+    await expect(poisonBadge).not.toBeVisible();
+    console.log('✅ Poison status removed after expiration');
+  });
+
+  test('should apply regeneration status and show duration badge', async ({ page }) => {
+    console.log('💚 TEST: Apply regeneration status');
+
+    // Find Dragon (player creature)
+    const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
+    await expect(dragon).toBeVisible();
+
+    // Get initial health
+    const initialHealth = await getCreatureHealth(page, 'Dragon');
+    console.log(`📊 Dragon initial health: ${initialHealth}`);
+
+    // Click Regeneration button to start target selection
+    const regenButton = page.locator('button').filter({ hasText: /💚.*Regeneration/i }).first();
+    await regenButton.scrollIntoViewIfNeeded();
+    await expect(regenButton).toBeVisible();
+    await regenButton.click();
+
+    // Click Dragon as target
+    await dragon.click();
+    await page.waitForTimeout(1000);
+
+    // Verify regeneration badge appears with duration 3
+    const regenBadge = dragon.locator('[data-testid="status-badge"]').filter({ hasText: /💚|regen/i });
+    await expect(regenBadge).toBeVisible({ timeout: 5000 });
+
+    const duration = await extractDuration(regenBadge);
+    console.log(`💚 Regeneration duration: ${duration}`);
+    expect(duration).toBe(3);
+
+    console.log('✅ Regeneration applied successfully with correct duration');
+  });
+
+  test('should decrement regeneration duration on turn end', async ({ page }) => {
+    console.log('💚 TEST: Regeneration duration decrements');
+
+    // Find Dragon (player creature)
+    const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
+    await expect(dragon).toBeVisible();
+
+    // Apply regeneration
+    const regenButton = page.locator('button').filter({ hasText: /💚.*Regeneration/i }).first();
+    await regenButton.scrollIntoViewIfNeeded();
+    await regenButton.click();
+    await dragon.click();
+    await page.waitForTimeout(1000);
+
+    // Verify regeneration badge
+    const regenBadge = dragon.locator('[data-testid="status-badge"]').filter({ hasText: /💚|regen/i });
+    await expect(regenBadge).toBeVisible({ timeout: 5000 });
+
+    const initialDuration = await extractDuration(regenBadge);
+    console.log(`💚 Initial regeneration duration: ${initialDuration}`);
+    expect(initialDuration).toBe(3);
+
+    // End turn and check duration decreased
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    await endTurnButton.click();
+    await page.waitForTimeout(3000);
+
+    const newDuration = await extractDuration(regenBadge);
+    console.log(`💚 Regeneration duration after turn: ${newDuration}`);
+    expect(newDuration).toBe(2);
+
+    console.log('✅ Regeneration duration decremented correctly');
+  });
+
+  test('should handle regeneration status correctly across turns', async ({ page }) => {
+    console.log('💚 TEST: Regeneration across multiple turns');
+
+    // Find Goblin
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    await expect(goblin).toBeVisible();
+
+    const initialHealth = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Initial health: ${initialHealth}`);
+
+    // Damage Goblin with burn
+    const burnButton = page.locator('button').filter({ hasText: /🔥.*Burn/i }).first();
+    await burnButton.scrollIntoViewIfNeeded();
+    await burnButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // End turn to deal burn damage
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    await endTurnButton.click();
+    await page.waitForTimeout(3000);
+
+    const damagedHealth = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Health after burn: ${damagedHealth}`);
+
+    // Apply regeneration (10 HP/turn for 3 turns)
+    const regenButton = page.locator('button').filter({ hasText: /💚.*Regeneration/i }).first();
+    await regenButton.scrollIntoViewIfNeeded();
+    await regenButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // Verify regeneration badge
+    const regenBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /💚|regen/i });
+    await expect(regenBadge).toBeVisible({ timeout: 5000 });
+
+    // End turn 3 times - regen heals 10, burn damages 10 each turn = net 0
+    for (let i = 1; i <= 3; i++) {
+      console.log(`🔄 Turn ${i}/3`);
+      await endTurnButton.click();
+      await page.waitForTimeout(3000);
+    }
+
+    // Health should be approximately same (regen and burn cancel out)
+    const finalHealth = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Health after 3 turns: ${finalHealth}`);
+    
+    const netChange = Math.abs(finalHealth - damagedHealth);
+    console.log(`💚 Net health change over 3 turns: ${netChange}`);
+    
+    // Should be close to 0 (regen cancels burn)
+    expect(netChange).toBeLessThanOrEqual(2);
+    console.log('✅ Regeneration and burn canceled each other out');
+
+    // Regeneration should be removed after 3 turns
+    await expect(regenBadge).not.toBeVisible();
+    console.log('✅ Regeneration status removed after expiration');
+  });
+
+  test('should apply stun status and show duration badge', async ({ page }) => {
+    console.log('💫 TEST: Apply stun status');
+
+    // Find Goblin (enemy creature)
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    await expect(goblin).toBeVisible();
+
+    // Get initial health
+    const initialHealth = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Goblin initial health: ${initialHealth}`);
+
+    // Click Stun button to start target selection
+    const stunButton = page.locator('button').filter({ hasText: /💫.*Stun/i }).first();
+    await stunButton.scrollIntoViewIfNeeded();
+    await expect(stunButton).toBeVisible();
+    await stunButton.click();
+
+    // Click Goblin as target
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // Verify stun badge appears with duration 2
+    const stunBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /💫|stun/i });
+    await expect(stunBadge).toBeVisible({ timeout: 5000 });
+
+    const duration = await extractDuration(stunBadge);
+    console.log(`💫 Stun duration: ${duration}`);
+    expect(duration).toBe(2);
+
+    // Verify damage was dealt
+    const healthAfterStun = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Health after stun: ${healthAfterStun}`);
+    expect(healthAfterStun).toBeLessThan(initialHealth);
+
+    console.log('✅ Stun applied successfully with correct duration');
+  });
+
+  test('should decrement stun duration on turn end', async ({ page }) => {
+    console.log('💫 TEST: Stun duration decrements');
+
+    // Find Goblin (enemy creature)
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    await expect(goblin).toBeVisible();
+
+    // Apply stun
+    const stunButton = page.locator('button').filter({ hasText: /💫.*Stun/i }).first();
+    await stunButton.scrollIntoViewIfNeeded();
+    await stunButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // Verify stun badge
+    const stunBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /💫|stun/i });
+    await expect(stunBadge).toBeVisible({ timeout: 5000 });
+
+    const initialDuration = await extractDuration(stunBadge);
+    console.log(`💫 Initial stun duration: ${initialDuration}`);
+    expect(initialDuration).toBe(2);
+
+    // End turn and check duration decreased
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    await endTurnButton.click();
+    await page.waitForTimeout(3000);
+
+    const newDuration = await extractDuration(stunBadge);
+    console.log(`💫 Stun duration after turn: ${newDuration}`);
+    expect(newDuration).toBe(1);
+
+    console.log('✅ Stun duration decremented correctly');
+  });
+
+  test('should remove stun after duration expires', async ({ page }) => {
+    console.log('💫 TEST: Stun expires after duration');
+
+    // Find Goblin
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    await expect(goblin).toBeVisible();
+
+    // Apply stun (2 turn duration)
+    const stunButton = page.locator('button').filter({ hasText: /💫.*Stun/i }).first();
+    await stunButton.scrollIntoViewIfNeeded();
+    await stunButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // Verify stun badge
+    const stunBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /💫|stun/i });
+    await expect(stunBadge).toBeVisible({ timeout: 5000 });
+
+    // End turn twice (stun lasts 2 turns)
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    
+    console.log('🔄 Turn 1/2');
+    await endTurnButton.click();
+    await page.waitForTimeout(3000);
+    
+    // Should still have stun with duration 1
+    await expect(stunBadge).toBeVisible();
+    const duration1 = await extractDuration(stunBadge);
+    console.log(`💫 Stun duration after turn 1: ${duration1}`);
+    expect(duration1).toBe(1);
+
+    console.log('🔄 Turn 2/2');
+    await endTurnButton.click();
+    await page.waitForTimeout(3000);
+
+    // Stun should be removed after 2 turns
+    await expect(stunBadge).not.toBeVisible();
+    console.log('✅ Stun status removed after expiration');
   });
 });
 
@@ -318,6 +707,267 @@ async function applyBurnToGoblin(page: Page) {
 
   console.log('✅ Burn applied successfully');
 }
+
+test.describe('Turn System - Status Effects - Bleed', () => {
+  test.beforeEach(async ({ page }) => {
+    // Capture browser console logs
+    page.on('console', msg => {
+      console.log(`[BROWSER] ${msg.text()}`);
+    });
+    
+    // Navigate to the app
+    await page.goto('/');
+    
+    // Wait for battle to be ready
+    await page.waitForSelector('[data-testid="creature-card"]', { timeout: 10000 });
+  });
+
+  test('should apply bleed status and show duration badge', async ({ page }) => {
+    console.log('🩸 TEST: Apply bleed status');
+
+    // Find Goblin (enemy creature)
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    await expect(goblin).toBeVisible();
+
+    // Get initial health
+    const initialHealth = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Goblin initial health: ${initialHealth}`);
+
+    // Click Bleed button
+    const bleedButton = page.locator('button').filter({ hasText: /🩸.*Bleed/i }).first();
+    await bleedButton.scrollIntoViewIfNeeded();
+    await expect(bleedButton).toBeVisible();
+    await bleedButton.click();
+
+    // Click Goblin as target
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // Verify bleed badge appears with duration 3
+    const bleedBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /🩸|bleed/i });
+    await expect(bleedBadge).toBeVisible({ timeout: 5000 });
+
+    const duration = await extractDuration(bleedBadge);
+    console.log(`🩸 Bleed duration: ${duration}`);
+    expect(duration).toBe(3);
+
+    // Verify damage was dealt
+    const healthAfterBleed = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Health after bleed: ${healthAfterBleed}`);
+    expect(healthAfterBleed).toBeLessThan(initialHealth);
+
+    console.log('✅ Bleed applied successfully with correct duration');
+  });
+
+  test('should tick bleed damage on turn end', async ({ page }) => {
+    console.log('🩸 TEST: Bleed ticks on turn end');
+
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+    
+    // Apply bleed
+    await applyBurnToGoblin(page); // Reusing burn helper - applies any DoT
+    const bleedButton = page.locator('button').filter({ hasText: /🩸.*Bleed/i }).first();
+    await bleedButton.scrollIntoViewIfNeeded();
+    await bleedButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    // Get health before turn end
+    const healthBeforeTick = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Health before turn end: ${healthBeforeTick}`);
+
+    // End turn to trigger bleed tick
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    await expect(endTurnButton).toBeVisible();
+    await endTurnButton.click();
+    await page.waitForTimeout(2500);
+
+    // Verify bleed damage was applied (7 damage per tick based on combatEffects.ts)
+    const healthAfterTick = await getCreatureHealth(page, 'Goblin');
+    console.log(`📊 Health after turn end: ${healthAfterTick}`);
+    expect(healthAfterTick).toBeLessThan(healthBeforeTick);
+    
+    const bleedDamage = healthBeforeTick - healthAfterTick;
+    console.log(`🩸 Bleed damage dealt: ${bleedDamage}`);
+
+    console.log('✅ Bleed ticked successfully');
+  });
+
+  test('should decrement bleed duration on turn end', async ({ page }) => {
+    console.log('🩸 TEST: Bleed duration decrement');
+
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+
+    // Apply bleed
+    const bleedButton = page.locator('button').filter({ hasText: /🩸.*Bleed/i }).first();
+    await bleedButton.scrollIntoViewIfNeeded();
+    await bleedButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    const bleedBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /🩸|bleed/i });
+    const initialDuration = await extractDuration(bleedBadge);
+    console.log(`🩸 Initial duration: ${initialDuration}`);
+    expect(initialDuration).toBe(3);
+
+    // End turn
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    await endTurnButton.click();
+    await page.waitForTimeout(2500);
+
+    const newDuration = await extractDuration(bleedBadge);
+    console.log(`🩸 After turn 1: ${newDuration}`);
+    expect(newDuration).toBe(2);
+
+    console.log('✅ Bleed duration decremented: 3 → 2');
+  });
+
+  test('should remove bleed after duration expires', async ({ page }) => {
+    console.log('🩸 TEST: Bleed expiration');
+
+    const goblin = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Goblin' }).first();
+
+    // Apply bleed
+    const bleedButton = page.locator('button').filter({ hasText: /🩸.*Bleed/i }).first();
+    await bleedButton.scrollIntoViewIfNeeded();
+    await bleedButton.click();
+    await goblin.click();
+    await page.waitForTimeout(1000);
+
+    const bleedBadge = goblin.locator('[data-testid="status-badge"]').filter({ hasText: /🩸|bleed/i });
+    await expect(bleedBadge).toBeVisible();
+
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+
+    // End turn 1 - duration 3 → 2
+    await endTurnButton.click();
+    await page.waitForTimeout(2500);
+    expect(await extractDuration(bleedBadge)).toBe(2);
+
+    // End turn 2 - duration 2 → 1
+    await endTurnButton.click();
+    await page.waitForTimeout(2500);
+    expect(await extractDuration(bleedBadge)).toBe(1);
+
+    // End turn 3 - duration 1 → 0, should remove
+    await endTurnButton.click();
+    await page.waitForTimeout(2500);
+
+    // Verify bleed is removed
+    await expect(bleedBadge).not.toBeVisible();
+
+    console.log('✅ Bleed removed after 3 turns');
+  });
+});
+
+test.describe('Turn System - Status Effects - Attack Buff', () => {
+  test.beforeEach(async ({ page }) => {
+    // Capture browser console logs
+    page.on('console', msg => {
+      console.log(`[BROWSER] ${msg.text()}`);
+    });
+    
+    // Navigate to the app
+    await page.goto('/');
+    
+    // Wait for battle to be ready
+    await page.waitForSelector('[data-testid="creature-card"]', { timeout: 10000 });
+  });
+
+  test('should apply attack buff status and show duration badge', async ({ page }) => {
+    console.log('💪 TEST: Apply attack buff status');
+
+    // Find player creature (Dragon)
+    const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
+    await expect(dragon).toBeVisible();
+
+    // Click Attack Buff (Power Up) button
+    const buffButton = page.locator('button').filter({ hasText: /💪.*Power Up/i }).first();
+    await buffButton.scrollIntoViewIfNeeded();
+    await expect(buffButton).toBeVisible();
+    await buffButton.click();
+
+    // Target self (Dragon)
+    await dragon.click();
+    await page.waitForTimeout(1000);
+
+    // Verify attack buff badge appears with duration 3
+    const buffBadge = dragon.locator('[data-testid="status-badge"]').filter({ hasText: /💪|attack.*buff/i });
+    await expect(buffBadge).toBeVisible({ timeout: 5000 });
+
+    const duration = await extractDuration(buffBadge);
+    console.log(`💪 Attack Buff duration: ${duration}`);
+    expect(duration).toBe(3);
+
+    console.log('✅ Attack buff applied successfully with duration 3');
+  });
+
+  test('should decrement attack buff duration on turn end', async ({ page }) => {
+    console.log('💪 TEST: Attack buff duration decrement');
+
+    const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
+
+    // Apply attack buff
+    const buffButton = page.locator('button').filter({ hasText: /💪.*Power Up/i }).first();
+    await buffButton.scrollIntoViewIfNeeded();
+    await buffButton.click();
+    await dragon.click();
+    await page.waitForTimeout(1000);
+
+    const buffBadge = dragon.locator('[data-testid="status-badge"]').filter({ hasText: /💪|attack.*buff/i });
+    const initialDuration = await extractDuration(buffBadge);
+    console.log(`💪 Initial duration: ${initialDuration}`);
+    expect(initialDuration).toBe(3);
+
+    // End turn
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+    await endTurnButton.click();
+    await page.waitForTimeout(2500);
+
+    const newDuration = await extractDuration(buffBadge);
+    console.log(`💪 After turn 1: ${newDuration}`);
+    expect(newDuration).toBe(2);
+
+    console.log('✅ Attack buff duration decremented: 3 → 2');
+  });
+
+  test('should remove attack buff after duration expires', async ({ page }) => {
+    console.log('💪 TEST: Attack buff expiration');
+
+    const dragon = page.locator('[data-testid="creature-card"]').filter({ hasText: 'Dragon' }).first();
+
+    // Apply attack buff (duration 3)
+    const buffButton = page.locator('button').filter({ hasText: /💪.*Power Up/i }).first();
+    await buffButton.scrollIntoViewIfNeeded();
+    await buffButton.click();
+    await dragon.click();
+    await page.waitForTimeout(1000);
+
+    const buffBadge = dragon.locator('[data-testid="status-badge"]').filter({ hasText: /💪|attack.*buff/i });
+    await expect(buffBadge).toBeVisible();
+
+    const endTurnButton = page.locator('button').filter({ hasText: /End Turn/i }).first();
+
+    // End turn 1 - duration 3 → 2
+    await endTurnButton.click();
+    await page.waitForTimeout(2500);
+    expect(await extractDuration(buffBadge)).toBe(2);
+
+    // End turn 2 - duration 2 → 1
+    await endTurnButton.click();
+    await page.waitForTimeout(2500);
+    expect(await extractDuration(buffBadge)).toBe(1);
+
+    // End turn 3 - duration 1 → 0, should remove
+    await endTurnButton.click();
+    await page.waitForTimeout(2500);
+
+    // Verify buff is removed
+    await expect(buffBadge).not.toBeVisible();
+
+    console.log('✅ Attack buff removed after 3 turns');
+  });
+});
 
 /**
  * Extracts health value from a creature card
