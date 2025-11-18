@@ -37,6 +37,10 @@ export type ShieldEffectData = {
   shieldAmount: number
 }
 
+export type FreezeEffectData = {
+  defenseReduction: number
+}
+
 // ============================================================================
 // EFFECT APPLICATORS (Pure functions)
 // ============================================================================
@@ -516,6 +520,66 @@ const applyShieldEffect = async (
   }
 }
 
+/**
+ * Apply a freeze effect that prevents actions and reduces defense
+ * Freeze represents being frozen solid, unable to move
+ */
+const applyFreezeEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { defenseReduction } = effect.data as FreezeEffectData
+  const creature = getCreatureFromContext(context, effect.targetId)
+
+  const hasFreezeStatus = creature.statuses.some(s => s.id === 'FREEZE')
+
+  if (hasFreezeStatus) {
+    // Freeze doesn't tick - it's a passive effect
+    console.log(`❄️ ${creature.name} remains frozen (no tick effect)`)
+    return {
+      stateChanges: [],
+      animations: []
+    }
+  } else {
+    // First application - apply status and reduce defense
+    console.log(`❄️ Freezing ${creature.name} (-${defenseReduction} defense, cannot act for 2 turns)`)
+
+    const statChange: StateChange = {
+      type: 'STAT_MODIFIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        stat: 'defense',
+        delta: -defenseReduction,
+        source: 'freeze'
+      }
+    }
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'FREEZE',
+        duration: 2,
+        defenseReduction: defenseReduction,
+        preventsActions: true,  // Flag for action system to check
+        source: 'freeze'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'freeze', targetId: effect.targetId, duration: 800 },
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'FREEZE' } }
+    ]
+
+    return {
+      stateChanges: [statChange, statusChange],
+      animations
+    }
+  }
+}
+
 // ============================================================================
 // REGISTER APPLICATORS
 // ============================================================================
@@ -534,6 +598,8 @@ registerEffectApplicator('DEFENSE_BUFF', applyDefenseBuffEffect)
 registerEffectApplicator('STUN', applyStunEffect)
 registerEffectApplicator('SHIELD', applyShieldEffect)
 console.log('✅ SHIELD applicator registered')
+registerEffectApplicator('FREEZE', applyFreezeEffect)
+console.log('✅ FREEZE applicator registered')
 
 // ============================================================================
 // EFFECT FACTORY FUNCTIONS

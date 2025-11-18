@@ -486,6 +486,17 @@ const getStatusEffectById = (statusId: string) => {
       icon: "🛡️",
       id: "SHIELD",
       notes: "Absorbs incoming damage for a few turns.",
+    },
+    FREEZE: {
+      name: "Freeze",
+      type: "debuff",
+      timing: "beforeAttack",
+      duration: 2,
+      effectFuncName: "applyFreeze",
+      chance: 1,
+      icon: "❄️",
+      id: "FREEZE",
+      notes: "Cannot act and defense reduced.",
     }
   }
 

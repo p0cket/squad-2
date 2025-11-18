@@ -16,6 +16,7 @@ import {
   buildPoisonEffect,
   buildBleedEffect,
   buildRegenerationEffect,
+  buildFreezeEffect,
   buildAttackBuffEffect,
   buildDefenseBuffEffect,
   buildStunEffect,
@@ -213,6 +214,10 @@ export const useBattleEngine = (initialState: BattleState) => {
           // Shield doesn't tick - it passively absorbs damage
           // Duration will be decremented below, no tick effect needed
           console.log(`🛡️ Shield on ${creature.name}: ${status.shieldAmount ?? 0} remaining (no tick, passive absorption)`)
+        } else if (sid === 'FREEZE') {
+          // Freeze doesn't tick - it's a passive prevention effect
+          // No effect to apply, just let duration decrement
+          console.log(`❄️ ${creature.name} is frozen (passive effect, no tick)`)
         } else {
           // Unknown status: skip or extend here
         }

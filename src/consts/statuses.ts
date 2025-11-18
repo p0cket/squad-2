@@ -97,6 +97,17 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     id: `SHIELD`,
     notes: "Absorbs incoming damage for a few turns.",
   },
+  FREEZE: {
+    name: "Freeze",
+    type: "debuff",
+    timing: "beforeAttack",
+    duration: 2,
+    effectFuncName: "applyFreeze",
+    chance: 1,
+    icon: "❄️",
+    id: `FREEZE`,
+    notes: "Cannot act. Defense reduced by 5.",
+  },
 }
 // Function to log and apply poison effect, reducing health by 10
 // export const applyPoison = (

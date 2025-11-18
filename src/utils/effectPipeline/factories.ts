@@ -199,6 +199,22 @@ export const buildRegenerationEffect = (
 })
 
 /**
+ * Build a freeze effect
+ * Freezes target, preventing actions and reducing defense
+ */
+export const buildFreezeEffect = (
+  targetId: number,
+  defenseReduction: number = 5
+): Effect => ({
+  id: generateEffectId('freeze'),
+  type: 'FREEZE',
+  targetId,
+  priority: 45,
+  timestamp: Date.now(),
+  data: { defenseReduction }
+})
+
+/**
  * Build a stun effect
  * Renamed from: createStunEffect
  */
