@@ -69,11 +69,22 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     type: "debuff",
     timing: "beforeAttack",
     duration: 3,
-    effectFuncName: "applyStun",
+    effectFuncName: "applyAttackDebuff",
     chance: 1,
     icon: "⚔️⬇️",
     id: `ATTACK_DEBUFF`,
-    notes: "Reduces attack power for a few turns.",
+    notes: "Reduces attack power by 10 for a few turns.",
+  },
+  SILENCE: {
+    name: "Silenced",
+    type: "debuff",
+    timing: "beforeAttack",  // Checks happen before attack selection
+    duration: 2,
+    effectFuncName: "applySilence",
+    chance: 1,
+    icon: "🤐",
+    id: "SILENCE",
+    notes: "Cannot use special abilities. Only basic attacks allowed.",
   },
   REGENERATION: {
     name: "Regeneration",
@@ -107,6 +118,17 @@ export const STATUS_EFFECTS: { [key: string]: StatusEffect } = {
     icon: "❄️",
     id: `FREEZE`,
     notes: "Cannot act. Defense reduced by 5.",
+  },
+  SLOW: {
+    name: "Slow",
+    type: "debuff",
+    timing: "beforeAttack",
+    duration: 3,
+    effectFuncName: "applySlow",
+    chance: 1,
+    icon: "🐌",
+    id: `SLOW`,
+    notes: "Moves slowly, skips every other turn.",
   },
 }
 // Function to log and apply poison effect, reducing health by 10

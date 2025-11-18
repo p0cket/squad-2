@@ -17,6 +17,10 @@ import {
   buildBleedEffect,
   buildRegenerationEffect,
   buildFreezeEffect,
+  buildSlowEffect,
+  buildAttackDebuffEffect,
+  buildCleanseEffect,
+  buildSilenceEffect,
   buildAttackBuffEffect,
   buildDefenseBuffEffect,
   buildStunEffect,
@@ -218,6 +222,18 @@ export const useBattleEngine = (initialState: BattleState) => {
           // Freeze doesn't tick - it's a passive prevention effect
           // No effect to apply, just let duration decrement
           console.log(`❄️ ${creature.name} is frozen (passive effect, no tick)`)
+        } else if (sid === 'SLOW') {
+          // Slow doesn't tick - it's a passive prevention effect
+          // Action skipping is handled by turn system checking turnCounter
+          console.log(`🐌 ${creature.name} is slowed (passive effect, no tick)`)
+        } else if (sid === 'ATTACK_DEBUFF') {
+          // Attack debuff doesn't tick - it's a passive stat modification
+          // Stat reduction persists via the status data
+          console.log(`⚔️⬇️ ${creature.name} attack is weakened (passive effect, no tick)`)
+        } else if (sid === 'SILENCE') {
+          // Silence doesn't tick - it's a passive prevention effect
+          // Ability blocking is handled by attack selection system
+          console.log(`🤐 ${creature.name} is silenced (passive effect, no tick)`)
         } else {
           // Unknown status: skip or extend here
         }

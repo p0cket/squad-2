@@ -215,6 +215,62 @@ export const buildFreezeEffect = (
 })
 
 /**
+ * Build a slow effect
+ * Slows target, causing them to skip turns periodically
+ */
+export const buildSlowEffect = (
+  targetId: number,
+  skipFrequency: number = 2
+): Effect => ({
+  id: generateEffectId('slow'),
+  type: 'SLOW',
+  targetId,
+  priority: 42,
+  timestamp: Date.now(),
+  data: { skipFrequency }
+})
+
+/**
+ * Build an attack debuff effect
+ * Reduces target's attack stat
+ */
+export const buildAttackDebuffEffect = (
+  targetId: number,
+  attackReduction: number = 10
+): Effect => ({
+  id: generateEffectId('attack-debuff'),
+  type: 'ATTACK_DEBUFF',
+  targetId,
+  priority: 35,
+  timestamp: Date.now(),
+  data: { attackReduction }
+})
+
+export const buildCleanseEffect = (
+  targetId: number
+): Effect => ({
+  id: generateEffectId('cleanse'),
+  type: 'CLEANSE',
+  targetId,
+  priority: 80,  // High priority - executes early
+  timestamp: Date.now(),
+  data: { targetType: 'debuffs' }
+})
+
+export const buildSilenceEffect = (
+  targetId: number
+): Effect => ({
+  id: generateEffectId('silence'),
+  type: 'SILENCE',
+  targetId,
+  priority: 50,
+  timestamp: Date.now(),
+  data: {}
+})
+
+// ============================================================================
+
+/**
  * Build a stun effect
  * Renamed from: createStunEffect
  */

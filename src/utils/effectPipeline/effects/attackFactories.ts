@@ -128,6 +128,48 @@ export const createFreezeAttack = (
 })
 
 /**
+ * Creates a slow attack (reduces turn frequency)
+ */
+export const createSlowAttack = (
+  name: string,
+  damage: number,
+  icon: string = '🐌',
+  cooldown: number = 3
+): Attack => ({
+  name,
+  template: 'slow',
+  attackType: 'magical',
+  damage,
+  trueDamage: 0,
+  effects: ['slow'],
+  chanceToLand: 0.9,
+  cooldown,
+  icon,
+  notes: `Attack dealing ${damage} damage and slowing target (skips every 2nd turn for 4 turns)`
+})
+
+/**
+ * Creates a silence attack (prevents abilities)
+ */
+export const createSilenceAttack = (
+  name: string,
+  damage: number,
+  icon: string = '🤐',
+  cooldown: number = 3
+): Attack => ({
+  name,
+  template: 'silence',
+  attackType: 'magical',
+  damage,
+  trueDamage: 0,
+  effects: ['silence'],
+  chanceToLand: 0.85,
+  cooldown,
+  icon,
+  notes: `Attack dealing ${damage} damage and silencing target for 2 turns (can only use basic attacks)`
+})
+
+/**
  * Creates a weakening attack (reduces target's attack)
  */
 export const createWeakeningAttack = (

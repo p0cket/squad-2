@@ -183,17 +183,18 @@ export const AttackShowcase: React.FC<AttackShowcaseProps> = ({
       name: 'Freeze',
       icon: '❄️',
       damage: 5,
-      description: '5 damage + freeze (target cannot act for 2 turns)',
+      description: '5 damage + freeze (-5 defense, cannot act for 2 turns)',
       category: 'debuff',
       color: 'bg-blue-400',
-      hoverColor: 'hover:bg-blue-500'
+      hoverColor: 'hover:bg-blue-500',
+      testId: 'btn-freeze'
     },
     {
       id: 'weaken',
       name: 'Weaken',
       icon: '⚔️↓',
       damage: 8,
-      description: '8 damage + reduce target attack by 5 for 3 turns',
+      description: '8 damage + reduce target attack by 10 for 3 turns',
       category: 'debuff',
       color: 'bg-amber-600',
       hoverColor: 'hover:bg-amber-700',
@@ -214,20 +215,22 @@ export const AttackShowcase: React.FC<AttackShowcaseProps> = ({
       name: 'Slow',
       icon: '🐌',
       damage: 0,
-      description: 'Reduce target speed by 50% for 3 turns (acts last)',
+      description: 'Slow target - skips every 2nd turn for 4 turns',
       category: 'debuff',
       color: 'bg-slate-500',
-      hoverColor: 'hover:bg-slate-600'
+      hoverColor: 'hover:bg-slate-600',
+      testId: 'btn-slow'
     },
     {
       id: 'silence',
       name: 'Silence',
-      icon: '🔇',
+      icon: '🤐',
       damage: 0,
-      description: 'Prevent target from using abilities for 2 turns',
+      description: 'Prevent target from using special abilities for 2 turns',
       category: 'debuff',
       color: 'bg-violet-600',
-      hoverColor: 'hover:bg-violet-700'
+      hoverColor: 'hover:bg-violet-700',
+      testId: 'btn-silence'
     },
 
     // Buff Attacks
@@ -281,6 +284,17 @@ export const AttackShowcase: React.FC<AttackShowcaseProps> = ({
       category: 'buff',
       color: 'bg-blue-500',
       hoverColor: 'hover:bg-blue-600'
+    },
+    {
+      id: 'cleanse',
+      name: 'Cleanse',
+      icon: '✨',
+      damage: 0,
+      description: 'Remove all debuffs from target ally',
+      category: 'buff',
+      color: 'bg-pink-400',
+      hoverColor: 'hover:bg-pink-500',
+      testId: 'btn-cleanse'
     },
 
     // Healing

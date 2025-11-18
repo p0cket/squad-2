@@ -7,6 +7,9 @@ import { InfoModal } from '../../../components/battle/InfoModal'
 import { AttackShowcase } from '../../../components/battle/AttackShowcase'
 import {
   createStunAttack,
+  createFreezeAttack,
+  createSlowAttack,
+  createSilenceAttack,
   createWeakeningAttack,
   createBurnAttack,
   createBuffingAttack,
@@ -400,6 +403,34 @@ export const BattleEngineExample: React.FC = () => {
     }
   }
 
+  // Execute new status effect attacks
+  const executeFreezeAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createFreezeAttack("Ice Blast", 5)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
+  const executeSlowAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createSlowAttack("Time Warp", 0)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
+  const executeSilenceAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createSilenceAttack("Mute", 0)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
   // Execute cleanse (remove all debuffs from target)
   const executeCleanse = async (targetId: number) => {
     if (playerCreatures.length > 0) {
@@ -442,8 +473,16 @@ export const BattleEngineExample: React.FC = () => {
         await executePassiveTest(creatureId)
         break
       case 'stun':
-      case 'freeze':
         await executeStunAttack(creatureId)
+        break
+      case 'freeze':
+        await executeFreezeAttack(creatureId)
+        break
+      case 'slow':
+        await executeSlowAttack(creatureId)
+        break
+      case 'silence':
+        await executeSilenceAttack(creatureId)
         break
       case 'weaken':
       case 'shatter-armor':

@@ -178,6 +178,29 @@ const applyAttackEffect = async (
             duration: 2
           }
         })
+      } else if (effectType === 'SLOW') {
+        console.log(`🐌 Attack slows ${target.name}`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'SLOW',
+            duration: 4,
+            skipFrequency: 2  // Skip every 2nd turn
+          }
+        })
+      } else if (effectType === 'SILENCE') {
+        console.log(`🤐 Attack silences ${target.name}`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'SILENCE',
+            duration: 2
+          }
+        })
       }
 
       // Debuff Effects
