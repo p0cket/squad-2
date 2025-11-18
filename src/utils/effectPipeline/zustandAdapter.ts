@@ -406,7 +406,13 @@ const applyStatusChange = (state: BattleState, change: any): BattleState => {
           ...updatedStatuses[existingStatusIndex],
           duration: data.duration || updatedStatuses[existingStatusIndex].duration,
           damagePerTurn: data.damagePerTurn ?? updatedStatuses[existingStatusIndex].damagePerTurn,
-          healPerTurn: data.healPerTurn ?? updatedStatuses[existingStatusIndex].healPerTurn
+          healPerTurn: data.healPerTurn ?? updatedStatuses[existingStatusIndex].healPerTurn,
+          // Batch 2 properties
+          damageMultiplier: data.damageMultiplier ?? updatedStatuses[existingStatusIndex].damageMultiplier,
+          damageReflected: data.damageReflected ?? updatedStatuses[existingStatusIndex].damageReflected,
+          healPercent: data.healPercent ?? updatedStatuses[existingStatusIndex].healPercent,
+          dodgeChance: data.dodgeChance ?? updatedStatuses[existingStatusIndex].dodgeChance,
+          reflectPercent: data.reflectPercent ?? updatedStatuses[existingStatusIndex].reflectPercent
         }
         return { ...creature, statuses: updatedStatuses }
       } else {
@@ -416,6 +422,7 @@ const applyStatusChange = (state: BattleState, change: any): BattleState => {
         console.log(`📦 getStatusEffectById returned:`, statusEffect)
         if (statusEffect) {
           console.log(`💾 Storing damagePerTurn: ${data.damagePerTurn}, healPerTurn: ${data.healPerTurn}`)
+          console.log(`💾 Storing Batch 2 - damageMultiplier: ${data.damageMultiplier}, damageReflected: ${data.damageReflected}, healPercent: ${data.healPercent}, dodgeChance: ${data.dodgeChance}, reflectPercent: ${data.reflectPercent}`)
           return {
             ...creature,
             statuses: [...creature.statuses, {
@@ -423,6 +430,12 @@ const applyStatusChange = (state: BattleState, change: any): BattleState => {
               duration: data.duration,
               damagePerTurn: data.damagePerTurn,  // Include dynamic damage value
               healPerTurn: data.healPerTurn,      // Include dynamic heal value
+              // Batch 2 properties
+              damageMultiplier: data.damageMultiplier,
+              damageReflected: data.damageReflected,
+              healPercent: data.healPercent,
+              dodgeChance: data.dodgeChance,
+              reflectPercent: data.reflectPercent
             }]
           }
         } else {

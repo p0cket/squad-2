@@ -122,6 +122,12 @@ export type StatusEffect = {
   healPerTurn?: number    // Dynamic value from effect data
   shieldAmount?: number   // Shield absorption amount
   description?: string    // Optional description for tooltips
+  // Batch 2 effect properties
+  damageMultiplier?: number   // VULNERABLE: damage taken multiplier (e.g., 1.5 = 50% more damage)
+  damageReflected?: number    // THORNS: flat damage reflected to attacker
+  healPercent?: number        // LEECH: percentage of damage dealt healed back (0-1)
+  dodgeChance?: number        // EVASION: chance to dodge attacks (0-1)
+  reflectPercent?: number     // REFLECT: percentage of damage reflected back (0-1)
 }
 
 export type Effect = {

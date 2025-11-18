@@ -13,7 +13,13 @@ import {
   createWeakeningAttack,
   createBurnAttack,
   createBuffingAttack,
-  createCleanseAttack
+  createCleanseAttack,
+  // Batch 2 attack factories
+  createVulnerableAttack,
+  createThornsAttack,
+  createLeechAttack,
+  createEvasionAttack,
+  createReflectAttack
 } from '../effects/attackFactories'
 
 // Example initial battle state
@@ -431,6 +437,52 @@ export const BattleEngineExample: React.FC = () => {
     }
   }
 
+  // Execute Batch 2 status effect attacks
+  const executeVulnerableAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createVulnerableAttack("Expose Weakness", 12)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
+  const executeThornsAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createThornsAttack("Thorn Shield", 8)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
+  const executeLeechAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createLeechAttack("Vampiric Strike", 18)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
+  const executeEvasionAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createEvasionAttack("Blur", 5)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
+  const executeReflectAttack = async (targetId: number) => {
+    if (playerCreatures.length > 0) {
+      const attack = createReflectAttack("Mirror Image", 6)
+      await performAttack(playerCreatures[0].ID, targetId, attack)
+      setIsSelectingTarget(false)
+      setPendingAction(null)
+    }
+  }
+
   // Execute cleanse (remove all debuffs from target)
   const executeCleanse = async (targetId: number) => {
     if (playerCreatures.length > 0) {
@@ -509,6 +561,28 @@ export const BattleEngineExample: React.FC = () => {
         break
       case 'cleanse':
         await executeCleanse(creatureId)
+        break
+      
+      // Batch 2 effects
+      case 'vulnerable':
+      case 'expose-weakness':
+        await executeVulnerableAttack(creatureId)
+        break
+      case 'thorns':
+      case 'thorn-shield':
+        await executeThornsAttack(creatureId)
+        break
+      case 'leech':
+      case 'vampiric-strike':
+        await executeLeechAttack(creatureId)
+        break
+      case 'evasion':
+      case 'blur':
+        await executeEvasionAttack(creatureId)
+        break
+      case 'reflect':
+      case 'mirror-image':
+        await executeReflectAttack(creatureId)
         break
       
       // Placeholder for unimplemented attacks

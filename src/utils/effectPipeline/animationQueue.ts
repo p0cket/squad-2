@@ -4,6 +4,7 @@ import { Animation } from './types'
 export interface AnimationQueueConfig {
   maxConcurrent: number // Max animations playing simultaneously
   batchDelay: number // Delay between batches (ms)
+  autoProcess: boolean // Auto-start processing when animations are enqueued
 }
 
 interface QueuedAnimation {
@@ -17,11 +18,13 @@ class AnimationQueueManager {
   private running: Set<Promise<void>> = new Set()
   private config: AnimationQueueConfig
   private isPaused: boolean = false
+  private isProcessing: boolean = false // Track if processQueue is actively running
 
   constructor(config: Partial<AnimationQueueConfig> = {}) {
     this.config = {
       maxConcurrent: config.maxConcurrent || 3,
-      batchDelay: config.batchDelay || 100
+      batchDelay: config.batchDelay || 100,
+      autoProcess: config.autoProcess !== undefined ? config.autoProcess : true
     }
   }
 
@@ -40,9 +43,15 @@ class AnimationQueueManager {
 
     console.log(`📥 Queued ${animation.type} animation (priority: ${priority}, queue size: ${this.queue.length})`)
 
-    // Auto-start processing if not already running
-    if (!this.isPaused && this.running.size === 0) {
-      this.processQueue()
+    // Auto-start processing if enabled and not already running
+    // OR if processing is active but might have finished its loop (restart it)
+    if (this.config.autoProcess && !this.isPaused) {
+      if (!this.isProcessing) {
+        this.processQueue()
+      } else {
+        // Processing is active - it will pick up this new item on its next iteration
+        console.log('⏳ Processing already active, new item will be picked up')
+      }
     }
   }
 
@@ -57,40 +66,66 @@ class AnimationQueueManager {
    * Process queue with concurrency control
    */
   private async processQueue(): Promise<void> {
-    while (this.queue.length > 0 && !this.isPaused) {
-      // Wait if at max concurrency
-      while (this.running.size >= this.config.maxConcurrent) {
-        await Promise.race(Array.from(this.running))
-      }
-
-      // Get next animation
-      const item = this.queue.shift()
-      if (!item) break
-
-      // Check if this is part of a batch
-      const batchItems = item.batchId
-        ? this.extractBatch(item.batchId)
-        : [item]
-
-      // Start batch (all items in parallel)
-      for (const batchItem of batchItems) {
-        const promise = this.executeAnimation(batchItem.animation)
-        this.running.add(promise)
-
-        promise.finally(() => {
-          this.running.delete(promise)
-        })
-      }
-
-      // Small delay between batches
-      if (this.queue.length > 0) {
-        await new Promise(resolve => setTimeout(resolve, this.config.batchDelay))
-      }
+    // Prevent multiple concurrent processQueue calls
+    if (this.isProcessing) {
+      console.log('⏭️ processQueue already running, skipping')
+      return
     }
+    
+    this.isProcessing = true
+    console.log('🎬 Starting processQueue')
+    
+    try {
+      // Keep processing until both queue AND running animations are empty
+      // This handles the case where new items are enqueued while processing
+      while (this.queue.length > 0 || this.running.size > 0) {
+        // Process queued items
+        while (this.queue.length > 0 && !this.isPaused) {
+          // Wait if at max concurrency
+          while (this.running.size >= this.config.maxConcurrent) {
+            await Promise.race(Array.from(this.running))
+          }
 
-    // Wait for all remaining to finish
-    await Promise.all(Array.from(this.running))
-    console.log('✅ Animation queue processing complete')
+          // Get next animation
+          const item = this.queue.shift()
+          if (!item) break
+
+          // Check if this is part of a batch
+          const batchItems = item.batchId
+            ? this.extractBatch(item.batchId)
+            : [item]
+
+          // Start batch (all items in parallel)
+          for (const batchItem of batchItems) {
+            const promise = this.executeAnimation(batchItem.animation)
+            this.running.add(promise)
+
+            promise.finally(() => {
+              this.running.delete(promise)
+            })
+          }
+
+          // Small delay between batches
+          if (this.queue.length > 0) {
+            await new Promise(resolve => setTimeout(resolve, this.config.batchDelay))
+          }
+        }
+
+        // Wait for all running animations to finish before checking queue again
+        if (this.running.size > 0) {
+          await Promise.all(Array.from(this.running))
+        }
+        
+        // Small delay before re-checking queue (allows newly enqueued items to be picked up)
+        if (this.queue.length > 0) {
+          await new Promise(resolve => setTimeout(resolve, 10))
+        }
+      }
+
+      console.log('✅ Animation queue processing complete')
+    } finally {
+      this.isProcessing = false
+    }
   }
 
   /**
@@ -189,10 +224,18 @@ class AnimationQueueManager {
    * Wait for all animations to complete (queue + running)
    */
   async waitForCompletion(): Promise<void> {
-    // Wait for queue to be empty and all running to finish
-    while (this.queue.length > 0 || this.running.size > 0) {
+    // If there are queued items and nothing is processing, manually trigger
+    if (this.queue.length > 0 && !this.isProcessing && !this.isPaused) {
+      console.log('🔄 waitForCompletion: manually triggering processQueue')
+      this.processQueue()
+    }
+    
+    // Wait for queue to be empty, all running to finish, AND processing to complete
+    while (this.queue.length > 0 || this.running.size > 0 || this.isProcessing) {
       await new Promise(resolve => setTimeout(resolve, 50))
     }
+    
+    console.log('✅ waitForCompletion: all animations complete')
   }
 }
 

@@ -169,7 +169,13 @@ const applyStatusChange = (state: BattleState, change: StatusChange): BattleStat
           duration: data.duration || updatedStatuses[existingStatusIndex].duration,
           damagePerTurn: data.damagePerTurn ?? updatedStatuses[existingStatusIndex].damagePerTurn,
           healPerTurn: data.healPerTurn ?? updatedStatuses[existingStatusIndex].healPerTurn,
-          shieldAmount: data.shieldAmount ?? updatedStatuses[existingStatusIndex].shieldAmount
+          shieldAmount: data.shieldAmount ?? updatedStatuses[existingStatusIndex].shieldAmount,
+          // Batch 2 properties
+          damageMultiplier: data.damageMultiplier ?? updatedStatuses[existingStatusIndex].damageMultiplier,
+          damageReflected: data.damageReflected ?? updatedStatuses[existingStatusIndex].damageReflected,
+          healPercent: data.healPercent ?? updatedStatuses[existingStatusIndex].healPercent,
+          dodgeChance: data.dodgeChance ?? updatedStatuses[existingStatusIndex].dodgeChance,
+          reflectPercent: data.reflectPercent ?? updatedStatuses[existingStatusIndex].reflectPercent
         }
         return { ...creature, statuses: updatedStatuses }
       } else {
@@ -179,6 +185,7 @@ const applyStatusChange = (state: BattleState, change: StatusChange): BattleStat
         const statusEffect = getStatusEffectById(data.statusId)
         if (statusEffect) {
           console.log(`💾 battleContext: Storing damagePerTurn: ${data.damagePerTurn}, healPerTurn: ${data.healPerTurn}, shieldAmount: ${data.shieldAmount}`)
+          console.log(`💾 battleContext: Storing Batch 2 - damageMultiplier: ${data.damageMultiplier}, damageReflected: ${data.damageReflected}, healPercent: ${data.healPercent}, dodgeChance: ${data.dodgeChance}, reflectPercent: ${data.reflectPercent}`)
           return {
             ...creature,
             statuses: [...creature.statuses, {
@@ -186,7 +193,13 @@ const applyStatusChange = (state: BattleState, change: StatusChange): BattleStat
               duration: data.duration || statusEffect.duration,
               damagePerTurn: data.damagePerTurn,  // Store dynamic damage value
               healPerTurn: data.healPerTurn,       // Store dynamic heal value
-              shieldAmount: data.shieldAmount      // Store dynamic shield value
+              shieldAmount: data.shieldAmount,     // Store dynamic shield value
+              // Batch 2 properties
+              damageMultiplier: data.damageMultiplier,
+              damageReflected: data.damageReflected,
+              healPercent: data.healPercent,
+              dodgeChance: data.dodgeChance,
+              reflectPercent: data.reflectPercent
             }]
           }
         }

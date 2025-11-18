@@ -57,6 +57,26 @@ export type SilenceEffectData = {
   // No additional data needed - just a flag
 }
 
+export type VulnerableEffectData = {
+  damageMultiplier: number  // 1.5 = 50% more damage
+}
+
+export type ThornsEffectData = {
+  damageAmount: number  // Flat damage to return to attacker
+}
+
+export type LeechEffectData = {
+  lifestealPercentage: number  // 0.3 = 30% lifesteal
+}
+
+export type EvasionEffectData = {
+  dodgeChance: number  // 0.4 = 40% dodge chance
+}
+
+export type ReflectEffectData = {
+  percentage: number  // 0.5 = 50% reflection
+}
+
 // ============================================================================
 // EFFECT APPLICATORS (Pure functions)
 // ============================================================================
@@ -787,6 +807,231 @@ const applySilenceEffect = async (
   }
 }
 
+/**
+ * Apply VULNERABLE status - increases damage taken from all sources
+ */
+const applyVulnerableEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { damageMultiplier } = effect.data as VulnerableEffectData
+  const creature = getCreatureFromContext(context, effect.targetId)
+
+  const hasVulnerable = creature.statuses.some(s => s.id === 'VULNERABLE')
+
+  if (hasVulnerable) {
+    console.log(`🎯 ${creature.name} remains vulnerable (passive effect)`)
+    return {
+      stateChanges: [],
+      animations: []
+    }
+  } else {
+    console.log(`🎯 Making ${creature.name} vulnerable (${(damageMultiplier - 1) * 100}% more damage for 3 turns)`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'VULNERABLE',
+        duration: 3,
+        damageMultiplier,
+        source: 'vulnerable'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'vulnerable', targetId: effect.targetId, duration: 800 },
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'VULNERABLE' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
+  }
+}
+
+/**
+ * Apply THORNS status - deals flat damage to attackers
+ */
+const applyThornsEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { damageAmount } = effect.data as ThornsEffectData
+  const creature = getCreatureFromContext(context, effect.targetId)
+
+  const hasThorns = creature.statuses.some(s => s.id === 'THORNS')
+
+  if (hasThorns) {
+    console.log(`🌵 ${creature.name} thorns remain active (passive effect)`)
+    return {
+      stateChanges: [],
+      animations: []
+    }
+  } else {
+    console.log(`🌵 Applying thorns to ${creature.name} (${damageAmount} damage to attackers for 3 turns)`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'THORNS',
+        duration: 3,
+        damageAmount,
+        source: 'thorns'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'thorns', targetId: effect.targetId, duration: 800 },
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'THORNS' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
+  }
+}
+
+/**
+ * Apply LEECH status - heals attacker for percentage of damage dealt
+ */
+const applyLeechEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { lifestealPercentage } = effect.data as LeechEffectData
+  const creature = getCreatureFromContext(context, effect.targetId)
+
+  const hasLeech = creature.statuses.some(s => s.id === 'LEECH')
+
+  if (hasLeech) {
+    console.log(`🩸 ${creature.name} leech remains active (passive effect)`)
+    return {
+      stateChanges: [],
+      animations: []
+    }
+  } else {
+    console.log(`🩸 Granting leech to ${creature.name} (${lifestealPercentage * 100}% lifesteal for 3 turns)`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'LEECH',
+        duration: 3,
+        lifestealPercentage,
+        source: 'leech'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'leech', targetId: effect.targetId, duration: 800 },
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'LEECH' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
+  }
+}
+
+/**
+ * Apply EVASION status - chance to dodge attacks
+ */
+const applyEvasionEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { dodgeChance } = effect.data as EvasionEffectData
+  const creature = getCreatureFromContext(context, effect.targetId)
+
+  const hasEvasion = creature.statuses.some(s => s.id === 'EVASION')
+
+  if (hasEvasion) {
+    console.log(`✨ ${creature.name} evasion remains active (passive effect)`)
+    return {
+      stateChanges: [],
+      animations: []
+    }
+  } else {
+    console.log(`✨ Granting evasion to ${creature.name} (${dodgeChance * 100}% dodge chance for 3 turns)`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'EVASION',
+        duration: 3,
+        dodgeChance,
+        source: 'evasion'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'evasion', targetId: effect.targetId, duration: 800 },
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'EVASION' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
+  }
+}
+
+/**
+ * Apply REFLECT status - returns percentage of damage to attacker
+ */
+const applyReflectEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { percentage } = effect.data as ReflectEffectData
+  const creature = getCreatureFromContext(context, effect.targetId)
+
+  const hasReflect = creature.statuses.some(s => s.id === 'REFLECT')
+
+  if (hasReflect) {
+    console.log(`🪞 ${creature.name} reflect remains active (passive effect)`)
+    return {
+      stateChanges: [],
+      animations: []
+    }
+  } else {
+    console.log(`🪞 Granting reflect to ${creature.name} (${percentage * 100}% damage reflection for 3 turns)`)
+
+    const statusChange: StateChange = {
+      type: 'STATUS_APPLIED',
+      creatureId: effect.targetId,
+      timestamp: Date.now(),
+      data: {
+        statusId: 'REFLECT',
+        duration: 3,
+        percentage,
+        source: 'reflect'
+      }
+    }
+
+    const animations: Animation[] = [
+      { type: 'reflect', targetId: effect.targetId, duration: 800 },
+      { type: 'status-icon', targetId: effect.targetId, duration: 800, data: { status: 'REFLECT' } }
+    ]
+
+    return {
+      stateChanges: [statusChange],
+      animations
+    }
+  }
+}
+
 // ============================================================================
 // REGISTER APPLICATORS
 // ============================================================================
@@ -815,6 +1060,16 @@ registerEffectApplicator('CLEANSE', applyCleanseEffect)
 console.log('✅ CLEANSE applicator registered')
 registerEffectApplicator('SILENCE', applySilenceEffect)
 console.log('✅ SILENCE applicator registered')
+registerEffectApplicator('VULNERABLE', applyVulnerableEffect)
+console.log('✅ VULNERABLE applicator registered')
+registerEffectApplicator('THORNS', applyThornsEffect)
+console.log('✅ THORNS applicator registered')
+registerEffectApplicator('LEECH', applyLeechEffect)
+console.log('✅ LEECH applicator registered')
+registerEffectApplicator('EVASION', applyEvasionEffect)
+console.log('✅ EVASION applicator registered')
+registerEffectApplicator('REFLECT', applyReflectEffect)
+console.log('✅ REFLECT applicator registered')
 
 // ============================================================================
 // EFFECT FACTORY FUNCTIONS

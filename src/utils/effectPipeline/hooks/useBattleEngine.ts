@@ -455,7 +455,9 @@ export const useBattleEngine = (initialState: BattleState) => {
       contextRef.current.stateHistory = []
     }
     // Reset battle-wide tracking flags (e.g., first blood)
-    resetBattleTracking()
+    if (typeof resetBattleTracking === 'function') {
+      resetBattleTracking()
+    }
     console.log('🔄 Battle state reset')
   }, [initialState])
 
@@ -495,6 +497,7 @@ export const useBattleEngine = (initialState: BattleState) => {
     performAttack,
     performTrueDamageAttack,
     performHeal,
+    performHealing: performHeal, // Alias for backward compatibility
     performDeath,
     performLifeDrain,
     performAoeAttack,

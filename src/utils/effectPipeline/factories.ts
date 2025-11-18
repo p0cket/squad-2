@@ -70,7 +70,7 @@ export const buildHealEffect = (
   healingAmount: number
 ): Effect => ({
   id: generateEffectId('heal'),
-  type: 'HEAL',
+  type: 'HEALING', // Changed from 'HEAL' to match registered applicator
   targetId,
   priority: 30,
   timestamp: Date.now(),

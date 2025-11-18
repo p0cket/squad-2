@@ -30,28 +30,32 @@ describe('Animation Queue Manager', () => {
   })
 
   test('enqueues single animation', () => {
+    // Create queue with autoProcess disabled so we can verify count
+    const testQueue = createAnimationQueue({ autoProcess: false })
     const animation: Animation = {
       type: 'shake',
       targetId: 1,
       duration: 300
     }
 
-    queue.enqueue(animation, 0)
+    testQueue.enqueue(animation, 0)
 
-    const status = queue.getStatus()
+    const status = testQueue.getStatus()
     expect(status.queued).toBe(1)
   })
 
   test('enqueues multiple animations', () => {
+    // Create queue with autoProcess disabled so we can verify count
+    const testQueue = createAnimationQueue({ autoProcess: false })
     const animations: Animation[] = [
       { type: 'shake', targetId: 1, duration: 300 },
       { type: 'burn', targetId: 2, duration: 500 },
       { type: 'damage-number', targetId: 1, duration: 1000, data: { value: -25 } }
     ]
 
-    queue.enqueueBatch(animations, 0)
+    testQueue.enqueueBatch(animations, 0)
 
-    const status = queue.getStatus()
+    const status = testQueue.getStatus()
     expect(status.queued).toBe(3)
   })
 
@@ -92,23 +96,25 @@ describe('Animation Queue Manager', () => {
   })
 
   test('clears queued animations', () => {
+    // Create queue with autoProcess disabled so we can verify count
+    const testQueue = createAnimationQueue({ autoProcess: false })
     const animations: Animation[] = [
       { type: 'shake', targetId: 1, duration: 300 },
       { type: 'burn', targetId: 2, duration: 500 }
     ]
 
-    queue.enqueueBatch(animations, 0)
-    expect(queue.getStatus().queued).toBe(2)
+    testQueue.enqueueBatch(animations, 0)
+    expect(testQueue.getStatus().queued).toBe(2)
 
-    queue.clear()
-    expect(queue.getStatus().queued).toBe(0)
+    testQueue.clear()
+    expect(testQueue.getStatus().queued).toBe(0)
   })
 
   test('processes animations sequentially with concurrency limit', async () => {
     const executionOrder: number[] = []
     
-    // Create test queue that tracks execution
-    const testQueue = createAnimationQueue({ maxConcurrent: 2, batchDelay: 10 })
+    // Create test queue with autoProcess enabled (default)
+    const testQueue = createAnimationQueue({ maxConcurrent: 2, batchDelay: 10, autoProcess: true })
 
     // Add 4 animations - with max 2 concurrent, should see 2 start, then next 2
     const animations: Animation[] = [1, 2, 3, 4].map(id => ({
@@ -124,18 +130,26 @@ describe('Animation Queue Manager', () => {
 
     // All animations should have executed
     expect(executionOrder.length).toBeLessThanOrEqual(4)
+    
+    // Cleanup
+    testQueue.hardClear()
   }, 10000) // 10 second timeout
 
   test('handles animation errors gracefully', async () => {
+    // Create fresh queue with autoProcess enabled
+    const testQueue = createAnimationQueue({ autoProcess: true })
     const animations: Animation[] = [
       { type: 'invalid-type' as any, targetId: 1, duration: 100 },
       { type: 'shake', targetId: 2, duration: 100 }
     ]
 
-    queue.enqueueBatch(animations, 0)
+    testQueue.enqueueBatch(animations, 0)
 
     // Should not throw
-    await expect(queue.waitForCompletion()).resolves.not.toThrow()
+    await expect(testQueue.waitForCompletion()).resolves.not.toThrow()
+    
+    // Cleanup
+    testQueue.hardClear()
   }, 5000)
 
   test('hard clear stops everything', () => {
@@ -167,23 +181,28 @@ describe('Animation Queue Manager', () => {
   })
 
   test('waits for completion correctly', async () => {
+    // Create fresh queue with autoProcess enabled
+    const testQueue = createAnimationQueue({ autoProcess: true })
     const animations: Animation[] = [
       { type: 'shake', targetId: 1, duration: 50 },
       { type: 'burn', targetId: 2, duration: 50 }
     ]
 
-    queue.enqueueBatch(animations, 0)
+    testQueue.enqueueBatch(animations, 0)
 
     const startTime = Date.now()
-    await queue.waitForCompletion()
+    await testQueue.waitForCompletion()
     const endTime = Date.now()
 
     // Should take at least 50ms (animation duration)
     expect(endTime - startTime).toBeGreaterThanOrEqual(40) // Allow 10ms margin
 
     // Queue should be empty
-    const status = queue.getStatus()
+    const status = testQueue.getStatus()
     expect(status.queued).toBe(0)
     expect(status.running).toBe(0)
+    
+    // Cleanup
+    testQueue.hardClear()
   }, 5000)
 })

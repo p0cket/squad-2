@@ -319,6 +319,115 @@ export const createComboAttack = (
 })
 
 // ============================================================================
+// Batch 2 Attack Factories
+// ============================================================================
+
+/**
+ * Creates a VULNERABLE attack - increases damage taken by 50%
+ */
+export const createVulnerableAttack = (
+  name: string,
+  damage: number,
+  icon: string = '🎯',
+  cooldown: number = 3
+): Attack => ({
+  name,
+  template: 'vulnerable',
+  attackType: 'physical',
+  damage,
+  trueDamage: 0,
+  effects: ['vulnerable'],
+  chanceToLand: 0.95,
+  cooldown,
+  icon,
+  notes: `Deals ${damage} damage and makes target VULNERABLE (50% increased damage taken for 3 turns)`
+})
+
+/**
+ * Creates a THORNS attack - applies counter-damage to attacker
+ */
+export const createThornsAttack = (
+  name: string,
+  damage: number,
+  icon: string = '🌵',
+  cooldown: number = 2
+): Attack => ({
+  name,
+  template: 'thorns',
+  attackType: 'magical',
+  damage,
+  trueDamage: 0,
+  effects: ['thorns'],
+  chanceToLand: 1.0,
+  cooldown,
+  icon,
+  notes: `Deals ${damage} damage and grants target THORNS (reflects 10 damage to attackers for 3 turns)`
+})
+
+/**
+ * Creates a LEECH attack - heals for percentage of damage dealt
+ */
+export const createLeechAttack = (
+  name: string,
+  damage: number,
+  icon: string = '🩸',
+  cooldown: number = 2
+): Attack => ({
+  name,
+  template: 'leech',
+  attackType: 'dark',
+  damage,
+  trueDamage: 0,
+  effects: ['leech'],
+  chanceToLand: 0.9,
+  cooldown,
+  icon,
+  notes: `Deals ${damage} damage and grants LEECH (heals for 30% of damage dealt for 3 turns)`
+})
+
+/**
+ * Creates an EVASION attack - grants dodge chance
+ */
+export const createEvasionAttack = (
+  name: string,
+  damage: number,
+  icon: string = '✨',
+  cooldown: number = 3
+): Attack => ({
+  name,
+  template: 'evasion',
+  attackType: 'physical',
+  damage,
+  trueDamage: 0,
+  effects: ['evasion'],
+  chanceToLand: 1.0,
+  cooldown,
+  icon,
+  notes: `Deals ${damage} damage and grants target EVASION (40% chance to dodge attacks for 3 turns)`
+})
+
+/**
+ * Creates a REFLECT attack - returns damage to attacker
+ */
+export const createReflectAttack = (
+  name: string,
+  damage: number,
+  icon: string = '🪞',
+  cooldown: number = 3
+): Attack => ({
+  name,
+  template: 'reflect',
+  attackType: 'magical',
+  damage,
+  trueDamage: 0,
+  effects: ['reflect'],
+  chanceToLand: 1.0,
+  cooldown,
+  icon,
+  notes: `Deals ${damage} damage and grants target REFLECT (returns 50% of damage to attacker for 3 turns)`
+})
+
+// ============================================================================
 // Pre-made Attack Examples
 // ============================================================================
 
@@ -357,3 +466,22 @@ export const LACERATE = createBleedAttack('Lacerate', 16, '🩸', 1)
 
 /** Basic Slash - Simple attack */
 export const BASIC_SLASH = createBasicAttack('Slash', 15, '⚔️', 0)
+
+// ============================================================================
+// Batch 2 Pre-made Attacks
+// ============================================================================
+
+/** Expose Weakness - Makes target vulnerable to damage */
+export const EXPOSE_WEAKNESS = createVulnerableAttack('Expose Weakness', 12, '🎯', 3)
+
+/** Thorn Shield - Reflects damage to attackers */
+export const THORN_SHIELD = createThornsAttack('Thorn Shield', 8, '🌵', 2)
+
+/** Vampiric Strike - Heals when dealing damage */
+export const VAMPIRIC_STRIKE = createLeechAttack('Vampiric Strike', 18, '🩸', 2)
+
+/** Blur - Grants high evasion */
+export const BLUR = createEvasionAttack('Blur', 5, '✨', 3)
+
+/** Mirror Image - Reflects damage back */
+export const MIRROR_IMAGE = createReflectAttack('Mirror Image', 6, '🪞', 3)

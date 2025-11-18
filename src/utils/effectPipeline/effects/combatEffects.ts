@@ -53,13 +53,69 @@ const applyAttackEffect = async (
   const attacker = getCreatureFromContext(context, attackerId)
   const target = getCreatureFromContext(context, effect.targetId)
 
+  // Check for EVASION first - if dodge succeeds, no damage or effects
+  const evasionStatus = target.statuses?.find(s => s.id === 'EVASION')
+  if (evasionStatus) {
+    const dodgeChance = evasionStatus.dodgeChance || 0.4
+    const dodgeRoll = Math.random()
+    if (dodgeRoll < dodgeChance) {
+      console.log(`✨ ${target.name} EVADED the attack! (${Math.round(dodgeChance * 100)}% chance, rolled ${Math.round(dodgeRoll * 100)}%)`)
+      
+      const animations: Animation[] = [
+        { type: 'attack-windup', targetId: attackerId, duration: 600 },
+        { type: 'dodge', targetId: effect.targetId, duration: 300 }
+      ]
+      
+      return {
+        stateChanges: [],
+        animations
+      }
+    }
+  }
+
   // Calculate damage components
   const baseAttackDamage = attack.damage
   const attackerBonus = attacker.attack
   const totalDamage = baseAttackDamage + attackerBonus
   const defense = target.defense
-  const actualDamage = Math.max(1, totalDamage - defense)
-  const newHealth = Math.max(0, target.health - actualDamage)
+  let actualDamage = Math.max(1, totalDamage - defense)
+
+  // Apply VULNERABLE modifier (increases damage taken by 50%)
+  const vulnerableStatus = target.statuses?.find(s => s.id === 'VULNERABLE')
+  if (vulnerableStatus) {
+    const damageMultiplier = vulnerableStatus.damageMultiplier || 1.5
+    const originalDamage = actualDamage
+    actualDamage = Math.floor(actualDamage * damageMultiplier)
+    console.log(`🎯 ${target.name} is VULNERABLE! Damage increased: ${originalDamage} → ${actualDamage} (×${damageMultiplier})`)
+  }
+
+  let newHealth = Math.max(0, target.health - actualDamage)
+
+  // LEECH: Attacker heals for percentage of damage dealt
+  const leechStatus = attacker.statuses?.find(s => s.id === 'LEECH')
+  let attackerHealAmount = 0
+  if (leechStatus) {
+    const healPercent = leechStatus.healPercent || 0.3
+    attackerHealAmount = Math.floor(actualDamage * healPercent)
+    console.log(`🩸 ${attacker.name} leeches ${attackerHealAmount} health (${Math.round(healPercent * 100)}% of ${actualDamage} damage)`)
+  }
+
+  // THORNS: Attacker takes damage when hitting target
+  const thornsStatus = target.statuses?.find(s => s.id === 'THORNS')
+  let thornsDamage = 0
+  if (thornsStatus) {
+    thornsDamage = thornsStatus.damageReflected || 10
+    console.log(`🌵 ${attacker.name} takes ${thornsDamage} damage from THORNS!`)
+  }
+
+  // REFLECT: Attacker takes percentage of damage dealt
+  const reflectStatus = target.statuses?.find(s => s.id === 'REFLECT')
+  let reflectDamage = 0
+  if (reflectStatus) {
+    const reflectPercent = reflectStatus.reflectPercent || 0.5
+    reflectDamage = Math.floor(actualDamage * reflectPercent)
+    console.log(`🪞 ${attacker.name} takes ${reflectDamage} reflected damage (${Math.round(reflectPercent * 100)}% of ${actualDamage})`)
+  }
 
   // Build damage breakdown for display
   const damageBreakdown: Array<{ label: string; value: number }> = []
@@ -110,6 +166,54 @@ const applyAttackEffect = async (
   }
 
   const stateChanges: StateChange[] = [healthChange]
+
+  // Apply THORNS damage to attacker
+  if (thornsDamage > 0) {
+    const attackerNewHealth = Math.max(0, attacker.health - thornsDamage)
+    stateChanges.push({
+      type: 'HEALTH_CHANGE',
+      creatureId: attackerId,
+      timestamp: Date.now(),
+      data: {
+        delta: -thornsDamage,
+        newHealth: attackerNewHealth,
+        source: 'thorns-反击',
+        sourceCreatureId: effect.targetId
+      }
+    })
+  }
+
+  // Apply REFLECT damage to attacker
+  if (reflectDamage > 0) {
+    const attackerNewHealth = Math.max(0, attacker.health - reflectDamage)
+    stateChanges.push({
+      type: 'HEALTH_CHANGE',
+      creatureId: attackerId,
+      timestamp: Date.now(),
+      data: {
+        delta: -reflectDamage,
+        newHealth: attackerNewHealth,
+        source: 'reflect-反射',
+        sourceCreatureId: effect.targetId
+      }
+    })
+  }
+
+  // Apply LEECH healing to attacker
+  if (attackerHealAmount > 0) {
+    const attackerNewHealth = Math.min(attacker.maxHealth, attacker.health + attackerHealAmount)
+    stateChanges.push({
+      type: 'HEALTH_CHANGE',
+      creatureId: attackerId,
+      timestamp: Date.now(),
+      data: {
+        delta: attackerHealAmount,
+        newHealth: attackerNewHealth,
+        source: 'leech-吸血',
+        sourceCreatureId: attackerId
+      }
+    })
+  }
 
   // Process attack effects (burn, poison, stun, cleanse, etc.)
   if (attack.effects && Array.isArray(attack.effects)) {
@@ -199,6 +303,69 @@ const applyAttackEffect = async (
           data: {
             statusId: 'SILENCE',
             duration: 2
+          }
+        })
+      }
+
+      // Batch 2 Effects
+      else if (effectType === 'VULNERABLE') {
+        console.log(`🎯 Attack makes ${target.name} vulnerable (50% increased damage taken)`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'VULNERABLE',
+            duration: 3,
+            damageMultiplier: 1.5
+          }
+        })
+      } else if (effectType === 'THORNS') {
+        console.log(`🌵 ${target.name} gains thorns (reflects 10 damage to attackers)`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'THORNS',
+            duration: 3,
+            damageReflected: 10
+          }
+        })
+      } else if (effectType === 'LEECH') {
+        console.log(`🩸 ${attacker.name} gains leech (heals for 30% of damage dealt)`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: attackerId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'LEECH',
+            duration: 3,
+            healPercent: 0.3
+          }
+        })
+      } else if (effectType === 'EVASION') {
+        console.log(`✨ ${target.name} gains evasion (40% dodge chance)`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'EVASION',
+            duration: 3,
+            dodgeChance: 0.4
+          }
+        })
+      } else if (effectType === 'REFLECT') {
+        console.log(`🪞 ${target.name} gains reflect (returns 50% of damage to attacker)`)
+        stateChanges.push({
+          type: 'STATUS_APPLIED',
+          creatureId: effect.targetId,
+          timestamp: Date.now(),
+          data: {
+            statusId: 'REFLECT',
+            duration: 3,
+            reflectPercent: 0.5
           }
         })
       }
