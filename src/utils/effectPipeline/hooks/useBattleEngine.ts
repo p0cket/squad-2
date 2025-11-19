@@ -486,9 +486,11 @@ export const useBattleEngine = (initialState: BattleState) => {
     const aliveTargets = getAliveCreatures('player')
     
     if (aliveEnemies.length > 0 && aliveTargets.length > 0) {
-      // Simple AI: first alive enemy attacks random player creature
+      // Smart AI: first alive enemy targets the weakest (lowest health) player creature
       const attacker = aliveEnemies[0]
-      const target = aliveTargets[Math.floor(Math.random() * aliveTargets.length)]
+      const target = aliveTargets.reduce((weakest, current) => 
+        current.health < weakest.health ? current : weakest
+      )
       
       const attack = {
         name: "Enemy Attack",
@@ -509,7 +511,24 @@ export const useBattleEngine = (initialState: BattleState) => {
     
     // Small delay before ending computer turn
     await new Promise(resolve => setTimeout(resolve, 500))
-  }, [getAliveCreatures, performAttack])
+    
+    // Check if battle is over after computer attack
+    if (isBattleOver()) {
+      const winner = getBattleWinner()
+      console.log(`🏆 Battle over after computer attack! Winner: ${winner}`)
+      
+      // Update battle status
+      setBattleState(prev => ({
+        ...prev,
+        battleStatus: winner === 'player' ? 'victory' : 'defeat'
+      }))
+      
+      if (contextRef.current) {
+        contextRef.current.state.battleStatus = winner === 'player' ? 'victory' : 'defeat'
+      }
+      return // Don't continue turn progression
+    }
+  }, [getAliveCreatures, performAttack, isBattleOver, getBattleWinner])
 
   /**
    * End current turn and process status effects
@@ -557,11 +576,25 @@ export const useBattleEngine = (initialState: BattleState) => {
     
     // 5. If computer turn, trigger AI after a short delay
     if (newOwner === 'computer') {
-      setTimeout(() => {
-        executeComputerTurn().then(() => {
-          // After computer acts, end their turn
-          endTurn()
-        })
+      setTimeout(async () => {
+        await executeComputerTurn()
+        
+        // After computer acts, switch back to player turn
+        // (Don't call endTurn recursively - just update state)
+        const nextTurn = battleState.turn + 2 // Increment again for player turn
+        
+        setBattleState(prev => ({
+          ...prev,
+          turn: nextTurn,
+          currentTurnOwner: 'player'
+        }))
+        
+        if (contextRef.current) {
+          contextRef.current.state.turn = nextTurn
+          contextRef.current.state.currentTurnOwner = 'player'
+        }
+        
+        console.log(`📊 Turn ${nextTurn}, player's turn`)
       }, 1000)
     }
   }, [battleState, processEndOfTurn, isBattleOver, getBattleWinner, executeComputerTurn])

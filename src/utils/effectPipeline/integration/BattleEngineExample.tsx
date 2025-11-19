@@ -22,6 +22,7 @@ import {
   createReflectAttack
 } from '../effects/attackFactories'
 import { BattleResultScreen } from '../../../components/battle/BattleResultScreen'
+import { TurnTransition } from '../../../components/battle/TurnTransition'
 
 // Example initial battle state
 const exampleBattleState: BattleState = {
@@ -645,6 +646,12 @@ export const BattleEngineExample: React.FC = () => {
           } : undefined}
         />
       )}
+
+      {/* Turn Transition Animation */}
+      <TurnTransition 
+        turnOwner={battleState.currentTurnOwner} 
+        turnNumber={battleState.turn} 
+      />
 
       {/* Target Selection Banner */}
       {isSelectingTarget && (
