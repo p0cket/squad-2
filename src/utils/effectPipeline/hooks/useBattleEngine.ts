@@ -579,6 +579,9 @@ export const useBattleEngine = (initialState: BattleState) => {
       setTimeout(async () => {
         await executeComputerTurn()
         
+        // Small delay to ensure turn transition shows
+        await new Promise(resolve => setTimeout(resolve, 300))
+        
         // After computer acts, switch back to player turn
         // (Don't call endTurn recursively - just update state)
         const nextTurn = battleState.turn + 2 // Increment again for player turn
