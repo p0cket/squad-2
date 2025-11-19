@@ -21,6 +21,7 @@ import {
   createEvasionAttack,
   createReflectAttack
 } from '../effects/attackFactories'
+import { BattleResultScreen } from '../../../components/battle/BattleResultScreen'
 
 // Example initial battle state
 const exampleBattleState: BattleState = {
@@ -149,8 +150,9 @@ const exampleBattleState: BattleState = {
     }
   ],
   mp: 0,
-  turn: 0,
-  battleStatus: null
+  turn: 1,
+  currentTurnOwner: 'player',
+  battleStatus: 'in-progress'
 }
 
 /**
@@ -171,7 +173,7 @@ export const BattleEngineExample: React.FC = () => {
     isBattleOver,
     getBattleWinner,
     resetBattle,
-    processEndOfTurn,
+    endTurn,
     getDebugInfo
   } = useBattleEngine(exampleBattleState)
 
@@ -619,25 +621,31 @@ export const BattleEngineExample: React.FC = () => {
 
   const debugInfo = getDebugInfo()
 
-  // Turn state
-  const [turnNumber, setTurnNumber] = React.useState(1)
-  const [currentTurnOwner, setCurrentTurnOwner] = React.useState<'player' | 'computer'>('player')
+  // Get turn state from battleState (no longer local state)
+  const isPlayerTurn = battleState.currentTurnOwner === 'player'
 
   const handleEndTurn = async () => {
-    // Process end of turn status ticks
-    try {
-      await processEndOfTurn()
-    } catch (err) {
-      console.error('Error during end of turn processing', err)
-    }
-
-    // Advance turn counter and flip owner
-    setTurnNumber(t => t + 1)
-    setCurrentTurnOwner(prev => prev === 'player' ? 'computer' : 'player')
+    await endTurn()
   }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
+      {/* Victory/Defeat Screen Overlay */}
+      {battleState.battleStatus && battleState.battleStatus !== 'in-progress' && (
+        <BattleResultScreen
+          result={battleState.battleStatus}
+          onRestart={() => {
+            console.log('🔄 Restarting battle...')
+            resetBattle()
+          }}
+          onNextLevel={battleState.battleStatus === 'victory' ? () => {
+            console.log('➡️ Next level! (Not implemented yet)')
+            // TODO: Implement level progression
+            alert('Next level feature coming soon!')
+          } : undefined}
+        />
+      )}
+
       {/* Target Selection Banner */}
       {isSelectingTarget && (
         <div className="mb-4 p-4 bg-blue-900/80 backdrop-blur-sm border border-blue-500/50 text-blue-100 rounded-lg shadow-lg shadow-blue-500/20">
@@ -689,11 +697,16 @@ export const BattleEngineExample: React.FC = () => {
         ) : (
           <div className="flex items-center gap-4">
             <div className="text-purple-200">Battle in progress...</div>
-            <div className="text-sm text-slate-300" data-testid="turn-counter">Turn: <span className="font-semibold text-purple-100">{turnNumber}</span></div>
-            <div className="text-sm text-slate-300" data-testid="turn-owner">Owner: <span className="font-semibold text-purple-100">{currentTurnOwner}</span></div>
+            <div className="text-sm text-slate-300" data-testid="turn-counter">Turn: <span className="font-semibold text-purple-100">{battleState.turn}</span></div>
+            <div className="text-sm text-slate-300" data-testid="turn-owner">Owner: <span className="font-semibold text-purple-100">{battleState.currentTurnOwner || 'none'}</span></div>
             <button
               onClick={handleEndTurn}
-              className="ml-4 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded"
+              disabled={!isPlayerTurn || isProcessingEffects}
+              className={`ml-4 px-3 py-1 rounded ${
+                !isPlayerTurn || isProcessingEffects
+                  ? 'bg-gray-600 cursor-not-allowed'
+                  : 'bg-purple-600 hover:bg-purple-700'
+              } text-white`}
               data-testid="end-turn-button"
             >
               End Turn

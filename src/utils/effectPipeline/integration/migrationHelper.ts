@@ -18,7 +18,10 @@ export const convertStateToBattleState = (state: State): BattleState => {
     computerCreatures: state.computerCreatures,
     mp: state.mp,
     turn: state.turn,
-    battleStatus: state.battleStatus
+    currentTurnOwner: null,  // Legacy state doesn't have this, default to null
+    battleStatus: (state.battleStatus === 'in-progress' || state.battleStatus === 'victory' || state.battleStatus === 'defeat') 
+      ? state.battleStatus 
+      : null
   }
 }
 

@@ -476,6 +476,96 @@ export const useBattleEngine = (initialState: BattleState) => {
     }
   }, [battleState, isProcessingEffects])
 
+  /**
+   * Execute computer turn (simple AI)
+   */
+  const executeComputerTurn = useCallback(async () => {
+    console.log('🤖 Computer turn starting...')
+    
+    const aliveEnemies = getAliveCreatures('computer')
+    const aliveTargets = getAliveCreatures('player')
+    
+    if (aliveEnemies.length > 0 && aliveTargets.length > 0) {
+      // Simple AI: first alive enemy attacks random player creature
+      const attacker = aliveEnemies[0]
+      const target = aliveTargets[Math.floor(Math.random() * aliveTargets.length)]
+      
+      const attack = {
+        name: "Enemy Attack",
+        damage: 15,
+        template: "physical",
+        attackType: "physical" as const,
+        effects: [],
+        chanceToLand: 1,
+        trueDamage: 0,
+        icon: "⚔️",
+        notes: "Computer attack",
+        cooldown: 0
+      }
+      
+      console.log(`🤖 ${attacker.name} attacks ${target.name}`)
+      await performAttack(attacker.ID, target.ID, attack)
+    }
+    
+    // Small delay before ending computer turn
+    await new Promise(resolve => setTimeout(resolve, 500))
+  }, [getAliveCreatures, performAttack])
+
+  /**
+   * End current turn and process status effects
+   */
+  const endTurn = useCallback(async () => {
+    console.log('🔄 Ending turn...')
+    
+    // 1. Process end-of-turn status ticks
+    await processEndOfTurn()
+    
+    // 2. Check for battle over
+    if (isBattleOver()) {
+      const winner = getBattleWinner()
+      console.log(`🏆 Battle over! Winner: ${winner}`)
+      
+      // Update battle status
+      setBattleState(prev => ({
+        ...prev,
+        battleStatus: winner === 'player' ? 'victory' : 'defeat'
+      }))
+      
+      if (contextRef.current) {
+        contextRef.current.state.battleStatus = winner === 'player' ? 'victory' : 'defeat'
+      }
+      return
+    }
+    
+    // 3. Advance turn counter and switch owner
+    const newTurn = battleState.turn + 1
+    const newOwner = battleState.currentTurnOwner === 'player' ? 'computer' : 'player'
+    
+    console.log(`📊 Turn ${newTurn}, ${newOwner}'s turn`)
+    
+    // 4. Update state
+    setBattleState(prev => ({
+      ...prev,
+      turn: newTurn,
+      currentTurnOwner: newOwner
+    }))
+    
+    if (contextRef.current) {
+      contextRef.current.state.turn = newTurn
+      contextRef.current.state.currentTurnOwner = newOwner
+    }
+    
+    // 5. If computer turn, trigger AI after a short delay
+    if (newOwner === 'computer') {
+      setTimeout(() => {
+        executeComputerTurn().then(() => {
+          // After computer acts, end their turn
+          endTurn()
+        })
+      }, 1000)
+    }
+  }, [battleState, processEndOfTurn, isBattleOver, getBattleWinner, executeComputerTurn])
+
   return {
     // State
     battleState,
@@ -511,6 +601,8 @@ export const useBattleEngine = (initialState: BattleState) => {
 
     // Turn system
     processEndOfTurn,
+    endTurn,
+    executeComputerTurn,
 
     // Debug
     getDebugInfo

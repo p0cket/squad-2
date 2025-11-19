@@ -42,6 +42,7 @@ const mockBattleState: BattleState = {
   ],
   mp: 0,
   turn: 0,
+  currentTurnOwner: null,
   battleStatus: null
 }
 

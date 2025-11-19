@@ -48,6 +48,7 @@ describe('Battle Context', () => {
     ],
     mp: 0,
     turn: 0,
+    currentTurnOwner: null,
     battleStatus: null
   }
 

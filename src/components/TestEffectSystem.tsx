@@ -44,7 +44,8 @@ const TestEffectSystem: React.FC = () => {
     computerCreatures: [mockCreatures[1]],
     mp: 100,
     turn: 1,
-    battleStatus: null
+    currentTurnOwner: 'player' as const,
+    battleStatus: 'in-progress' as const
   }
 
   const { battleState, performAttack } = useBattleEngine(initialState)

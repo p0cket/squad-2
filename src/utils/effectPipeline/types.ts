@@ -105,7 +105,8 @@ export type BattleState = {
   computerCreatures: Creature[]
   mp: number
   turn: number
-  battleStatus: string | null
+  currentTurnOwner: 'player' | 'computer' | null
+  battleStatus: 'in-progress' | 'victory' | 'defeat' | null
 }
 
 export type BattleContext = {
