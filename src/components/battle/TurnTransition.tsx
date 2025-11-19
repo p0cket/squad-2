@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 interface TurnTransitionProps {
   turnOwner: 'player' | 'computer' | null
@@ -10,24 +10,31 @@ interface TurnTransitionProps {
  */
 export const TurnTransition: React.FC<TurnTransitionProps> = ({ turnOwner, turnNumber }) => {
   const [isVisible, setIsVisible] = useState(false)
-  const [prevOwner, setPrevOwner] = useState<'player' | 'computer' | null>(null)
+  const prevOwnerRef = useRef<'player' | 'computer' | null>(null)
 
   useEffect(() => {
+    console.log('🔍 TurnTransition effect:', { turnOwner, prevOwner: prevOwnerRef.current, isVisible })
+    
     // Show transition when turn owner changes (but not on initial mount)
-    if (prevOwner !== null && turnOwner !== prevOwner && turnOwner !== null) {
+    if (prevOwnerRef.current !== null && turnOwner !== prevOwnerRef.current && turnOwner !== null) {
+      console.log('✅ Showing turn transition:', turnOwner)
       setIsVisible(true)
       
       // Hide after 1.5 seconds
       const timer = setTimeout(() => {
+        console.log('⏰ Hiding turn transition')
         setIsVisible(false)
       }, 1500)
+      
+      // Update ref for next time
+      prevOwnerRef.current = turnOwner
       
       return () => clearTimeout(timer)
     }
     
-    // Update previous owner
-    setPrevOwner(turnOwner)
-  }, [turnOwner, prevOwner])
+    // Update previous owner ref
+    prevOwnerRef.current = turnOwner
+  }, [turnOwner]) // Only depend on turnOwner, not prevOwner
 
   if (!isVisible) return null
 
