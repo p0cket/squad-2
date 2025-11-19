@@ -10,11 +10,11 @@ interface TurnTransitionProps {
  */
 export const TurnTransition: React.FC<TurnTransitionProps> = ({ turnOwner, turnNumber }) => {
   const [isVisible, setIsVisible] = useState(false)
-  const [prevOwner, setPrevOwner] = useState(turnOwner)
+  const [prevOwner, setPrevOwner] = useState<'player' | 'computer' | null>(null)
 
   useEffect(() => {
-    // Show transition when turn owner changes
-    if (turnOwner !== prevOwner && turnOwner !== null) {
+    // Show transition when turn owner changes (but not on initial mount)
+    if (prevOwner !== null && turnOwner !== prevOwner && turnOwner !== null) {
       setIsVisible(true)
       
       // Hide after 1.5 seconds
@@ -22,10 +22,11 @@ export const TurnTransition: React.FC<TurnTransitionProps> = ({ turnOwner, turnN
         setIsVisible(false)
       }, 1500)
       
-      setPrevOwner(turnOwner)
-      
       return () => clearTimeout(timer)
     }
+    
+    // Update previous owner
+    setPrevOwner(turnOwner)
   }, [turnOwner, prevOwner])
 
   if (!isVisible) return null
