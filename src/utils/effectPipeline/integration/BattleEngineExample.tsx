@@ -725,154 +725,212 @@ export const BattleEngineExample: React.FC = () => {
         )}
       </div>
 
-      {/* Creatures Display */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Player Creatures */}
-        <div className="p-4 bg-slate-800/60 backdrop-blur-sm border border-blue-500/30 rounded-lg">
-          <h3 className="text-lg font-semibold mb-3 text-blue-300">Player Creatures</h3>
-          {battleState.playerCreatures.map(creature => (
-            <div
-              key={creature.ID}
-              data-testid="creature-card"
-              data-creature-name={creature.name}
-              data-creature-id={creature.ID}
-              onClick={() => handleCreatureClick(creature.ID)}
-              className={`p-3 border rounded mb-2 transition-all ${
-                creature.health <= 0 
-                  ? 'opacity-50 bg-slate-900/50 border-slate-600' 
-                  : isSelectingTarget
-                  ? 'bg-blue-900/40 border-blue-400 cursor-pointer hover:bg-blue-800/60 hover:shadow-lg hover:shadow-blue-500/20'
-                  : 'bg-slate-900/70 border-slate-600'
-              }`}
-            >
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-purple-100">
-                  {creature.icon} {creature.name}
-                </span>
-                <div className="text-sm" data-testid="creature-health">
-                  <span className={creature.health <= 0 ? 'text-red-400' : 'text-green-400'}>
-                    {creature.health}/{creature.maxHealth} HP
-                  </span>
-                </div>
-              </div>
-              <div className="text-xs text-gray-600 mt-1">
-                ATK: {creature.attack} | DEF: {creature.defense}
-              </div>
-              {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-purple-500/20">
-                  <div className="text-xs text-purple-300 mb-1 font-semibold">⚡ Passive Abilities:</div>
-                  {creature.passiveAbilities.map((ability) => (
-                    <div 
-                      key={ability.id} 
-                      onClick={(e) => handlePassiveClick(ability, e)}
-                      className="text-xs bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/40 rounded p-2 mb-1 cursor-pointer transition-all hover:shadow-lg hover:shadow-yellow-500/20 group"
-                    >
-                      <div className="font-semibold text-yellow-200 group-hover:text-yellow-100">
-                        {ability.icon} {ability.name}
-                        <span className="ml-2 text-xs text-yellow-400/70 group-hover:text-yellow-300">ⓘ Click for details</span>
-                      </div>
-                      <div className="text-yellow-300/90 mt-1">{ability.description}</div>
+      {/* Creatures Display - Vertical Layout */}
+      <div className="mb-4 space-y-3">
+        {/* Computer Creatures (Top) */}
+        <div className="p-3 bg-slate-800/60 backdrop-blur-sm border border-red-500/30 rounded-lg">
+          <h3 className="text-sm font-semibold mb-2 text-red-300 flex items-center gap-1.5">
+            <span className="text-base">🤖</span> Enemy Creatures
+          </h3>
+          {battleState.computerCreatures.map(creature => {
+            const hpPercent = (creature.health / creature.maxHealth) * 100;
+            const getHPColor = () => {
+              if (hpPercent > 66) return 'from-green-500 to-emerald-600';
+              if (hpPercent > 33) return 'from-amber-500 to-orange-600';
+              return 'from-red-500 to-rose-600';
+            };
+            
+            return (
+              <div
+                key={creature.ID}
+                data-testid="creature-card"
+                data-creature-name={creature.name}
+                data-creature-id={creature.ID}
+                onClick={() => handleCreatureClick(creature.ID)}
+                className={`relative p-2.5 rounded-lg mb-2 transition-all duration-300 ${
+                  creature.health <= 0 
+                    ? 'opacity-50 bg-slate-900/50 border border-slate-700' 
+                    : isSelectingTarget
+                    ? 'bg-gradient-to-br from-red-900/60 via-red-800/40 to-red-900/60 border-2 border-red-400 cursor-pointer hover:scale-[1.02] hover:shadow-xl hover:shadow-red-500/30 transform'
+                    : 'bg-gradient-to-br from-slate-900/90 via-purple-900/20 to-slate-900/90 border border-slate-600/50 hover:border-red-500/50'
+                }`}
+              >
+                {/* Header - Horizontal Layout */}
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-3xl">{creature.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-sm text-purple-100 truncate">{creature.name}</div>
+                    <div className="flex gap-1.5 mt-0.5">
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-red-500/20 border border-red-500/40 text-red-200 font-semibold">
+                        ⚔️{creature.attack}
+                      </span>
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 border border-blue-500/40 text-blue-200 font-semibold">
+                        🛡️{creature.defense}
+                      </span>
                     </div>
-                  ))}
+                  </div>
+                  {/* HP inline */}
+                  <div className="text-right">
+                    <div className={`text-xs font-bold ${creature.health <= 0 ? 'text-red-400' : hpPercent > 66 ? 'text-green-400' : hpPercent > 33 ? 'text-amber-400' : 'text-red-400'}`} data-testid="creature-health">
+                      {creature.health}/{creature.maxHealth}
+                    </div>
+                    <div className="w-16 h-1.5 bg-slate-700/50 rounded-full overflow-hidden border border-slate-600/50 mt-0.5">
+                      <div 
+                        className={`h-full bg-gradient-to-r ${getHPColor()} transition-all duration-500`}
+                        style={{ width: `${Math.max(0, hpPercent)}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              )}
-              {creature.statuses.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {creature.statuses.map((status, idx) => (
-                    <span
-                      key={`${status.id}-${idx}`}
-                      data-testid="status-badge"
-                      data-status-id={status.id}
-                      onClick={(e) => handleStatusClick(status, e)}
-                      className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium cursor-pointer transition-all hover:shadow-lg group ${
-                        status.type === 'debuff'
-                          ? 'bg-red-500/30 text-red-200 border border-red-400/50 hover:bg-red-500/40 hover:shadow-red-500/30'
-                          : status.type === 'buff'
-                          ? 'bg-green-500/30 text-green-200 border border-green-400/50 hover:bg-green-500/40 hover:shadow-green-500/30'
-                          : 'bg-slate-500/30 text-slate-200 border border-slate-400/50 hover:bg-slate-500/40 hover:shadow-slate-500/30'
-                      }`}
-                    >
-                      {status.icon} {status.name} ({status.duration})
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+
+                {/* Passive Abilities - Compact */}
+                {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
+                  <div className="mb-1.5">
+                    {creature.passiveAbilities.map((ability) => (
+                      <div 
+                        key={ability.id} 
+                        onClick={(e) => handlePassiveClick(ability, e)}
+                        className="text-[10px] bg-gradient-to-r from-yellow-500/15 to-amber-500/15 hover:from-yellow-500/25 hover:to-amber-500/25 border border-yellow-500/40 rounded px-2 py-1 mb-1 cursor-pointer transition-all group"
+                      >
+                        <div className="font-semibold text-yellow-200 group-hover:text-yellow-100 flex items-center gap-1">
+                          <span className="text-xs">{ability.icon}</span>
+                          <span className="truncate flex-1">{ability.name}</span>
+                          <span className="text-yellow-400/70">ⓘ</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Status Effects - Inline */}
+                {creature.statuses.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {creature.statuses.map((status, idx) => (
+                      <span
+                        key={`${status.id}-${idx}`}
+                        data-testid="status-badge"
+                        data-status-id={status.id}
+                        onClick={(e) => handleStatusClick(status, e)}
+                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold cursor-pointer transition-all hover:scale-105 ${
+                          status.type === 'debuff'
+                            ? 'bg-red-500/30 text-red-200 border border-red-400/50'
+                            : status.type === 'buff'
+                            ? 'bg-green-500/30 text-green-200 border border-green-400/50'
+                            : 'bg-slate-500/30 text-slate-200 border border-slate-400/50'
+                        }`}
+                      >
+                        <span className="text-xs">{status.icon}</span>
+                        <span className="opacity-70">({status.duration})</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
-        {/* Computer Creatures */}
-        <div className="p-4 bg-slate-800/60 backdrop-blur-sm border border-red-500/30 rounded-lg">
-          <h3 className="text-lg font-semibold mb-3 text-red-300">Computer Creatures</h3>
-          {battleState.computerCreatures.map(creature => (
-            <div
-              key={creature.ID}
-              data-testid="creature-card"
-              data-creature-name={creature.name}
-              data-creature-id={creature.ID}
-              onClick={() => handleCreatureClick(creature.ID)}
-              className={`p-3 border rounded mb-2 transition-all ${
-                creature.health <= 0 
-                  ? 'opacity-50 bg-slate-900/50 border-slate-600' 
-                  : isSelectingTarget
-                  ? 'bg-red-900/40 border-red-400 cursor-pointer hover:bg-red-800/60 hover:shadow-lg hover:shadow-red-500/20'
-                  : 'bg-slate-900/70 border-slate-600'
-              }`}
-            >
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-purple-100">
-                  {creature.icon} {creature.name}
-                </span>
-                <div className="text-sm" data-testid="creature-health">
-                  <span className={creature.health <= 0 ? 'text-red-400' : 'text-green-400'}>
-                    {creature.health}/{creature.maxHealth} HP
-                  </span>
-                </div>
-              </div>
-              <div className="text-xs text-gray-600 mt-1">
-                ATK: {creature.attack} | DEF: {creature.defense}
-              </div>
-              {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
-                <div className="mt-2 pt-2 border-t border-purple-500/20">
-                  <div className="text-xs text-purple-300 mb-1 font-semibold">⚡ Passive Abilities:</div>
-                  {creature.passiveAbilities.map((ability) => (
-                    <div 
-                      key={ability.id} 
-                      onClick={(e) => handlePassiveClick(ability, e)}
-                      className="text-xs bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/40 rounded p-2 mb-1 cursor-pointer transition-all hover:shadow-lg hover:shadow-yellow-500/20 group"
-                    >
-                      <div className="font-semibold text-yellow-200 group-hover:text-yellow-100">
-                        {ability.icon} {ability.name}
-                        <span className="ml-2 text-xs text-yellow-400/70 group-hover:text-yellow-300">ⓘ Click for details</span>
-                      </div>
-                      <div className="text-yellow-300/90 mt-1">{ability.description}</div>
+        {/* Player Creatures (Bottom) */}
+        <div className="p-3 bg-slate-800/60 backdrop-blur-sm border border-blue-500/30 rounded-lg">
+          <h3 className="text-sm font-semibold mb-2 text-blue-300 flex items-center gap-1.5">
+            <span className="text-base">👤</span> Your Creatures
+          </h3>
+          {battleState.playerCreatures.map(creature => {
+            const hpPercent = (creature.health / creature.maxHealth) * 100;
+            const getHPColor = () => {
+              if (hpPercent > 66) return 'from-green-500 to-emerald-600';
+              if (hpPercent > 33) return 'from-amber-500 to-orange-600';
+              return 'from-red-500 to-rose-600';
+            };
+            
+            return (
+              <div
+                key={creature.ID}
+                data-testid="creature-card"
+                data-creature-name={creature.name}
+                data-creature-id={creature.ID}
+                onClick={() => handleCreatureClick(creature.ID)}
+                className={`relative p-2.5 rounded-lg mb-2 transition-all duration-300 ${
+                  creature.health <= 0 
+                    ? 'opacity-50 bg-slate-900/50 border border-slate-700' 
+                    : isSelectingTarget
+                    ? 'bg-gradient-to-br from-blue-900/60 via-blue-800/40 to-blue-900/60 border-2 border-blue-400 cursor-pointer hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/30 transform'
+                    : 'bg-gradient-to-br from-slate-900/90 via-purple-900/20 to-slate-900/90 border border-slate-600/50 hover:border-blue-500/50'
+                }`}
+              >
+                {/* Header - Horizontal Layout */}
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-3xl">{creature.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-sm text-purple-100 truncate">{creature.name}</div>
+                    <div className="flex gap-1.5 mt-0.5">
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-red-500/20 border border-red-500/40 text-red-200 font-semibold">
+                        ⚔️{creature.attack}
+                      </span>
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 border border-blue-500/40 text-blue-200 font-semibold">
+                        🛡️{creature.defense}
+                      </span>
                     </div>
-                  ))}
+                  </div>
+                  {/* HP inline */}
+                  <div className="text-right">
+                    <div className={`text-xs font-bold ${creature.health <= 0 ? 'text-red-400' : hpPercent > 66 ? 'text-green-400' : hpPercent > 33 ? 'text-amber-400' : 'text-red-400'}`} data-testid="creature-health">
+                      {creature.health}/{creature.maxHealth}
+                    </div>
+                    <div className="w-16 h-1.5 bg-slate-700/50 rounded-full overflow-hidden border border-slate-600/50 mt-0.5">
+                      <div 
+                        className={`h-full bg-gradient-to-r ${getHPColor()} transition-all duration-500`}
+                        style={{ width: `${Math.max(0, hpPercent)}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              )}
-              {creature.statuses.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {creature.statuses.map((status, idx) => (
-                    <span
-                      key={`${status.id}-${idx}`}
-                      data-testid="status-badge"
-                      data-status-id={status.id}
-                      onClick={(e) => handleStatusClick(status, e)}
-                      className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium cursor-pointer transition-all hover:shadow-lg group ${
-                        status.type === 'debuff'
-                          ? 'bg-red-500/30 text-red-200 border border-red-400/50 hover:bg-red-500/40 hover:shadow-red-500/30'
-                          : status.type === 'buff'
-                          ? 'bg-green-500/30 text-green-200 border border-green-400/50 hover:bg-green-500/40 hover:shadow-green-500/30'
-                          : 'bg-slate-500/30 text-slate-200 border border-slate-400/50 hover:bg-slate-500/40 hover:shadow-slate-500/30'
-                      }`}
-                    >
-                      {status.icon} {status.name} ({status.duration})
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+
+                {/* Passive Abilities - Compact */}
+                {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
+                  <div className="mb-1.5">
+                    {creature.passiveAbilities.map((ability) => (
+                      <div 
+                        key={ability.id} 
+                        onClick={(e) => handlePassiveClick(ability, e)}
+                        className="text-[10px] bg-gradient-to-r from-yellow-500/15 to-amber-500/15 hover:from-yellow-500/25 hover:to-amber-500/25 border border-yellow-500/40 rounded px-2 py-1 mb-1 cursor-pointer transition-all group"
+                      >
+                        <div className="font-semibold text-yellow-200 group-hover:text-yellow-100 flex items-center gap-1">
+                          <span className="text-xs">{ability.icon}</span>
+                          <span className="truncate flex-1">{ability.name}</span>
+                          <span className="text-yellow-400/70">ⓘ</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Status Effects - Inline */}
+                {creature.statuses.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {creature.statuses.map((status, idx) => (
+                      <span
+                        key={`${status.id}-${idx}`}
+                        data-testid="status-badge"
+                        data-status-id={status.id}
+                        onClick={(e) => handleStatusClick(status, e)}
+                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold cursor-pointer transition-all hover:scale-105 ${
+                          status.type === 'debuff'
+                            ? 'bg-red-500/30 text-red-200 border border-red-400/50'
+                            : status.type === 'buff'
+                            ? 'bg-green-500/30 text-green-200 border border-green-400/50'
+                            : 'bg-slate-500/30 text-slate-200 border border-slate-400/50'
+                        }`}
+                      >
+                        <span className="text-xs">{status.icon}</span>
+                        <span className="opacity-70">({status.duration})</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
