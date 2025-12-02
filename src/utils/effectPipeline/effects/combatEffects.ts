@@ -3,6 +3,7 @@ import { Effect, BattleContext, EffectApplicationResult, HealthChange, StateChan
 import { registerEffectApplicator } from '../effectApplicatorRegistry'
 import { getCreatureFromContext } from '../effectResolver'
 import { Attack } from '../../../consts/types/types'
+import { battleEventLogger } from '../eventLogger'
 
 // ============================================================================
 // EFFECT DATA TYPES (Serializable)
@@ -134,6 +135,19 @@ const applyAttackEffect = async (
   console.log(`⚔️ Attack: ${attacker.name} attacks ${target.name}`)
   console.log(`  📊 Breakdown: ${damageBreakdown.map(b => `${b.label} ${b.value >= 0 ? '+' : ''}${b.value}`).join(' | ')}`)
   console.log(`  💔 Result: ${target.health} → ${newHealth} (-${actualDamage} damage)`)
+
+  // Log to battle timeline
+  battleEventLogger.logAttack({
+    attackerName: attacker.name,
+    targetName: target.name,
+    attackName: attack.name,
+    baseDamage: baseAttackDamage,
+    attackerAtk: attackerBonus,
+    targetDef: defense,
+    totalDamage: actualDamage,
+    targetOldHp: target.health,
+    targetNewHp: newHealth
+  })
 
   // Create animations
   const animations: Animation[] = [

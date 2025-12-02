@@ -1,6 +1,7 @@
 // Battle Context - Manages battle state and change tracking
 import { BattleState, BattleContext, StateChange, HealthChange, StatusChange, CreatureMovement } from './types'
 import { Creature } from '../../consts/types/types'
+import { battleEventLogger } from './eventLogger'
 
 // Simple structuredClone polyfill for compatibility
 const safeClone = <T>(obj: T): T => {
@@ -44,6 +45,19 @@ export const applyChangesToContext = (
   })
 
   if (changes.length === 0) return
+
+  // Log changes to event logger with context for better messaging
+  changes.forEach(change => {
+    const creature = 
+      context.state.playerCreatures.find(c => c.ID === change.creatureId) ||
+      context.state.computerCreatures.find(c => c.ID === change.creatureId)
+    
+    if (creature) {
+      battleEventLogger.logStateChange(change, creature.name)
+    } else {
+      battleEventLogger.logStateChange(change)
+    }
+  })
 
   // Save history for potential rollback
   context.stateHistory.push(safeClone(context.state))

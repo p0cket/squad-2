@@ -32,6 +32,8 @@ import {
   buildLifeDrainEffect,
   buildAoeAttackEffect
 } from '../factories'
+import { selectBestTarget, selectAttack } from '../ai/autopilotAI'
+import { battleEventLogger } from '../eventLogger'
 
 // Feature flag: Set to true to use Zustand adapter instead of native BattleContext
 const USE_ZUSTAND_ADAPTER = true // ✅ ZUSTAND ENABLED FOR TESTING
@@ -44,6 +46,24 @@ export const useBattleEngine = (initialState: BattleState) => {
   const contextRef = useRef<BattleContext>()
   const zustandStoreRef = useRef<ReturnType<typeof createZustandBattleStore>>()
   const [isProcessingEffects, setIsProcessingEffects] = useState(false)
+  
+  // Autopilot state
+  const [isAutopilotEnabled, setIsAutopilotEnabled] = useState(false)
+  const [autopilotSpeed, setAutopilotSpeed] = useState(1000) // Default: 1000ms delay
+
+  /**
+   * Get battle event log
+   */
+  const getEventLog = useCallback(() => {
+    return battleEventLogger.getEvents()
+  }, [])
+
+  /**
+   * Clear battle event log
+   */
+  const clearEventLog = useCallback(() => {
+    battleEventLogger.clearEvents()
+  }, [])
 
   // Initialize context on first render (during render phase, not in useEffect)
   // This ensures the context persists across React Strict Mode double-mounting
@@ -117,6 +137,71 @@ export const useBattleEngine = (initialState: BattleState) => {
       unsubscribe()
     }
   }, [])
+
+  // Trigger autopilot when enabled during an active player turn
+  useEffect(() => {
+    if (isAutopilotEnabled && 
+        battleState.currentTurnOwner === 'player' && 
+        !isProcessingEffects &&
+        battleState.battleStatus === 'in-progress') {
+      console.log('🤖 Autopilot enabled on player turn - triggering immediately')
+      
+      // Small delay to allow UI to update
+      const timer = setTimeout(async () => {
+        const alivePlayerCreatures = battleState.playerCreatures.filter(c => c.health > 0)
+        const aliveEnemies = battleState.computerCreatures.filter(c => c.health > 0)
+        
+        if (alivePlayerCreatures.length > 0 && aliveEnemies.length > 0) {
+          // Use the executePlayerAutopilot function via a ref to avoid stale closures
+          // For now, we'll manually trigger it here
+          const attacker = alivePlayerCreatures[0]
+          const target = aliveEnemies.reduce((weakest, current) =>
+            current.health < weakest.health ? current : weakest
+          )
+          
+          const attack = {
+            name: "Auto Attack",
+            damage: 15,
+            template: "physical",
+            attackType: "physical" as const,
+            effects: [],
+            chanceToLand: 1,
+            trueDamage: 0,
+            icon: "⚔️",
+            notes: "Autopilot basic attack",
+            cooldown: 0
+          }
+          
+          console.log(`🤖 Autopilot: ${attacker.name} attacks ${target.name}`)
+          
+          if (contextRef.current) {
+            const effect = buildAttackEffect(attacker.ID, target.ID, attack)
+            await processEffectChain(effect, contextRef.current)
+          }
+          
+          // Apply autopilot speed delay then end turn
+          await new Promise(resolve => setTimeout(resolve, autopilotSpeed))
+          
+          // Manually trigger endTurn by updating state
+          const newTurn = battleState.turn + 1
+          const newOwner = 'computer'
+          
+          setBattleState(prev => ({
+            ...prev,
+            turn: newTurn,
+            currentTurnOwner: newOwner
+          }))
+          
+          if (contextRef.current) {
+            contextRef.current.state.turn = newTurn
+            contextRef.current.state.currentTurnOwner = newOwner
+          }
+        }
+      }, 500)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [isAutopilotEnabled, battleState.currentTurnOwner, battleState.turn, isProcessingEffects, battleState.battleStatus])
 
   // Note: Removed state synchronization that could interfere with effect pipeline
   // The context should be the single source of truth, not React state
@@ -531,6 +616,55 @@ export const useBattleEngine = (initialState: BattleState) => {
   }, [getAliveCreatures, performAttack, isBattleOver, getBattleWinner])
 
   /**
+   * Execute player autopilot turn (AI for player)
+   */
+  const executePlayerAutopilot = useCallback(async () => {
+    console.log('🤖 Player autopilot turn starting...')
+    
+    const alivePlayerCreatures = getAliveCreatures('player')
+    const aliveEnemies = getAliveCreatures('computer')
+    
+    if (alivePlayerCreatures.length > 0 && aliveEnemies.length > 0) {
+      // Use first alive player creature as attacker
+      const attacker = alivePlayerCreatures[0]
+      
+      // Use AI to select best target (weakest enemy)
+      const target = selectBestTarget(aliveEnemies, 'weakest')
+      
+      if (!target) {
+        console.warn('⚠️ Autopilot could not find a target')
+        return
+      }
+      
+      // Use AI to select attack (basic for now)
+      const attack = selectAttack(attacker, target, 'basic')
+      
+      console.log(`🤖 Autopilot: ${attacker.name} attacks ${target.name}`)
+      await performAttack(attacker.ID, target.ID, attack)
+    }
+    
+    // Apply autopilot speed delay
+    await new Promise(resolve => setTimeout(resolve, autopilotSpeed))
+    
+    // Check if battle is over after player autopilot attack
+    if (isBattleOver()) {
+      const winner = getBattleWinner()
+      console.log(`🏆 Battle over after autopilot attack! Winner: ${winner}`)
+      
+      // Update battle status
+      setBattleState(prev => ({
+        ...prev,
+        battleStatus: winner === 'player' ? 'victory' : 'defeat'
+      }))
+      
+      if (contextRef.current) {
+        contextRef.current.state.battleStatus = winner === 'player' ? 'victory' : 'defeat'
+      }
+      return // Don't continue turn progression
+    }
+  }, [getAliveCreatures, performAttack, isBattleOver, getBattleWinner, autopilotSpeed])
+
+  /**
    * End current turn and process status effects
    */
   const endTurn = useCallback(async () => {
@@ -583,24 +717,42 @@ export const useBattleEngine = (initialState: BattleState) => {
         await new Promise(resolve => setTimeout(resolve, 300))
         
         // After computer acts, switch back to player turn
-        // (Don't call endTurn recursively - just update state)
-        const nextTurn = battleState.turn + 2 // Increment again for player turn
+        // Use functional update to get the latest turn value
+        setBattleState(prev => {
+          const nextTurn = prev.turn + 1 // Increment for player turn
+          
+          if (contextRef.current) {
+            contextRef.current.state.turn = nextTurn
+            contextRef.current.state.currentTurnOwner = 'player'
+          }
+          
+          console.log(`📊 Turn ${nextTurn}, player's turn`)
+          
+          return {
+            ...prev,
+            turn: nextTurn,
+            currentTurnOwner: 'player'
+          }
+        })
         
-        setBattleState(prev => ({
-          ...prev,
-          turn: nextTurn,
-          currentTurnOwner: 'player'
-        }))
-        
-        if (contextRef.current) {
-          contextRef.current.state.turn = nextTurn
-          contextRef.current.state.currentTurnOwner = 'player'
+        // 6. If autopilot is enabled, trigger player autopilot after a delay
+        if (isAutopilotEnabled) {
+          setTimeout(async () => {
+            await executePlayerAutopilot()
+            // After autopilot acts, end turn to continue the cycle
+            await endTurn()
+          }, 500)
         }
-        
-        console.log(`📊 Turn ${nextTurn}, player's turn`)
       }, 1000)
+    } else if (newOwner === 'player' && isAutopilotEnabled) {
+      // If it's player turn and autopilot is enabled, trigger autopilot
+      setTimeout(async () => {
+        await executePlayerAutopilot()
+        // After autopilot acts, end turn
+        await endTurn()
+      }, 500)
     }
-  }, [battleState, processEndOfTurn, isBattleOver, getBattleWinner, executeComputerTurn])
+  }, [battleState, processEndOfTurn, isBattleOver, getBattleWinner, executeComputerTurn, executePlayerAutopilot, isAutopilotEnabled])
 
   return {
     // State
@@ -639,6 +791,17 @@ export const useBattleEngine = (initialState: BattleState) => {
     processEndOfTurn,
     endTurn,
     executeComputerTurn,
+    executePlayerAutopilot,
+
+    // Autopilot
+    isAutopilotEnabled,
+    setIsAutopilotEnabled,
+    autopilotSpeed,
+    setAutopilotSpeed,
+
+    // Event Log
+    getEventLog,
+    clearEventLog,
 
     // Debug
     getDebugInfo

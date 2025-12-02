@@ -394,16 +394,6 @@ export const AttackShowcase: React.FC<AttackShowcaseProps> = ({
     }
   ]
 
-  // Group attacks by category
-  const categories = {
-    damage: attacks.filter(a => a.category === 'damage'),
-    status: attacks.filter(a => a.category === 'status'),
-    debuff: attacks.filter(a => a.category === 'debuff'),
-    buff: attacks.filter(a => a.category === 'buff'),
-    heal: attacks.filter(a => a.category === 'heal'),
-    special: attacks.filter(a => a.category === 'special')
-  }
-
   const renderAttackButton = (attack: Attack) => (
     <div key={attack.id} className="relative group">
       <button
@@ -459,150 +449,163 @@ export const AttackShowcase: React.FC<AttackShowcaseProps> = ({
     </div>
   )
 
+  // Add Batch 2 attacks to the attacks array for consistent rendering
+  const batch2Attacks: Attack[] = [
+    {
+      id: 'vulnerable',
+      name: 'Expose Weakness',
+      icon: '🎯',
+      damage: 12,
+      description: '12 damage + VULNERABLE (target takes 50% more damage for 3 turns)',
+      category: 'debuff',
+      color: 'bg-red-600',
+      hoverColor: 'hover:bg-red-700',
+      testId: 'btn-vulnerable'
+    },
+    {
+      id: 'thorns',
+      name: 'Thorn Shield',
+      icon: '🌵',
+      damage: 8,
+      description: '8 damage + THORNS (reflects 10 damage to attackers for 3 turns)',
+      category: 'buff',
+      color: 'bg-green-600',
+      hoverColor: 'hover:bg-green-700',
+      testId: 'btn-thorns'
+    },
+    {
+      id: 'leech',
+      name: 'Vampiric Strike',
+      icon: '🩸',
+      damage: 18,
+      description: '18 damage + LEECH (heals for 30% of damage dealt for 3 turns)',
+      category: 'special',
+      color: 'bg-rose-600',
+      hoverColor: 'hover:bg-rose-700',
+      testId: 'btn-leech'
+    },
+    {
+      id: 'evasion',
+      name: 'Blur',
+      icon: '✨',
+      damage: 5,
+      description: '5 damage + EVASION (40% dodge chance for 3 turns)',
+      category: 'buff',
+      color: 'bg-yellow-500',
+      hoverColor: 'hover:bg-yellow-600',
+      testId: 'btn-evasion'
+    },
+    {
+      id: 'reflect',
+      name: 'Mirror Image',
+      icon: '🪞',
+      damage: 6,
+      description: '6 damage + REFLECT (returns 50% damage to attackers for 3 turns)',
+      category: 'special',
+      color: 'bg-cyan-500',
+      hoverColor: 'hover:bg-cyan-600',
+      testId: 'btn-reflect'
+    }
+  ]
+
+  // Update categories to include Batch 2 attacks
+  const allAttacks = [...attacks, ...batch2Attacks]
+  const allCategories = {
+    damage: allAttacks.filter(a => a.category === 'damage'),
+    status: allAttacks.filter(a => a.category === 'status'),
+    debuff: allAttacks.filter(a => a.category === 'debuff'),
+    buff: allAttacks.filter(a => a.category === 'buff'),
+    heal: allAttacks.filter(a => a.category === 'heal'),
+    special: allAttacks.filter(a => a.category === 'special')
+  }
+
   return (
-    <div className="space-y-6">
-      {/* FULLY IMPLEMENTED ✅ */}
-      <div className="border-2 border-green-500/30 rounded-lg p-4 bg-green-900/10">
-        <h2 className="text-lg font-bold text-green-400 mb-3 flex items-center gap-2">
-          <span>✅</span>
-          <span>Fully Implemented & Tested</span>
-        </h2>
+    <div className="space-y-2">
+      {/* MAIN ATTACK ARSENAL - More Compact */}
+      <div className="border border-green-500/30 rounded-lg p-2 bg-green-900/10">
+        <h2 className="text-xs font-bold text-green-400 mb-2">✅ Attack Arsenal</h2>
         
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           <div>
-            <h3 className="text-sm font-semibold text-purple-300 mb-2">💥 Direct Damage</h3>
-            <div className="flex flex-wrap gap-2">
-              {categories.damage.map(renderAttackButton)}
+            <h3 className="text-xs font-semibold text-purple-300 mb-1">💥 Damage</h3>
+            <div className="flex flex-wrap gap-1">
+              {allCategories.damage.map(renderAttackButton)}
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-purple-300 mb-2">🔥 Status Effects (DoT)</h3>
-            <div className="flex flex-wrap gap-2">
-              {categories.status.map(renderAttackButton)}
+            <h3 className="text-xs font-semibold text-purple-300 mb-1">🔥 DoT</h3>
+            <div className="flex flex-wrap gap-1">
+              {allCategories.status.map(renderAttackButton)}
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-purple-300 mb-2">⬇️ Debuffs & Control</h3>
-            <div className="flex flex-wrap gap-2">
-              {categories.debuff.map(renderAttackButton)}
+            <h3 className="text-xs font-semibold text-purple-300 mb-1">⬇️ Debuff</h3>
+            <div className="flex flex-wrap gap-1">
+              {allCategories.debuff.map(renderAttackButton)}
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-purple-300 mb-2">⬆️ Buffs & Support</h3>
-            <div className="flex flex-wrap gap-2">
-              {categories.buff.map(renderAttackButton)}
+            <h3 className="text-xs font-semibold text-purple-300 mb-1">⬆️ Buff</h3>
+            <div className="flex flex-wrap gap-1">
+              {allCategories.buff.map(renderAttackButton)}
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-purple-300 mb-2">💚 Healing & Cleanse</h3>
-            <div className="flex flex-wrap gap-2">
-              {categories.heal.map(renderAttackButton)}
+            <h3 className="text-xs font-semibold text-purple-300 mb-1">💚 Heal</h3>
+            <div className="flex flex-wrap gap-1">
+              {allCategories.heal.map(renderAttackButton)}
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-purple-300 mb-2">✨ Special & Hybrid</h3>
-            <div className="flex flex-wrap gap-2">
-              {categories.special.map(renderAttackButton)}
+            <h3 className="text-xs font-semibold text-purple-300 mb-1">✨ Special</h3>
+            <div className="flex flex-wrap gap-1">
+              {allCategories.special.map(renderAttackButton)}
             </div>
           </div>
         </div>
       </div>
 
-      {/* IN DEVELOPMENT ⚠️ - Now Implemented! */}
-      <div className="border-2 border-green-500/30 rounded-lg p-4 bg-green-900/10">
-        <h2 className="text-lg font-bold text-green-400 mb-3 flex items-center gap-2">
-          <span>✅</span>
-          <span>Batch 2 - Now Available!</span>
-        </h2>
-        <div className="text-sm text-green-300/70 mb-3">
-          Advanced status effects with complex mechanics - fully implemented and ready for testing!
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-          <button
-            onClick={() => onAttackSelect('vulnerable')}
-            disabled={isDisabled || isSelectingTarget}
-            data-testid="btn-vulnerable"
-            className={`${isDisabled ? 'opacity-50 cursor-not-allowed' : ''} ${selectedAction === 'vulnerable' ? 'ring-2 ring-white' : ''} bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded transition-colors flex flex-col items-center gap-1`}
-            title="Make target VULNERABLE - 12 damage + target takes 50% more damage for 3 turns"
-          >
-            <span className="text-2xl">🎯</span>
-            <span className="font-semibold text-sm">Expose Weakness</span>
-            <span className="text-xs opacity-75">12 dmg + vulnerable</span>
-          </button>
-
-          <button
-            onClick={() => onAttackSelect('thorns')}
-            disabled={isDisabled || isSelectingTarget}
-            data-testid="btn-thorns"
-            className={`${isDisabled ? 'opacity-50 cursor-not-allowed' : ''} ${selectedAction === 'thorns' ? 'ring-2 ring-white' : ''} bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded transition-colors flex flex-col items-center gap-1`}
-            title="Apply THORNS - 8 damage + target reflects 10 damage to attackers for 3 turns"
-          >
-            <span className="text-2xl">🌵</span>
-            <span className="font-semibold text-sm">Thorn Shield</span>
-            <span className="text-xs opacity-75">8 dmg + thorns</span>
-          </button>
-
-          <button
-            onClick={() => onAttackSelect('leech')}
-            disabled={isDisabled || isSelectingTarget}
-            data-testid="btn-leech"
-            className={`${isDisabled ? 'opacity-50 cursor-not-allowed' : ''} ${selectedAction === 'leech' ? 'ring-2 ring-white' : ''} bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded transition-colors flex flex-col items-center gap-1`}
-            title="Gain LEECH - 18 damage + heal for 30% of damage dealt for 3 turns"
-          >
-            <span className="text-2xl">🩸</span>
-            <span className="font-semibold text-sm">Vampiric Strike</span>
-            <span className="text-xs opacity-75">18 dmg + leech</span>
-          </button>
-
-          <button
-            onClick={() => onAttackSelect('evasion')}
-            disabled={isDisabled || isSelectingTarget}
-            data-testid="btn-evasion"
-            className={`${isDisabled ? 'opacity-50 cursor-not-allowed' : ''} ${selectedAction === 'evasion' ? 'ring-2 ring-white' : ''} bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded transition-colors flex flex-col items-center gap-1`}
-            title="Grant EVASION - 5 damage + target gains 40% dodge chance for 3 turns"
-          >
-            <span className="text-2xl">✨</span>
-            <span className="font-semibold text-sm">Blur</span>
-            <span className="text-xs opacity-75">5 dmg + evasion</span>
-          </button>
-
-          <button
-            onClick={() => onAttackSelect('reflect')}
-            disabled={isDisabled || isSelectingTarget}
-            data-testid="btn-reflect"
-            className={`${isDisabled ? 'opacity-50 cursor-not-allowed' : ''} ${selectedAction === 'reflect' ? 'ring-2 ring-white' : ''} bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-2 rounded transition-colors flex flex-col items-center gap-1`}
-            title="Apply REFLECT - 6 damage + target returns 50% of damage to attackers for 3 turns"
-          >
-            <span className="text-2xl">🪞</span>
-            <span className="font-semibold text-sm">Mirror Image</span>
-            <span className="text-xs opacity-75">6 dmg + reflect</span>
-          </button>
-        </div>
-      </div>
-
-      {/* PLANNED 📋 */}
-      <div className="border-2 border-blue-500/30 rounded-lg p-4 bg-blue-900/10">
-        <h2 className="text-lg font-bold text-blue-400 mb-3 flex items-center gap-2">
-          <span>📋</span>
-          <span>Planned (Future Batches)</span>
-        </h2>
-        <div className="text-sm text-blue-300/70 mb-3">
-          High-priority effects for future implementation based on gameplay needs.
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-          <div className="bg-gray-800/30 p-2 rounded text-gray-400">⚡💨 HASTE</div>
-          <div className="bg-gray-800/30 p-2 rounded text-gray-400">💀 CURSE/DOOM</div>
-          <div className="bg-gray-800/30 p-2 rounded text-gray-400">🗡️✨ PIERCING</div>
-          <div className="bg-gray-800/30 p-2 rounded text-gray-400">😡 BERSERK</div>
-          <div className="bg-gray-800/30 p-2 rounded text-gray-400">📈 MOMENTUM</div>
-          <div className="bg-gray-800/30 p-2 rounded text-gray-400">🎭 CHARM</div>
-          <div className="bg-gray-800/30 p-2 rounded text-gray-400">🔮 IMMUNITY</div>
-          <div className="bg-gray-800/30 p-2 rounded text-gray-400">🎯 MARK</div>
+      {/* PLANNED - With Labels */}
+      <div className="border border-blue-500/30 rounded-lg p-2 bg-blue-900/10">
+        <h2 className="text-xs font-bold text-blue-400 mb-1.5">📋 Upcoming Attacks</h2>
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-1.5 text-xs">
+          <div className="bg-gray-800/30 p-1.5 rounded text-center">
+            <div className="text-gray-400">⚡💨</div>
+            <div className="text-gray-500 text-[10px] mt-0.5">Haste</div>
+          </div>
+          <div className="bg-gray-800/30 p-1.5 rounded text-center">
+            <div className="text-gray-400">💀</div>
+            <div className="text-gray-500 text-[10px] mt-0.5">Death</div>
+          </div>
+          <div className="bg-gray-800/30 p-1.5 rounded text-center">
+            <div className="text-gray-400">🗡️✨</div>
+            <div className="text-gray-500 text-[10px] mt-0.5">Enchant</div>
+          </div>
+          <div className="bg-gray-800/30 p-1.5 rounded text-center">
+            <div className="text-gray-400">😡</div>
+            <div className="text-gray-500 text-[10px] mt-0.5">Enrage</div>
+          </div>
+          <div className="bg-gray-800/30 p-1.5 rounded text-center">
+            <div className="text-gray-400">📈</div>
+            <div className="text-gray-500 text-[10px] mt-0.5">Grow</div>
+          </div>
+          <div className="bg-gray-800/30 p-1.5 rounded text-center">
+            <div className="text-gray-400">🎭</div>
+            <div className="text-gray-500 text-[10px] mt-0.5">Taunt</div>
+          </div>
+          <div className="bg-gray-800/30 p-1.5 rounded text-center">
+            <div className="text-gray-400">🔮</div>
+            <div className="text-gray-500 text-[10px] mt-0.5">Curse</div>
+          </div>
+          <div className="bg-gray-800/30 p-1.5 rounded text-center">
+            <div className="text-gray-400">🎯</div>
+            <div className="text-gray-500 text-[10px] mt-0.5">Mark</div>
+          </div>
         </div>
       </div>
     </div>

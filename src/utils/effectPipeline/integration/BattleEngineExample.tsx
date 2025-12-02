@@ -23,6 +23,7 @@ import {
 } from '../effects/attackFactories'
 import { BattleResultScreen } from '../../../components/battle/BattleResultScreen'
 import { TurnTransition } from '../../../components/battle/TurnTransition'
+import { BattleTimeline } from '../../../components/battle/BattleTimeline'
 
 // Example initial battle state
 const exampleBattleState: BattleState = {
@@ -196,6 +197,23 @@ export const BattleEngineExample: React.FC = () => {
     data: null
   })
 
+  // Creature detail modal state
+  const [selectedCreatureInfo, setSelectedCreatureInfo] = useState<any | null>(null)
+
+  // Battle menu state
+  const [battleMenuState, setBattleMenuState] = useState<'main' | 'attack' | 'creatures' | 'items' | null>('main')
+  const [selectedMenuOption, setSelectedMenuOption] = useState<number>(0)
+
+  // Debug panel state
+  const [showDebugPanel, setShowDebugPanel] = useState<boolean>(false)
+  
+  // Timeline modal state
+  const [isTimelineOpen, setIsTimelineOpen] = useState<boolean>(false)
+
+  // Attack shuffle state
+  const [currentAttacks, setCurrentAttacks] = useState<any[]>([])
+  const [isShuffling, setIsShuffling] = useState<boolean>(false)
+
   // Handle clicking on status effect
   const handleStatusClick = (status: any, e: React.MouseEvent) => {
     e.stopPropagation() // Prevent creature click
@@ -224,6 +242,49 @@ export const BattleEngineExample: React.FC = () => {
       data: null
     })
   }
+
+  // Define all available attacks for shuffling
+  const allAvailableAttacks = [
+    { id: 'slash', name: 'Slash', icon: '⚔️', color: 'bg-red-500', description: 'Basic physical attack - 15 damage' },
+    { id: 'heavy-strike', name: 'Heavy Strike', icon: '🔨', color: 'bg-red-600', description: 'Powerful strike - 25 damage, ignores 50% defense' },
+    { id: 'true-strike', name: 'True Strike', icon: '⚡', color: 'bg-yellow-500', description: 'True damage - 20 damage, ignores ALL defense' },
+    { id: 'pierce', name: 'Pierce', icon: '🗡️', color: 'bg-orange-600', description: 'Armor-piercing - 12 damage + 8 true damage' },
+    { id: 'burn', name: 'Burn', icon: '🔥', color: 'bg-orange-500', description: 'Apply burn - 10 dmg/turn for 3 turns (30 total)' },
+    { id: 'flameswipe', name: 'Flame Swipe', icon: '🔥💨', color: 'bg-orange-500', description: '15 damage + burn (5 dmg/turn for 3 turns)' },
+    { id: 'poison', name: 'Poison', icon: '🧪', color: 'bg-purple-500', description: 'Apply poison - 15 dmg/turn for 3 turns (45 total)' },
+    { id: 'toxic-bite', name: 'Toxic Bite', icon: '🦷☠️', color: 'bg-purple-600', description: '8 damage + poison (10 dmg/turn for 4 turns)' },
+    { id: 'bleed', name: 'Bleed', icon: '🩸', color: 'bg-rose-600', description: '12 damage + bleeding (8 dmg/turn for 3 turns)' },
+    { id: 'stun', name: 'Stun', icon: '💫', color: 'bg-cyan-500', description: '10 damage + stun (target cannot act for 1 turn)' },
+    { id: 'freeze', name: 'Freeze', icon: '❄️', color: 'bg-blue-400', description: '5 damage + freeze (cannot act for 2 turns)' },
+    { id: 'weaken', name: 'Weaken', icon: '⚔️↓', color: 'bg-amber-600', description: '8 damage + reduce target attack by 10 for 3 turns' },
+    { id: 'shatter-armor', name: 'Shatter Armor', icon: '🛡️💥', color: 'bg-stone-600', description: '10 damage + reduce target defense by 8 for 3 turns' },
+    { id: 'slow', name: 'Slow', icon: '🐌', color: 'bg-slate-500', description: 'Slow target - skips every 2nd turn for 4 turns' },
+    { id: 'buff', name: 'Power Up', icon: '💪', color: 'bg-indigo-500', description: '12 damage + gain +5 attack for 3 turns (self)' },
+    { id: 'shield', name: 'Shield', icon: '🛡️', color: 'bg-blue-500', description: 'Grant target +10 defense for 3 turns' }, 
+    { id: 'heal', name: 'Heal', icon: '💚', color: 'bg-green-500', description: 'Restore 25 HP to target (capped at max health)' },
+    { id: 'greater-heal', name: 'Greater Heal', icon: '💚✨', color: 'bg-green-600', description: 'Restore 50 HP to target (capped at max health)' },
+    { id: 'lifedrain', name: 'Life Drain', icon: '🩸💚', color: 'bg-fuchsia-600', description: '18 damage + heal self for 50% of damage dealt' },
+    { id: 'execute', name: 'Execute', icon: '⚔️💀', color: 'bg-red-700', description: 'Deals 30 damage, double if target below 25% health' }
+  ]
+
+  // Shuffle attacks - pick 4 random
+  const shuffleAttacks = () => {
+    setIsShuffling(true)
+    
+    // Shuffle animation delay
+    setTimeout(() => {
+      const shuffled = [...allAvailableAttacks].sort(() => Math.random() - 0.5)
+      const selected = shuffled.slice(0, 4)
+      setCurrentAttacks(selected)
+      setIsShuffling(false)
+    }, 300)
+  }
+
+  // Initialize attacks on mount
+  React.useEffect(() => {
+    shuffleAttacks()
+  }, [])
+
 
   // Start target selection for burn
   const handleBurnTest = () => {
@@ -616,9 +677,7 @@ export const BattleEngineExample: React.FC = () => {
     setPendingAction(attackId)
   }
 
-  const goBackToBattle = () => {
-    dispatch({ type: "CHANGE_SCREEN", payload: { screen: "battle" } })
-  }
+
 
   const debugInfo = getDebugInfo()
 
@@ -653,291 +712,582 @@ export const BattleEngineExample: React.FC = () => {
         turnNumber={battleState.turn} 
       />
 
-      {/* Target Selection Banner */}
-      {isSelectingTarget && (
-        <div className="mb-4 p-4 bg-blue-900/80 backdrop-blur-sm border border-blue-500/50 text-blue-100 rounded-lg shadow-lg shadow-blue-500/20">
-          <div className="flex justify-between items-center">
-          <div data-selecting-target={isSelectingTarget ? 'true' : 'false'} data-pending-action={pendingAction || ''}>
-              <p className="text-lg font-bold">
-                {pendingAction === 'attack' && '⚔️ Select a target to attack'}
-                {pendingAction === 'heal' && '💚 Select a target to heal'}
-                {pendingAction === 'burn' && '🔥 Select a target to burn'}
-                {pendingAction === 'kindle' && '🔥✨ Select a target to kindle (spreads to allies)'}
-                {pendingAction === 'poison' && '🧪 Select a target to poison'}
-                {pendingAction === 'passive-test' && '🌿 Select a creature to attack (triggers passives)'}
-                {pendingAction === 'stun' && '💫 Select a target to stun (10 dmg + 1 turn disable)'}
-                {pendingAction === 'weaken' && '⚔️↓ Select a target to weaken (8 dmg + reduce attack)'}
-                {pendingAction === 'flameswipe' && '🔥 Select a target for flame swipe (15 dmg + burn)'}
-                {pendingAction === 'buff' && '💪 Select a target for power strike (12 dmg + gain attack buff)'}
-                {pendingAction === 'regeneration' && '💚 Select a target to grant regeneration (10 HP/turn for 3 turns)'}
-                {pendingAction === 'shield' && '🛡️ Select a target to grant shield (20 shield for 3 turns)'}
-              </p>
-              <p className="text-sm opacity-90">Click on any creature to target them</p>
-            </div>
-            <button
-              onClick={cancelTargetSelection}
-              className="px-4 py-2 bg-slate-100 text-blue-900 rounded hover:bg-white font-semibold"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
 
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-purple-100">Effect Pipeline System Demo</h1>
-        <button
-          onClick={goBackToBattle}
-          className="px-4 py-2 bg-slate-700 text-purple-200 rounded hover:bg-slate-600 border border-purple-500/30"
-        >
-          ← Back to Battle
-        </button>
-      </div>
 
-      {/* Battle Status */}
-      <div className="mb-6 p-4 bg-slate-800/80 backdrop-blur-sm border border-purple-500/30 rounded-lg">
-        <h2 className="text-xl font-semibold mb-2 text-purple-200">Battle Status</h2>
-        {isBattleOver() ? (
-          <div className="text-lg text-purple-100">
-            Battle Over! Winner: <span className="font-bold text-pink-400">{getBattleWinner()}</span>
+      {/* Fresh Header Bar */}
+      <div className="max-w-2xl mx-auto mb-6">
+        <div className="bg-slate-900/90 backdrop-blur-md border border-purple-500/30 rounded-lg p-3 flex items-center justify-between shadow-lg">
+          {/* Title */}
+          <div className="font-bold text-purple-200 tracking-wide">
+            BATTLE SYSTEM DEMO
           </div>
-        ) : (
+
+          {/* Status & Controls */}
           <div className="flex items-center gap-4">
-            <div className="text-purple-200">Battle in progress...</div>
-            <div className="text-sm text-slate-300" data-testid="turn-counter">Turn: <span className="font-semibold text-purple-100">{battleState.turn}</span></div>
-            <div className="text-sm text-slate-300" data-testid="turn-owner">Owner: <span className="font-semibold text-purple-100">{battleState.currentTurnOwner || 'none'}</span></div>
+            {/* Turn Info */}
+            <div className="flex items-center gap-3 text-sm font-medium text-slate-400 bg-slate-800/50 px-3 py-1.5 rounded-md border border-slate-700/50">
+              <span>Turn <span className="text-white font-bold">{battleState.turn}</span></span>
+              <span className="text-slate-600">•</span>
+              <span className={`uppercase font-bold ${battleState.currentTurnOwner === 'player' ? 'text-green-400' : 'text-red-400'}`}>
+                {battleState.currentTurnOwner} Phase
+              </span>
+            </div>
+
+            {/* End Turn Button */}
             <button
               onClick={handleEndTurn}
               disabled={!isPlayerTurn || isProcessingEffects}
-              className={`ml-4 px-3 py-1 rounded ${
-                !isPlayerTurn || isProcessingEffects
-                  ? 'bg-gray-600 cursor-not-allowed'
-                  : 'bg-purple-600 hover:bg-purple-700'
-              } text-white`}
-              data-testid="end-turn-button"
+              className={`
+                px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all
+                ${!isPlayerTurn || isProcessingEffects
+                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                  : 'bg-red-600 hover:bg-red-500 text-white border border-red-500 hover:border-red-400 shadow-lg shadow-red-900/20'
+                }
+              `}
             >
               End Turn
             </button>
           </div>
-        )}
-        {isProcessingEffects && (
-          <div className="text-blue-400 font-semibold">⚡ Processing effects...</div>
-        )}
+        </div>
       </div>
 
-      {/* Creatures Display - Vertical Layout */}
-      <div className="mb-4 space-y-3">
-        {/* Computer Creatures (Top) */}
-        <div className="p-3 bg-slate-800/60 backdrop-blur-sm border border-red-500/30 rounded-lg">
-          <h3 className="text-sm font-semibold mb-2 text-red-300 flex items-center gap-1.5">
-            <span className="text-base">🤖</span> Enemy Creatures
-          </h3>
-          {battleState.computerCreatures.map(creature => {
+      {/* Creatures Display - Active + Team Layout */}
+      <div className="mb-4 space-y-4 max-w-2xl mx-auto">
+        {/* Enemy Section (Top) */}
+        <div className="relative">
+          {/* Enemy Team Background Boxes */}
+          <div className="flex gap-2 mb-2 justify-center">
+            {battleState.computerCreatures.map((creature, idx) => {
+              const isActive = idx === 0;
+              const hpPercent = (creature.health / creature.maxHealth) * 100;
+              
+              return (
+                <div
+                  key={creature.ID}
+                  data-creature-id={creature.ID}
+                  data-testid="team-box"
+                  onClick={() => {
+                    if (!isSelectingTarget) {
+                      setSelectedCreatureInfo(creature);
+                    } else {
+                      handleCreatureClick(creature.ID);
+                    }
+                  }}
+                  className={`${isActive ? 'hidden' : ''} relative p-2 rounded-lg border-2 transition-all cursor-pointer ${
+                    creature.health <= 0
+                      ? 'opacity-40 bg-slate-900/30 border-slate-700'
+                      : isSelectingTarget
+                      ? 'bg-red-900/40 border-red-400 hover:scale-105'
+                      : 'bg-slate-900/60 border-red-500/50 hover:border-red-400'
+                  }`}
+                  style={{ width: '80px' }}
+                >
+                  <div className="text-2xl text-center mb-1">{creature.icon}</div>
+                  <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full transition-all ${hpPercent > 50 ? 'bg-green-500' : hpPercent > 25 ? 'bg-amber-500' : 'bg-red-500'}`}
+                      style={{ width: `${Math.max(0, hpPercent)}%` }}
+                    />
+                  </div>
+                  <div className="text-[8px] text-center text-slate-400 mt-0.5">{creature.health}/{creature.maxHealth}</div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Active Enemy Creature */}
+          {battleState.computerCreatures[0] && (() => {
+            const creature = battleState.computerCreatures[0];
             const hpPercent = (creature.health / creature.maxHealth) * 100;
             const getHPColor = () => {
               if (hpPercent > 66) return 'from-green-500 to-emerald-600';
               if (hpPercent > 33) return 'from-amber-500 to-orange-600';
               return 'from-red-500 to-rose-600';
             };
-            
+
             return (
               <div
-                key={creature.ID}
                 data-testid="creature-card"
                 data-creature-name={creature.name}
                 data-creature-id={creature.ID}
-                onClick={() => handleCreatureClick(creature.ID)}
-                className={`relative p-2.5 rounded-lg mb-2 transition-all duration-300 ${
-                  creature.health <= 0 
-                    ? 'opacity-50 bg-slate-900/50 border border-slate-700' 
+                onClick={() => {
+                  if (!isSelectingTarget) {
+                    setSelectedCreatureInfo(creature);
+                  } else {
+                    handleCreatureClick(creature.ID);
+                  }
+                }}
+                className={`relative p-4 rounded-xl transition-all duration-300 mx-auto max-w-md border-4 ${
+                  creature.health <= 0
+                    ? 'opacity-50 bg-slate-900/50 border-slate-700'
                     : isSelectingTarget
-                    ? 'bg-gradient-to-br from-red-900/60 via-red-800/40 to-red-900/60 border-2 border-red-400 cursor-pointer hover:scale-[1.02] hover:shadow-xl hover:shadow-red-500/30 transform'
-                    : 'bg-gradient-to-br from-slate-900/90 via-purple-900/20 to-slate-900/90 border border-slate-600/50 hover:border-red-500/50'
+                    ? 'bg-gradient-to-br from-red-900/70 via-red-800/50 to-red-900/70 border-red-400 cursor-pointer hover:scale-[1.03] shadow-2xl shadow-red-500/40'
+                    : 'bg-gradient-to-br from-slate-900/90 via-purple-900/30 to-slate-900/90 border-red-500/60 hover:border-red-400 cursor-pointer shadow-xl'
                 }`}
               >
-                {/* Header - Horizontal Layout */}
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-3xl">{creature.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-sm text-purple-100 truncate">{creature.name}</div>
-                    <div className="flex gap-1.5 mt-0.5">
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-red-500/20 border border-red-500/40 text-red-200 font-semibold">
-                        ⚔️{creature.attack}
-                      </span>
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 border border-blue-500/40 text-blue-200 font-semibold">
-                        🛡️{creature.defense}
-                      </span>
+                {/* Header */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-5xl">{creature.icon}</span>
+                    <div>
+                      <div className="font-bold text-lg text-red-300 uppercase tracking-wide">{creature.name}</div>
+                      <div className="flex gap-2 mt-1">
+                        <span className="px-2 py-0.5 rounded text-xs bg-red-500/30 border border-red-500/50 text-red-200 font-bold">
+                          ⚔️ {creature.attack}
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-xs bg-blue-500/30 border border-blue-500/50 text-blue-200 font-bold">
+                          🛡️ {creature.defense}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  {/* HP inline */}
-                  <div className="text-right">
-                    <div className={`text-xs font-bold ${creature.health <= 0 ? 'text-red-400' : hpPercent > 66 ? 'text-green-400' : hpPercent > 33 ? 'text-amber-400' : 'text-red-400'}`} data-testid="creature-health">
-                      {creature.health}/{creature.maxHealth}
-                    </div>
-                    <div className="w-16 h-1.5 bg-slate-700/50 rounded-full overflow-hidden border border-slate-600/50 mt-0.5">
-                      <div 
-                        className={`h-full bg-gradient-to-r ${getHPColor()} transition-all duration-500`}
-                        style={{ width: `${Math.max(0, hpPercent)}%` }}
-                      />
+                  <div className="text-sm text-slate-400">Enemy</div>
+                </div>
+
+                {/* HP Bar */}
+                <div className="mb-3">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs font-bold text-slate-300 uppercase">HP</span>
+                    <span className={`text-sm font-bold ${creature.health <= 0 ? 'text-red-400' : hpPercent > 66 ? 'text-green-400' : hpPercent > 33 ? 'text-amber-400' : 'text-red-400'}`}>
+                      {creature.health} / {creature.maxHealth}
+                    </span>
+                  </div>
+                  <div className="h-4 bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 shadow-inner">
+                    <div 
+                      className={`h-full bg-gradient-to-r ${getHPColor()} transition-all duration-500 shadow-lg relative`}
+                      style={{ width: `${Math.max(0, hpPercent)}%` }}
+                    >
+                      <div className="absolute inset-0 bg-white/20"></div>
                     </div>
                   </div>
                 </div>
 
-                {/* Passive Abilities - Compact */}
-                {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
-                  <div className="mb-1.5">
-                    {creature.passiveAbilities.map((ability) => (
-                      <div 
-                        key={ability.id} 
-                        onClick={(e) => handlePassiveClick(ability, e)}
-                        className="text-[10px] bg-gradient-to-r from-yellow-500/15 to-amber-500/15 hover:from-yellow-500/25 hover:to-amber-500/25 border border-yellow-500/40 rounded px-2 py-1 mb-1 cursor-pointer transition-all group"
-                      >
-                        <div className="font-semibold text-yellow-200 group-hover:text-yellow-100 flex items-center gap-1">
-                          <span className="text-xs">{ability.icon}</span>
-                          <span className="truncate flex-1">{ability.name}</span>
-                          <span className="text-yellow-400/70">ⓘ</span>
+                {/* Passives & Status */}
+                <div className="flex gap-2">
+                  {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
+                    <div className="flex-1">
+                      {creature.passiveAbilities.map((ability) => (
+                        <div 
+                          key={ability.id}
+                          onClick={(e) => { e.stopPropagation(); handlePassiveClick(ability, e); }}
+                          className="text-xs bg-yellow-600/20 border border-yellow-500/40 rounded px-2 py-1 cursor-pointer hover:bg-yellow-600/30 transition-all"
+                        >
+                          <span className="text-sm">{ability.icon}</span> <span className="text-yellow-200 font-semibold">{ability.name}</span>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Status Effects - Inline */}
-                {creature.statuses.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
-                    {creature.statuses.map((status, idx) => (
-                      <span
-                        key={`${status.id}-${idx}`}
-                        data-testid="status-badge"
-                        data-status-id={status.id}
-                        onClick={(e) => handleStatusClick(status, e)}
-                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold cursor-pointer transition-all hover:scale-105 ${
-                          status.type === 'debuff'
-                            ? 'bg-red-500/30 text-red-200 border border-red-400/50'
-                            : status.type === 'buff'
-                            ? 'bg-green-500/30 text-green-200 border border-green-400/50'
-                            : 'bg-slate-500/30 text-slate-200 border border-slate-400/50'
-                        }`}
-                      >
-                        <span className="text-xs">{status.icon}</span>
-                        <span className="opacity-70">({status.duration})</span>
-                      </span>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  )}
+                  {creature.statuses.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {creature.statuses.map((status, idx) => (
+                        <span
+                          key={`${status.id}-${idx}`}
+                          onClick={(e) => { e.stopPropagation(); handleStatusClick(status, e); }}
+                          className={`px-2 py-1 rounded text-xs font-bold cursor-pointer ${
+                            status.type === 'debuff' ? 'bg-red-500/30 border border-red-400/50 text-red-200' :
+                            status.type === 'buff' ? 'bg-green-500/30 border border-green-400/50 text-green-200' :
+                            'bg-slate-500/30 border border-slate-400/50 text-slate-200'
+                          }`}
+                        >
+                          {status.icon} ({status.duration})
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             );
-          })}
+          })()}
         </div>
 
-        {/* Player Creatures (Bottom) */}
-        <div className="p-3 bg-slate-800/60 backdrop-blur-sm border border-blue-500/30 rounded-lg">
-          <h3 className="text-sm font-semibold mb-2 text-blue-300 flex items-center gap-1.5">
-            <span className="text-base">👤</span> Your Creatures
-          </h3>
-          {battleState.playerCreatures.map(creature => {
+        {/* Player Section (Bottom) */}
+        <div className="relative">
+          {/* Active Player Creature */}
+          {battleState.playerCreatures[0] && (() => {
+            const creature = battleState.playerCreatures[0];
             const hpPercent = (creature.health / creature.maxHealth) * 100;
             const getHPColor = () => {
               if (hpPercent > 66) return 'from-green-500 to-emerald-600';
               if (hpPercent > 33) return 'from-amber-500 to-orange-600';
               return 'from-red-500 to-rose-600';
             };
-            
+
             return (
               <div
-                key={creature.ID}
                 data-testid="creature-card"
                 data-creature-name={creature.name}
                 data-creature-id={creature.ID}
-                onClick={() => handleCreatureClick(creature.ID)}
-                className={`relative p-2.5 rounded-lg mb-2 transition-all duration-300 ${
-                  creature.health <= 0 
-                    ? 'opacity-50 bg-slate-900/50 border border-slate-700' 
+                onClick={() => {
+                  if (!isSelectingTarget) {
+                    setSelectedCreatureInfo(creature);
+                  } else {
+                    handleCreatureClick(creature.ID);
+                  }
+                }}
+                className={`relative p-4 rounded-xl transition-all duration-300 mx-auto max-w-md border-4 ${
+                  creature.health <= 0
+                    ? 'opacity-50 bg-slate-900/50 border-slate-700'
                     : isSelectingTarget
-                    ? 'bg-gradient-to-br from-blue-900/60 via-blue-800/40 to-blue-900/60 border-2 border-blue-400 cursor-pointer hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/30 transform'
-                    : 'bg-gradient-to-br from-slate-900/90 via-purple-900/20 to-slate-900/90 border border-slate-600/50 hover:border-blue-500/50'
+                    ? 'bg-gradient-to-br from-blue-900/70 via-blue-800/50 to-blue-900/70 border-blue-400 cursor-pointer hover:scale-[1.03] shadow-2xl shadow-blue-500/40'
+                    : 'bg-gradient-to-br from-slate-900/90 via-purple-900/30 to-slate-900/90 border-blue-500/60 hover:border-blue-400 cursor-pointer shadow-xl'
                 }`}
               >
-                {/* Header - Horizontal Layout */}
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-3xl">{creature.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-sm text-purple-100 truncate">{creature.name}</div>
-                    <div className="flex gap-1.5 mt-0.5">
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-red-500/20 border border-red-500/40 text-red-200 font-semibold">
-                        ⚔️{creature.attack}
-                      </span>
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 border border-blue-500/40 text-blue-200 font-semibold">
-                        🛡️{creature.defense}
-                      </span>
+                {/* Header */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-5xl">{creature.icon}</span>
+                    <div>
+                      <div className="font-bold text-lg text-blue-300 uppercase tracking-wide">{creature.name}</div>
+                      <div className="flex gap-2 mt-1">
+                        <span className="px-2 py-0.5 rounded text-xs bg-red-500/30 border border-red-500/50 text-red-200 font-bold">
+                          ⚔️ {creature.attack}
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-xs bg-blue-500/30 border border-blue-500/50 text-blue-200 font-bold">
+                          🛡️ {creature.defense}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  {/* HP inline */}
-                  <div className="text-right">
-                    <div className={`text-xs font-bold ${creature.health <= 0 ? 'text-red-400' : hpPercent > 66 ? 'text-green-400' : hpPercent > 33 ? 'text-amber-400' : 'text-red-400'}`} data-testid="creature-health">
-                      {creature.health}/{creature.maxHealth}
-                    </div>
-                    <div className="w-16 h-1.5 bg-slate-700/50 rounded-full overflow-hidden border border-slate-600/50 mt-0.5">
-                      <div 
-                        className={`h-full bg-gradient-to-r ${getHPColor()} transition-all duration-500`}
-                        style={{ width: `${Math.max(0, hpPercent)}%` }}
-                      />
+                  <div className="text-sm text-slate-400">Yours</div>
+                </div>
+
+                {/* HP Bar */}
+                <div className="mb-3">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs font-bold text-slate-300 uppercase">HP</span>
+                    <span className={`text-sm font-bold ${creature.health <= 0 ? 'text-red-400' : hpPercent > 66 ? 'text-green-400' : hpPercent > 33 ? 'text-amber-400' : 'text-red-400'}`}>
+                      {creature.health} / {creature.maxHealth}
+                    </span>
+                  </div>
+                  <div className="h-4 bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-700 shadow-inner">
+                    <div 
+                      className={`h-full bg-gradient-to-r ${getHPColor()} transition-all duration-500 shadow-lg relative`}
+                      style={{ width: `${Math.max(0, hpPercent)}%` }}
+                    >
+                      <div className="absolute inset-0 bg-white/20"></div>
                     </div>
                   </div>
                 </div>
 
-                {/* Passive Abilities - Compact */}
-                {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
-                  <div className="mb-1.5">
-                    {creature.passiveAbilities.map((ability) => (
-                      <div 
-                        key={ability.id} 
-                        onClick={(e) => handlePassiveClick(ability, e)}
-                        className="text-[10px] bg-gradient-to-r from-yellow-500/15 to-amber-500/15 hover:from-yellow-500/25 hover:to-amber-500/25 border border-yellow-500/40 rounded px-2 py-1 mb-1 cursor-pointer transition-all group"
-                      >
-                        <div className="font-semibold text-yellow-200 group-hover:text-yellow-100 flex items-center gap-1">
-                          <span className="text-xs">{ability.icon}</span>
-                          <span className="truncate flex-1">{ability.name}</span>
-                          <span className="text-yellow-400/70">ⓘ</span>
+                {/* Passives & Status */}
+                <div className="flex gap-2">
+                  {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
+                    <div className="flex-1">
+                      {creature.passiveAbilities.map((ability) => (
+                        <div 
+                          key={ability.id}
+                          onClick={(e) => { e.stopPropagation(); handlePassiveClick(ability, e); }}
+                          className="text-xs bg-yellow-600/20 border border-yellow-500/40 rounded px-2 py-1 cursor-pointer hover:bg-yellow-600/30 transition-all"
+                        >
+                          <span className="text-sm">{ability.icon}</span> <span className="text-yellow-200 font-semibold">{ability.name}</span>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Status Effects - Inline */}
-                {creature.statuses.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
-                    {creature.statuses.map((status, idx) => (
-                      <span
-                        key={`${status.id}-${idx}`}
-                        data-testid="status-badge"
-                        data-status-id={status.id}
-                        onClick={(e) => handleStatusClick(status, e)}
-                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold cursor-pointer transition-all hover:scale-105 ${
-                          status.type === 'debuff'
-                            ? 'bg-red-500/30 text-red-200 border border-red-400/50'
-                            : status.type === 'buff'
-                            ? 'bg-green-500/30 text-green-200 border border-green-400/50'
-                            : 'bg-slate-500/30 text-slate-200 border border-slate-400/50'
-                        }`}
-                      >
-                        <span className="text-xs">{status.icon}</span>
-                        <span className="opacity-70">({status.duration})</span>
-                      </span>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  )}
+                  {creature.statuses.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {creature.statuses.map((status, idx) => (
+                        <span
+                          key={`${status.id}-${idx}`}
+                          onClick={(e) => { e.stopPropagation(); handleStatusClick(status, e); }}
+                          className={`px-2 py-1 rounded text-xs font-bold cursor-pointer ${
+                            status.type === 'debuff' ? 'bg-red-500/30 border border-red-400/50 text-red-200' :
+                            status.type === 'buff' ? 'bg-green-500/30 border border-green-400/50 text-green-200' :
+                            'bg-slate-500/30 border border-slate-400/50 text-slate-200'
+                          }`}
+                        >
+                          {status.icon} ({status.duration})
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             );
-          })}
+          })()}
+
+          {/* Player Team Background Boxes */}
+          <div className="flex gap-2 mt-2 justify-center">
+            {battleState.playerCreatures.map((creature, idx) => {
+              const isActive = idx === 0;
+              const hpPercent = (creature.health / creature.maxHealth) * 100;
+              
+              return (
+                <div
+                  key={creature.ID}
+                  data-creature-id={creature.ID}
+                  data-testid="team-box"
+                  onClick={() => {
+                    if (!isSelectingTarget) {
+                      setSelectedCreatureInfo(creature);
+                    } else {
+                      handleCreatureClick(creature.ID);
+                    }
+                  }}
+                  className={`${isActive ? 'hidden' : ''} relative p-2 rounded-lg border-2 transition-all cursor-pointer ${
+                    creature.health <= 0
+                      ? 'opacity-40 bg-slate-900/30 border-slate-700'
+                      : isSelectingTarget
+                      ? 'bg-blue-900/40 border-blue-400 hover:scale-105'
+                      : 'bg-slate-900/60 border-blue-500/50 hover:border-blue-400'
+                  }`}
+                  style={{ width: '80px' }}
+                >
+                  <div className="text-2xl text-center mb-1">{creature.icon}</div>
+                  <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full transition-all ${hpPercent > 50 ? 'bg-green-500' : hpPercent > 25 ? 'bg-amber-500' : 'bg-red-500'}`}
+                      style={{ width: `${Math.max(0, hpPercent)}%` }}
+                    />
+                  </div>
+                  <div className="text-[8px] text-center text-slate-400 mt-0.5">{creature.health}/{creature.maxHealth}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Attack Showcase */}
-      <div className="mb-6 p-4 bg-slate-800/60 backdrop-blur-sm border border-purple-500/30 rounded-lg">
-        <h2 className="text-xl font-semibold mb-3 text-purple-200">Attack Showcase</h2>
-        <p className="text-sm text-purple-300 mb-4">Hover over buttons to see attack details • Click to select target</p>
+      {/* Battle Menu - Integrated Below Player */}
+      {battleMenuState && (
+        <div className="mb-4 max-w-2xl mx-auto" style={{ minHeight: '400px' }}>
+          {/* Targeting State - Show Attack Details */}
+          {isSelectingTarget && pendingAction && (
+            <div className="bg-slate-900 border-4 border-purple-500/60 rounded-xl overflow-hidden shadow-2xl">
+              <div className="bg-gradient-to-r from-purple-900/80 to-purple-800/80 px-4 py-2 border-b-2 border-purple-500/60">
+                <div className="text-sm font-bold text-purple-200 uppercase">Select Target</div>
+              </div>
+              <div className="p-4">
+                {(() => {
+                  const selectedAttack = allAvailableAttacks.find(a => a.id === pendingAction)
+                  if (!selectedAttack) return null
+                  
+                  return (
+                    <div>
+                      {/* Attack Info Card */}
+                      <div className={`${selectedAttack.color} rounded-lg p-4 mb-4`}>
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-5xl">{selectedAttack.icon}</span>
+                          <div>
+                            <div className="text-xl font-bold text-white uppercase">{selectedAttack.name}</div>
+                            <div className="text-sm text-white/80">{selectedAttack.description}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Instructions */}
+                      <div className="bg-blue-900/30 border border-blue-500/50 rounded-lg p-3 mb-4">
+                        <div className="text-sm text-blue-200">
+                          👆 <span className="font-bold">Click a target</span> to use this attack
+                        </div>
+                      </div>
+
+                      {/* Cancel Button */}
+                      <button
+                        onClick={() => {
+                          setIsSelectingTarget(false)
+                          setPendingAction(null)
+                          setBattleMenuState('attack')
+                        }}
+                        className="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition-all border-2 border-slate-500"
+                      >
+                        ✕ Cancel
+                      </button>
+                    </div>
+                  )
+                })()}
+              </div>
+            </div>
+          )}
+
+          {battleMenuState === 'main' && !isSelectingTarget && (
+            <div className="bg-slate-900 border-4 border-purple-500/60 rounded-xl overflow-hidden shadow-2xl">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-purple-900/80 to-purple-800/80 px-4 py-2 border-b-2 border-purple-500/60">
+                <div className="text-sm font-bold text-purple-200 uppercase">
+                  What will {battleState.playerCreatures[0]?.name || 'you'} do?
+                </div>
+              </div>
+
+              {/* Menu Grid - 2x2 */}
+              <div className="grid grid-cols-2 gap-0">
+                {/* ATTACK */}
+                <button
+                  onClick={() => setBattleMenuState('attack')}
+                  onMouseEnter={() => setSelectedMenuOption(0)}
+                  className={`relative px-6 py-12 text-left font-bold uppercase border-r-2 border-b-2 border-purple-500/40 transition-all ${
+                    selectedMenuOption === 0
+                      ? 'bg-purple-700/40 text-purple-100'
+                      : 'bg-slate-800/60 text-purple-300 hover:bg-purple-800/30'
+                  }`}
+                >
+                  {selectedMenuOption === 0 && <span className="absolute left-2 text-purple-300">►</span>}
+                  <span className="ml-6">Attack</span>
+                </button>
+
+                {/* CREATURES */}
+                <button
+                  onClick={() => setBattleMenuState('creatures')}
+                  onMouseEnter={() => setSelectedMenuOption(1)}
+                  className={`relative px-6 py-12 text-left font-bold uppercase border-b-2 border-purple-500/40 transition-all ${
+                    selectedMenuOption === 1
+                      ? 'bg-purple-700/40 text-purple-100'
+                      : 'bg-slate-800/60 text-purple-300 hover:bg-purple-800/30'
+                  }`}
+                >
+                  {selectedMenuOption === 1 && <span className="absolute left-2 text-purple-300">►</span>}
+                  <span className="ml-6">Creatures</span>
+                </button>
+
+                {/* USE ITEM */}
+                <button
+                  onClick={() => setBattleMenuState('items')}
+                  onMouseEnter={() => setSelectedMenuOption(2)}
+                  className={`relative px-6 py-12 text-left font-bold uppercase border-r-2 border-purple-500/40 transition-all ${
+                    selectedMenuOption === 2
+                      ? 'bg-purple-700/40 text-purple-100'
+                      : 'bg-slate-800/60 text-purple-300 hover:bg-purple-800/30'
+                  }`}
+                >
+                  {selectedMenuOption === 2 && <span className="absolute left-2 text-purple-300">►</span>}
+                  <span className="ml-6">Use Item</span>
+                </button>
+
+                {/* FLEE */}
+                <button
+                  onClick={() => alert('Flee functionality coming soon!')}
+                  onMouseEnter={() => setSelectedMenuOption(3)}
+                  className={`relative px-6 py-12 text-left font-bold uppercase transition-all ${
+                    selectedMenuOption === 3
+                      ? 'bg-purple-700/40 text-purple-100'
+                      : 'bg-slate-800/60 text-purple-300 hover:bg-purple-800/30'
+                  }`}
+                >
+                  {selectedMenuOption === 3 && <span className="absolute left-2 text-purple-300">►</span>}
+                  <span className="ml-6">Flee</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Attack Submenu */}
+          {battleMenuState === 'attack' && (
+            <div className="bg-slate-900 border-4 border-purple-500/60 rounded-xl overflow-hidden shadow-2xl">
+              <div className="bg-gradient-to-r from-purple-900/80 to-purple-800/80 px-4 py-2 border-b-2 border-purple-500/60 flex items-center justify-between">
+                <div className="text-sm font-bold text-purple-200 uppercase">Choose Attack</div>
+                <button
+                  onClick={() => setBattleMenuState('main')}
+                  className="text-purple-300 hover:text-purple-100 font-bold"
+                >
+                  ✕ Back
+                </button>
+              </div>
+              <div className="p-4">
+                {/* Shuffle Button */}
+                <button
+                  onClick={shuffleAttacks}
+                  disabled={isShuffling}
+                  className="w-full mb-4 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  <span className={`text-lg ${isShuffling ? 'animate-spin' : ''}`}>🎲</span>
+                  <span>{isShuffling ? 'Shuffling...' : 'Shuffle Attacks'}</span>
+                </button>
+
+                {/* 4 Attack Grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  {currentAttacks.map((attack, idx) => (
+                    <button
+                      key={`${attack.id}-${idx}`}
+                      onClick={() => {
+                        handleAttackSelect(attack.id)
+                        setBattleMenuState('main')
+                      }}
+                      className={`
+                        relative p-4 rounded-lg text-white font-bold transition-all duration-300
+                        ${attack.color} hover:scale-105 hover:shadow-xl
+                        animate-slide-in
+                      `}
+                      style={{
+                        animationDelay: `${idx * 75}ms`
+                      }}
+                    >
+                      <div className="text-4xl mb-2">{attack.icon}</div>
+                      <div className="text-sm">{attack.name}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Creatures Submenu */}
+          {battleMenuState === 'creatures' && (
+            <div className="bg-slate-900 border-4 border-purple-500/60 rounded-xl overflow-hidden shadow-2xl">
+              <div className="bg-gradient-to-r from-purple-900/80 to-purple-800/80 px-4 py-2 border-b-2 border-purple-500/60 flex items-center justify-between">
+                <div className="text-sm font-bold text-purple-200 uppercase">Your Team</div>
+                <button
+                  onClick={() => setBattleMenuState('main')}
+                  className="text-purple-300 hover:text-purple-100 font-bold"
+                >
+                  ✕ Back
+                </button>
+              </div>
+              <div className="p-3">
+                <div className="text-sm text-purple-300 text-center py-4">
+                  Team switching coming soon!
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Items Submenu */}
+          {battleMenuState === 'items' && (
+            <div className="bg-slate-900 border-4 border-purple-500/60 rounded-xl overflow-hidden shadow-2xl">
+              <div className="bg-gradient-to-r from-purple-900/80 to-purple-800/80 px-4 py-2 border-b-2 border-purple-500/60 flex items-center justify-between">
+                <div className="text-sm font-bold text-purple-200 uppercase">Items</div>
+                <button
+                  onClick={() => setBattleMenuState('main')}
+                  className="text-purple-300 hover:text-purple-100 font-bold"
+                >
+                  ✕ Back
+                </button>
+              </div>
+              <div className="p-3">
+                <div className="text-sm text-purple-300 text-center py-4">
+                  No items available
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Debug Panel Toggle & Timeline Button */}
+      <div className="mb-4 flex justify-center gap-3">
+        <button
+          onClick={() => setIsTimelineOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-blue-100 rounded-lg hover:bg-blue-500 border border-blue-400 transition-all flex items-center gap-2"
+          data-testid="timeline-button"
+        >
+          ⏱️ Battle Log
+        </button>
+        <button
+          onClick={() => setShowDebugPanel(!showDebugPanel)}
+          className="px-4 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 border border-slate-500 transition-all"
+        >
+          🔧 {showDebugPanel ? 'Hide' : 'Show'} Developer Tools
+        </button>
+      </div>
+
+      {/* Debug Panel - Collapsible */}
+      {showDebugPanel && (
+        <div className="mb-6 p-4 bg-slate-800/60 backdrop-blur-sm border-2 border-amber-500/40 rounded-lg">
+          <h2 className="text-xl font-semibold mb-3 text-amber-300 flex items-center gap-2">
+            <span>🔧</span> Developer Tools
+          </h2>
+          <p className="text-sm text-amber-200/80 mb-4">
+            These controls are for testing and development only
+          </p>
         
         <AttackShowcase
           onAttackSelect={handleAttackSelect}
@@ -956,20 +1306,21 @@ export const BattleEngineExample: React.FC = () => {
             🔄 Reset Battle
           </button>
         </div>
-      </div>
 
-      {/* Debug Info */}
-      {debugInfo && (
-        <div className="p-4 bg-slate-800/60 backdrop-blur-sm border border-yellow-500/30 rounded-lg">
-          <h3 className="text-lg font-semibold mb-3 text-yellow-300">Debug Info</h3>
-          <pre className="text-xs bg-slate-900/70 text-purple-200 p-2 rounded overflow-auto border border-slate-700">
-            {JSON.stringify({
-              turn: debugInfo.battleState.turn,
-              stateHistoryLength: debugInfo.stateHistoryLength,
-              subscriberCount: debugInfo.subscriberCount,
-              isProcessingEffects: debugInfo.isProcessingEffects
-            }, null, 2)}
-          </pre>
+        {/* Debug Info */}
+        {debugInfo && (
+          <div className="mt-4 p-4 bg-slate-800/60 backdrop-blur-sm border border-yellow-500/30 rounded-lg">
+            <h3 className="text-lg font-semibold mb-3 text-yellow-300">Debug Info</h3>
+            <pre className="text-xs bg-slate-900/70 text-purple-200 p-2 rounded overflow-auto border border-slate-700">
+              {JSON.stringify({
+                turn: debugInfo.battleState.turn,
+                stateHistoryLength: debugInfo.stateHistoryLength,
+                subscriberCount: debugInfo.subscriberCount,
+                isProcessingEffects: debugInfo.isProcessingEffects
+              }, null, 2)}
+            </pre>
+          </div>
+        )}
         </div>
       )}
 
@@ -986,12 +1337,46 @@ export const BattleEngineExample: React.FC = () => {
           50% { background-color: rgba(255, 100, 0, 0.3); }
         }
 
+        @keyframes flip {
+          0% {
+            transform: rotateY(0deg) scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: rotateY(90deg) scale(0.8);
+            opacity: 0.5;
+          }
+          100% {
+            transform: rotateY(0deg) scale(1);
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideIn {
+          0% {
+            transform: translateY(20px) scale(0.8);
+            opacity: 0;
+          }
+          100% {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+          }
+        }
+
         .shake-animation {
           animation: shake 0.3s ease-in-out;
         }
 
         .burn-effect {
           animation: burn 0.5s ease-in-out;
+        }
+
+        .animate-flip {
+          animation: flip 0.6s ease-in-out;
+        }
+
+        .animate-slide-in {
+          animation: slideIn 0.4s ease-out forwards;
         }
 
         .damage-number {
@@ -1007,6 +1392,97 @@ export const BattleEngineExample: React.FC = () => {
         onClose={closeModal}
         type={infoModal.type as 'status' | 'passive'}
         data={infoModal.data}
+      />
+
+      {/* Creature Detail Modal */}
+      {selectedCreatureInfo && (
+        <div 
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedCreatureInfo(null)}
+        >
+          <div 
+            className="bg-slate-900 border-4 border-purple-500/50 rounded-xl p-6 max-w-md w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <span className="text-6xl">{selectedCreatureInfo.icon}</span>
+                <div>
+                  <div className="font-bold text-2xl text-purple-200 uppercase">{selectedCreatureInfo.name}</div>
+                  <div className="text-sm text-slate-400">{selectedCreatureInfo.owner === 'player' ? 'Your Creature' : 'Enemy Creature'}</div>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedCreatureInfo(null)}
+                className="text-slate-400 hover:text-white text-2xl font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="bg-slate-800 border border-red-500/50 rounded-lg p-3 text-center">
+                <div className="text-xs text-slate-400 uppercase">Attack</div>
+                <div className="text-2xl font-bold text-red-400">⚔️ {selectedCreatureInfo.attack}</div>
+              </div>
+              <div className="bg-slate-800 border border-blue-500/50 rounded-lg p-3 text-center">
+                <div className="text-xs text-slate-400 uppercase">Defense</div>
+                <div className="text-2xl font-bold text-blue-400">🛡️ {selectedCreatureInfo.defense}</div>
+              </div>
+              <div className="bg-slate-800 border border-green-500/50 rounded-lg p-3 text-center">
+                <div className="text-xs text-slate-400 uppercase">HP</div>
+                <div className="text-2xl font-bold text-green-400">{selectedCreatureInfo.health}/{selectedCreatureInfo.maxHealth}</div>
+              </div>
+            </div>
+
+            {/* Passive Abilities */}
+            {selectedCreatureInfo.passiveAbilities && selectedCreatureInfo.passiveAbilities.length > 0 && (
+              <div className="mb-4">
+                <div className="text-sm font-bold text-yellow-300 uppercase mb-2">⚡ Passive Abilities</div>
+                {selectedCreatureInfo.passiveAbilities.map((ability: any) => (
+                  <div 
+                    key={ability.id}
+                    className="bg-yellow-600/20 border border-yellow-500/40 rounded-lg p-3 mb-2"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xl">{ability.icon}</span>
+                      <span className="font-bold text-yellow-200">{ability.name}</span>
+                    </div>
+                    <div className="text-sm text-yellow-100/80">{ability.description}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Status Effects */}
+            {selectedCreatureInfo.statuses && selectedCreatureInfo.statuses.length > 0 && (
+              <div>
+                <div className="text-sm font-bold text-purple-300 uppercase mb-2">✨ Status Effects</div>
+                <div className="flex flex-wrap gap-2">
+                  {selectedCreatureInfo.statuses.map((status: any, idx: number) => (
+                    <div
+                      key={`${status.id}-${idx}`}
+                      className={`px-3 py-2 rounded-lg border-2 text-sm font-bold ${
+                        status.type === 'debuff' ? 'bg-red-500/30 border-red-400/50 text-red-200' :
+                        status.type === 'buff' ? 'bg-green-500/30 border-green-400/50 text-green-200' :
+                        'bg-slate-500/30 border-slate-400/50 text-slate-200'
+                      }`}
+                    >
+                      {status.icon} {status.name} ({status.duration})
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Battle Timeline Modal */}
+      <BattleTimeline
+        isOpen={isTimelineOpen}
+        onClose={() => setIsTimelineOpen(false)}
       />
     </div>
   )

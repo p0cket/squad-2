@@ -4,6 +4,7 @@
 import { BattleContext, StateChange, HealthChange } from '../types'
 import { Attack, Creature } from '../../../consts/types/types'
 import { getCreatureFromContext } from '../effectResolver'
+import { battleEventLogger } from '../eventLogger'
 
 /**
  * Helper: Calculate actual damage after defense
@@ -146,6 +147,9 @@ export const applyHealingEffect = (
   const newHealth = target.health + actualHealing
 
   console.log(`💚 Healing: ${caster.name} heals ${target.name} for ${actualHealing} HP (${target.health} → ${newHealth})`)
+  
+  // Log to battle timeline
+  battleEventLogger.logHeal(target.name, actualHealing, caster.name)
 
   const healthChange: HealthChange = {
     type: 'HEALTH_CHANGE',
@@ -179,6 +183,9 @@ export const applyBurnDamage = (
   const newHealth = clampHealth(creature.health - actualDamage, creature.maxHealth)
 
   console.log(`🔥 Burn effect: ${creature.name} takes ${actualDamage} damage (${creature.health} → ${newHealth})`)
+  
+  // Log to battle timeline
+  battleEventLogger.logStatusTick(creature.name, 'Burn', actualDamage, false)
 
   const healthChange: HealthChange = {
     type: 'HEALTH_CHANGE',
@@ -222,6 +229,9 @@ export const applyPoisonDamage = (
   const newHealth = clampHealth(creature.health - actualDamage, creature.maxHealth)
 
   console.log(`🧪 Poison effect: ${creature.name} takes ${actualDamage} poison damage (${creature.health} → ${newHealth})`)
+  
+  // Log to battle timeline
+  battleEventLogger.logStatusTick(creature.name, 'Poison', actualDamage, false)
 
   const healthChange: HealthChange = {
     type: 'HEALTH_CHANGE',

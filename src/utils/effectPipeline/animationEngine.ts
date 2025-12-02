@@ -157,14 +157,19 @@ const createShakeAnimation = (animation: Animation): AnimationInstance => {
     play: () => {
       // Shake animation
 
-      // Find the creature element
-      const creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      // Find the creature element (prioritize active card)
+      let creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"][data-testid="creature-card"]`)
+      if (!creatureElement) {
+        creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      }
 
       if (creatureElement) {
         creatureElement.classList.add('shake-animation')
 
         setTimeout(() => {
-          creatureElement.classList.remove('shake-animation')
+          if (creatureElement) {
+            creatureElement.classList.remove('shake-animation')
+          }
           if (instance.onComplete) instance.onComplete()
         }, animation.duration)
       } else {
@@ -189,11 +194,24 @@ const createDamageNumberAnimation = (animation: Animation): AnimationInstance =>
       const isTotal = animation.data?.isTotal || false
       const delay = animation.data?.delay || 0
 
-      const creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      // Try to find the main creature card first (active creature)
+      // This avoids selecting the hidden team box element which would cause position 0,0
+      let creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"][data-testid="creature-card"]`)
+      
+      // Fallback to any element with the ID if specific card not found
+      if (!creatureElement) {
+        creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      }
 
       if (creatureElement) {
         // Calculate position BEFORE the delay (so it's relative to current scroll position)
         const rect = creatureElement.getBoundingClientRect()
+        
+        // If rect is all zeros, it might be hidden or not rendered yet
+        if (rect.width === 0 && rect.height === 0) {
+           console.warn(`Creature element found but has 0 dimensions (hidden?): ${animation.targetId}`)
+        }
+
         const scrollY = window.scrollY
         const scrollX = window.scrollX
         
@@ -280,14 +298,20 @@ const createBurnAnimation = (animation: Animation): AnimationInstance => {
   const instance: AnimationInstance = {
     play: () => {
       // Burn animation
-
-      const creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      
+      // Find the creature element (prioritize active card)
+      let creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"][data-testid="creature-card"]`)
+      if (!creatureElement) {
+        creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      }
 
       if (creatureElement) {
         creatureElement.classList.add('burn-effect')
 
         setTimeout(() => {
-          creatureElement.classList.remove('burn-effect')
+          if (creatureElement) {
+            creatureElement.classList.remove('burn-effect')
+          }
           if (instance.onComplete) instance.onComplete()
         }, animation.duration)
       } else {
@@ -307,7 +331,11 @@ const createDeathAnimation = (animation: Animation): AnimationInstance => {
     play: () => {
       // Death animation
 
-      const creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      // Find the creature element (prioritize active card)
+      let creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"][data-testid="creature-card"]`)
+      if (!creatureElement) {
+        creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      }
 
       if (creatureElement) {
         creatureElement.animate([
@@ -336,7 +364,11 @@ const createAttackWindupAnimation = (animation: Animation): AnimationInstance =>
     play: () => {
       // Attack windup animation
 
-      const creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      // Find the creature element (prioritize active card)
+      let creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"][data-testid="creature-card"]`)
+      if (!creatureElement) {
+        creatureElement = document.querySelector(`[data-creature-id="${animation.targetId}"]`)
+      }
 
       if (creatureElement) {
         creatureElement.animate([
