@@ -50,6 +50,14 @@ export const useBattleEngine = (initialState: BattleState) => {
   // Autopilot state
   const [isAutopilotEnabled, setIsAutopilotEnabled] = useState(false)
   const [autopilotSpeed, setAutopilotSpeed] = useState(1000) // Default: 1000ms delay
+  
+  // Ref to track autopilot state for use in callbacks (avoids stale closures)
+  const autopilotRef = useRef({ enabled: false, speed: 1000 })
+  
+  // Keep ref in sync with state
+  useEffect(() => {
+    autopilotRef.current = { enabled: isAutopilotEnabled, speed: autopilotSpeed }
+  }, [isAutopilotEnabled, autopilotSpeed])
 
   /**
    * Get battle event log
@@ -138,70 +146,8 @@ export const useBattleEngine = (initialState: BattleState) => {
     }
   }, [])
 
-  // Trigger autopilot when enabled during an active player turn
-  useEffect(() => {
-    if (isAutopilotEnabled && 
-        battleState.currentTurnOwner === 'player' && 
-        !isProcessingEffects &&
-        battleState.battleStatus === 'in-progress') {
-      console.log('🤖 Autopilot enabled on player turn - triggering immediately')
-      
-      // Small delay to allow UI to update
-      const timer = setTimeout(async () => {
-        const alivePlayerCreatures = battleState.playerCreatures.filter(c => c.health > 0)
-        const aliveEnemies = battleState.computerCreatures.filter(c => c.health > 0)
-        
-        if (alivePlayerCreatures.length > 0 && aliveEnemies.length > 0) {
-          // Use the executePlayerAutopilot function via a ref to avoid stale closures
-          // For now, we'll manually trigger it here
-          const attacker = alivePlayerCreatures[0]
-          const target = aliveEnemies.reduce((weakest, current) =>
-            current.health < weakest.health ? current : weakest
-          )
-          
-          const attack = {
-            name: "Auto Attack",
-            damage: 15,
-            template: "physical",
-            attackType: "physical" as const,
-            effects: [],
-            chanceToLand: 1,
-            trueDamage: 0,
-            icon: "⚔️",
-            notes: "Autopilot basic attack",
-            cooldown: 0
-          }
-          
-          console.log(`🤖 Autopilot: ${attacker.name} attacks ${target.name}`)
-          
-          if (contextRef.current) {
-            const effect = buildAttackEffect(attacker.ID, target.ID, attack)
-            await processEffectChain(effect, contextRef.current)
-          }
-          
-          // Apply autopilot speed delay then end turn
-          await new Promise(resolve => setTimeout(resolve, autopilotSpeed))
-          
-          // Manually trigger endTurn by updating state
-          const newTurn = battleState.turn + 1
-          const newOwner = 'computer'
-          
-          setBattleState(prev => ({
-            ...prev,
-            turn: newTurn,
-            currentTurnOwner: newOwner
-          }))
-          
-          if (contextRef.current) {
-            contextRef.current.state.turn = newTurn
-            contextRef.current.state.currentTurnOwner = newOwner
-          }
-        }
-      }, 500)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [isAutopilotEnabled, battleState.currentTurnOwner, battleState.turn, isProcessingEffects, battleState.battleStatus])
+  // Note: The autopilot useEffect has been moved below the endTurn definition
+  // to avoid stale closure issues. See autopilot trigger useEffect below.
 
   // Note: Removed state synchronization that could interfere with effect pipeline
   // The context should be the single source of truth, not React state
@@ -229,6 +175,36 @@ export const useBattleEngine = (initialState: BattleState) => {
       // End effect group
     }
   }, [])
+
+  /**
+   * Get a creature by ID from current state
+   */
+  const getCreatureById = useCallback((creatureId: number) => {
+    const playerCreature = battleState.playerCreatures.find(c => c.ID === creatureId)
+    if (playerCreature) return playerCreature
+
+    const computerCreature = battleState.computerCreatures.find(c => c.ID === creatureId)
+    if (computerCreature) return computerCreature
+
+    return null
+  }, [battleState])
+
+  /**
+   * Get alive creatures by owner
+   */
+  const getAliveCreatures = useCallback((owner: 'player' | 'computer') => {
+    const creatures = owner === 'player' ? battleState.playerCreatures : battleState.computerCreatures
+    return creatures.filter(creature => creature.health > 0)
+  }, [battleState])
+
+  /**
+   * Check if battle is over
+   */
+  const isBattleOver = useCallback(() => {
+    const alivePlayerCreatures = getAliveCreatures('player')
+    const aliveComputerCreatures = getAliveCreatures('computer')
+    return alivePlayerCreatures.length === 0 || aliveComputerCreatures.length === 0
+  }, [getAliveCreatures])
 
   /**
    * Helper function to apply a burn effect
@@ -438,12 +414,132 @@ export const useBattleEngine = (initialState: BattleState) => {
   }, [applyEffect])
 
   /**
+   * Switch active creature with a bench creature
+   */
+  const switchCreature = useCallback(async (owner: 'player' | 'computer', newActiveIndex: number) => {
+    if (!contextRef.current) return
+
+    console.log(`🔄 Switching ${owner} creature: index 0 ↔ index ${newActiveIndex}`)
+    
+    const ctx = contextRef.current
+    const creatures = owner === 'player' ? [...ctx.state.playerCreatures] : [...ctx.state.computerCreatures]
+    
+    if (newActiveIndex >= creatures.length || newActiveIndex <= 0) {
+      console.error('❌ Invalid switch index:', newActiveIndex)
+      return
+    }
+
+    // Perform swap
+    const temp = creatures[0]
+    creatures[0] = creatures[newActiveIndex]
+    creatures[newActiveIndex] = temp
+    
+    // Create state change for swap
+    const changes: StateChange[] = [{
+      type: 'CREATURE_MOVED',
+      creatureId: creatures[0].ID,
+      timestamp: Date.now(),
+      data: { fromPosition: newActiveIndex, toPosition: 0, reason: 'switch' }
+    }, {
+      type: 'CREATURE_MOVED',
+      creatureId: creatures[newActiveIndex].ID,
+      timestamp: Date.now(),
+      data: { fromPosition: 0, toPosition: newActiveIndex, reason: 'faint_switch' }
+    }]
+    
+    // Update state
+    if (owner === 'player') {
+      ctx.state.playerCreatures = creatures
+    } else {
+      ctx.state.computerCreatures = creatures
+    }
+    
+    // Reset status to in-progress
+    ctx.state.battleStatus = 'in-progress'
+    
+    // Notify subscribers
+    applyChangesToContext(ctx, changes)
+    
+    // Sync React state
+    setBattleState({ ...ctx.state })
+    
+    console.log(`✅ Switch complete. New active: ${creatures[0].name}`)
+    
+  }, [])
+
+  /**
+   * Handle computer auto-switching
+   */
+  const handleComputerSwitch = useCallback(async () => {
+    if (!contextRef.current) return
+    
+    const creatures = contextRef.current.state.computerCreatures
+    // Find first healthy bench creature
+    const nextIndex = creatures.findIndex((c, i) => i > 0 && c.health > 0)
+    
+    if (nextIndex !== -1) {
+      console.log(`🤖 Computer switching to index ${nextIndex}`)
+      await switchCreature('computer', nextIndex)
+    } else {
+      console.warn('⚠️ Computer tried to switch but no healthy creatures found')
+    }
+  }, [switchCreature])
+
+  /**
    * Helper function to perform an attack
    */
   const performAttack = useCallback(async (attackerId: number, targetId: number, attack: any) => {
+    // 1. Check if attacker is alive
+    const attacker = getCreatureById(attackerId)
+    if (!attacker || attacker.health <= 0) {
+      console.warn(`⚠️ Dead or missing creature ${attackerId} tried to attack`)
+      return
+    }
+
+    // 2. Check if target is alive (unless attack specifically allows targeting dead)
+    const target = getCreatureById(targetId)
+    const canTargetDead = attack.canTargetDead || false
+    
+    if (!target || (target.health <= 0 && !canTargetDead)) {
+      console.warn(`⚠️ Tried to attack dead or missing target ${targetId}`)
+      return
+    }
+
     const effect = buildAttackEffect(attackerId, targetId, attack)
     await applyEffect(effect)
-  }, [applyEffect])
+
+    // Check if any active creature died after attack
+    const playerActive = battleState.playerCreatures[0]
+    const computerActive = battleState.computerCreatures[0]
+
+    // We need to check fresh state from context if possible, otherwise use local state (which might be slightly stale but okay for this check)
+    // Better to use contextRef if available
+    if (contextRef.current) {
+      const freshPlayerActive = contextRef.current.state.playerCreatures[0]
+      const freshComputerActive = contextRef.current.state.computerCreatures[0]
+      
+      if (freshPlayerActive && freshPlayerActive.health <= 0) {
+        const hasBench = contextRef.current.state.playerCreatures.slice(1).some(c => c.health > 0)
+        if (hasBench) {
+          console.log('⚠️ Player active creature fainted! Triggering switch...')
+          setBattleState(prev => ({ ...prev, battleStatus: 'player-select-switch' }))
+          contextRef.current.state.battleStatus = 'player-select-switch'
+        }
+      }
+      
+      if (freshComputerActive && freshComputerActive.health <= 0) {
+        const hasBench = contextRef.current.state.computerCreatures.slice(1).some(c => c.health > 0)
+        if (hasBench) {
+          console.log('⚠️ Computer active creature fainted! Triggering auto-switch...')
+          setBattleState(prev => ({ ...prev, battleStatus: 'computer-switching' }))
+          contextRef.current.state.battleStatus = 'computer-switching'
+          
+          // Trigger computer switch
+          setTimeout(() => handleComputerSwitch(), 1500)
+        }
+      }
+    }
+  }, [applyEffect, getCreatureById, battleState, handleComputerSwitch])
 
   /**
    * Helper function to perform true damage attack
@@ -485,35 +581,7 @@ export const useBattleEngine = (initialState: BattleState) => {
     await applyEffect(effect)
   }, [applyEffect])
 
-  /**
-   * Get a creature by ID from current state
-   */
-  const getCreatureById = useCallback((creatureId: number) => {
-    const playerCreature = battleState.playerCreatures.find(c => c.ID === creatureId)
-    if (playerCreature) return playerCreature
 
-    const computerCreature = battleState.computerCreatures.find(c => c.ID === creatureId)
-    if (computerCreature) return computerCreature
-
-    return null
-  }, [battleState])
-
-  /**
-   * Get alive creatures by owner
-   */
-  const getAliveCreatures = useCallback((owner: 'player' | 'computer') => {
-    const creatures = owner === 'player' ? battleState.playerCreatures : battleState.computerCreatures
-    return creatures.filter(creature => creature.health > 0)
-  }, [battleState])
-
-  /**
-   * Check if battle is over
-   */
-  const isBattleOver = useCallback(() => {
-    const alivePlayerCreatures = getAliveCreatures('player')
-    const aliveComputerCreatures = getAliveCreatures('computer')
-    return alivePlayerCreatures.length === 0 || aliveComputerCreatures.length === 0
-  }, [getAliveCreatures])
 
   /**
    * Get battle winner
@@ -644,7 +712,7 @@ export const useBattleEngine = (initialState: BattleState) => {
     }
     
     // Apply autopilot speed delay
-    await new Promise(resolve => setTimeout(resolve, autopilotSpeed))
+    await new Promise(resolve => setTimeout(resolve, autopilotRef.current.speed))
     
     // Check if battle is over after player autopilot attack
     if (isBattleOver()) {
@@ -662,7 +730,7 @@ export const useBattleEngine = (initialState: BattleState) => {
       }
       return // Don't continue turn progression
     }
-  }, [getAliveCreatures, performAttack, isBattleOver, getBattleWinner, autopilotSpeed])
+  }, [getAliveCreatures, performAttack, isBattleOver, getBattleWinner])
 
   /**
    * End current turn and process status effects
@@ -695,6 +763,9 @@ export const useBattleEngine = (initialState: BattleState) => {
     const newOwner = battleState.currentTurnOwner === 'player' ? 'computer' : 'player'
     
     console.log(`📊 Turn ${newTurn}, ${newOwner}'s turn`)
+    
+    // Log turn change to battle timeline
+    battleEventLogger.logTurnStart(newTurn, newOwner)
     
     // 4. Update state
     setBattleState(prev => ({
@@ -735,24 +806,35 @@ export const useBattleEngine = (initialState: BattleState) => {
           }
         })
         
-        // 6. If autopilot is enabled, trigger player autopilot after a delay
-        if (isAutopilotEnabled) {
-          setTimeout(async () => {
-            await executePlayerAutopilot()
-            // After autopilot acts, end turn to continue the cycle
-            await endTurn()
-          }, 500)
-        }
-      }, 1000)
-    } else if (newOwner === 'player' && isAutopilotEnabled) {
-      // If it's player turn and autopilot is enabled, trigger autopilot
-      setTimeout(async () => {
-        await executePlayerAutopilot()
-        // After autopilot acts, end turn
-        await endTurn()
-      }, 500)
+      }, 2000) // Increased from 1000ms to 2000ms to give time for turn transition
     }
-  }, [battleState, processEndOfTurn, isBattleOver, getBattleWinner, executeComputerTurn, executePlayerAutopilot, isAutopilotEnabled])
+  }, [battleState, processEndOfTurn, isBattleOver, getBattleWinner, executeComputerTurn, executePlayerAutopilot])
+
+  // Autopilot trigger effect - runs when autopilot is enabled and it's player turn
+  // This is placed after endTurn to avoid stale closure issues
+  useEffect(() => {
+    // Only trigger if autopilot is enabled, it's player turn, not processing, and battle is active
+    if (!autopilotRef.current.enabled) return
+    if (battleState.currentTurnOwner !== 'player') return
+    if (isProcessingEffects) return
+    if (battleState.battleStatus !== 'in-progress') return
+    
+    console.log('🤖 Autopilot: Player turn detected, triggering auto-attack')
+    
+    const timer = setTimeout(async () => {
+      // Double check battle status before executing
+      if (battleState.battleStatus !== 'in-progress') return
+      
+      await executePlayerAutopilot()
+      
+      // Double check again before ending turn
+      if (isBattleOver()) return
+      
+      await endTurn()
+    }, 1500) // Increased from 500ms to 1500ms to slow down autopilot pace
+    
+    return () => clearTimeout(timer)
+  }, [battleState.currentTurnOwner, battleState.turn, isProcessingEffects, battleState.battleStatus, executePlayerAutopilot, endTurn, isAutopilotEnabled])
 
   return {
     // State
@@ -804,7 +886,10 @@ export const useBattleEngine = (initialState: BattleState) => {
     clearEventLog,
 
     // Debug
-    getDebugInfo
+    getDebugInfo,
+    
+    // Switching
+    switchCreature
   }
 }
 

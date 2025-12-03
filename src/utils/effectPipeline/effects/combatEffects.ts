@@ -580,6 +580,9 @@ const applyDeathEffect = async (
   const creature = getCreatureFromContext(context, effect.targetId)
 
   console.log(`💀 Death: ${creature.name} has died`)
+  
+  // Log to battle timeline
+  battleEventLogger.logDeath(creature.name)
 
   const deathChange: StateChange = {
     type: 'CREATURE_DIED',

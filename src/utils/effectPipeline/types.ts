@@ -106,7 +106,7 @@ export type BattleState = {
   mp: number
   turn: number
   currentTurnOwner: 'player' | 'computer' | null
-  battleStatus: 'in-progress' | 'victory' | 'defeat' | null
+  battleStatus: 'in-progress' | 'victory' | 'defeat' | 'player-select-switch' | 'computer-switching' | null
 }
 
 export type BattleContext = {

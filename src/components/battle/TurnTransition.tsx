@@ -20,11 +20,11 @@ export const TurnTransition: React.FC<TurnTransitionProps> = ({ turnOwner, turnN
       console.log('✅ Showing turn transition:', turnOwner)
       setIsVisible(true)
       
-      // Hide after 1.5 seconds
+      // Hide after 1 second (faster)
       const timer = setTimeout(() => {
         console.log('⏰ Hiding turn transition')
         setIsVisible(false)
-      }, 1500)
+      }, 1000)
       
       // Update ref for next time
       prevOwnerRef.current = turnOwner
@@ -41,33 +41,35 @@ export const TurnTransition: React.FC<TurnTransitionProps> = ({ turnOwner, turnN
   const isPlayerTurn = turnOwner === 'player'
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-40 pointer-events-none">
+    <div className="fixed top-24 left-0 right-0 flex justify-center z-40 pointer-events-none">
       <div className={`
-        transform transition-all duration-500 ease-out
-        ${isVisible ? 'scale-100 opacity-100' : 'scale-50 opacity-0'}
+        transform transition-all duration-300 ease-out
+        ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-8 opacity-0'}
       `}>
         <div className={`
-          px-12 py-8 rounded-2xl border-4 shadow-2xl backdrop-blur-sm
+          px-8 py-4 rounded-xl border-2 shadow-lg backdrop-blur-sm
           ${isPlayerTurn 
-            ? 'bg-blue-900/90 border-blue-400 shadow-blue-500/50' 
-            : 'bg-red-900/90 border-red-400 shadow-red-500/50'}
+            ? 'bg-blue-900/80 border-blue-400 shadow-blue-500/30' 
+            : 'bg-red-900/80 border-red-400 shadow-red-500/30'}
         `}>
-          <div className="text-center">
+          <div className="text-center flex items-center gap-4">
             {/* Icon */}
-            <div className="text-7xl mb-4 animate-bounce">
+            <div className="text-4xl animate-bounce">
               {isPlayerTurn ? '🛡️' : '⚔️'}
             </div>
             
-            {/* Turn Info */}
-            <h2 className={`text-5xl font-bold mb-2 ${
-              isPlayerTurn ? 'text-blue-200' : 'text-red-200'
-            }`}>
-              {isPlayerTurn ? 'Your Turn' : 'Enemy Turn'}
-            </h2>
-            
-            <p className="text-2xl text-gray-300">
-              Turn {turnNumber}
-            </p>
+            <div>
+              {/* Turn Info */}
+              <h2 className={`text-2xl font-bold ${
+                isPlayerTurn ? 'text-blue-200' : 'text-red-200'
+              }`}>
+                {isPlayerTurn ? 'Your Turn' : 'Enemy Turn'}
+              </h2>
+              
+              <p className="text-sm text-gray-300">
+                Turn {turnNumber}
+              </p>
+            </div>
           </div>
         </div>
       </div>

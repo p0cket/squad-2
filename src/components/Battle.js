@@ -8,6 +8,12 @@ import { useCreatureControls } from "../hooks/useCreatureControls";
 import ClassicHand from "./hand/ClassicHand";
 import AnimationQueueDemo from "./AnimationQueueDemo"; // Build 1.1: Animation Queue Demo
 
+/**
+ * @deprecated LEGACY BATTLE COMPONENT
+ * This component is deprecated and kept only for reference.
+ * Please use the "Zustand Battle" tab instead for the latest battle system
+ * with Auto Battle, Battle Timeline, and the new Effect Pipeline System.
+ */
 const Battle = () => {
   const state = useStateContext();
   const dispatch = useDispatchContext();
@@ -36,6 +42,26 @@ const Battle = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white p-1">
+      {/* ⚠️ DEPRECATION NOTICE */}
+      <div className="w-full max-w-3xl mb-4 p-4 bg-yellow-900/80 border-2 border-yellow-500 rounded-lg">
+        <div className="flex items-center gap-2 text-yellow-300">
+          <span className="text-2xl">⚠️</span>
+          <div>
+            <p className="font-bold text-lg">DEPRECATED - Legacy Battle System</p>
+            <p className="text-sm text-yellow-200">
+              This is the old battle system, kept for reference only. 
+              Please use <strong>"Zustand Battle"</strong> tab for the latest features including:
+            </p>
+            <ul className="text-sm text-yellow-200 list-disc list-inside mt-1">
+              <li>🤖 Auto Battle mode</li>
+              <li>📜 Battle Timeline / Log</li>
+              <li>✨ New Effect Pipeline System</li>
+              <li>🎯 Enhanced targeting & passives</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
       <Hud />
       <OwnedRunes />
       

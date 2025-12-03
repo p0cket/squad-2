@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { useBattleEngine } from '../hooks/useBattleEngine'
 import { BattleState } from '../types'
+import { Creature } from '../../../consts/types/types'
 import { useDispatchContext } from '../../../GameContext'
 import { InfoModal } from '../../../components/battle/InfoModal'
 import { AttackShowcase } from '../../../components/battle/AttackShowcase'
@@ -38,6 +39,22 @@ const exampleBattleState: BattleState = {
       attack: 25,
       trueDamage: 0,
       defense: 15,
+      mods: [],
+      startingAttacks: [],
+      possibleAttacks: [],
+      statuses: [],
+      owner: "player"
+    },
+    {
+      ID: 6,
+      name: "Phoenix",
+      icon: "🦅",
+      template: "phoenix",
+      health: 80,
+      maxHealth: 80,
+      attack: 20,
+      trueDamage: 5,
+      defense: 10,
       mods: [],
       startingAttacks: [],
       possibleAttacks: [],
@@ -176,7 +193,13 @@ export const BattleEngineExample: React.FC = () => {
     getBattleWinner,
     resetBattle,
     endTurn,
-    getDebugInfo
+    getDebugInfo,
+    // Autopilot controls
+    isAutopilotEnabled,
+    setIsAutopilotEnabled,
+    autopilotSpeed,
+    setAutopilotSpeed,
+    switchCreature
   } = useBattleEngine(exampleBattleState)
 
   const playerCreatures = getAliveCreatures('player')
@@ -198,9 +221,14 @@ export const BattleEngineExample: React.FC = () => {
   })
 
   // Creature detail modal state
-  const [selectedCreatureInfo, setSelectedCreatureInfo] = useState<any | null>(null)
+  const [selectedCreatureInfo, setSelectedCreatureInfo] = useState<Creature | null>(null)
+  
+  // Switch animation state
+  const [switchAnimation, setSwitchAnimation] = useState<'idle' | 'exiting' | 'entering'>('idle')
+  const [switchingBenchIndex, setSwitchingBenchIndex] = useState<number | null>(null)
 
-  // Battle menu state
+  // Derived state
+  // isProcessingEffects and isPlayerTurn are already destructured from useBattleEngine or derived above
   const [battleMenuState, setBattleMenuState] = useState<'main' | 'attack' | 'creatures' | 'items' | null>('main')
   const [selectedMenuOption, setSelectedMenuOption] = useState<number>(0)
 
@@ -688,10 +716,37 @@ export const BattleEngineExample: React.FC = () => {
     await endTurn()
   }
 
+  const handleSwitch = async (index: number, consumeTurn: boolean) => {
+    // 1. Exit animation
+    setSwitchingBenchIndex(index)
+    setSwitchAnimation('exiting')
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // 2. Perform switch
+    await switchCreature('player', index)
+    setSwitchingBenchIndex(null)
+    
+    // 3. Enter animation (Start state)
+    setSwitchAnimation('entering')
+    // Short delay to allow render of start state
+    await new Promise(resolve => setTimeout(resolve, 50))
+    
+    // 4. Reset animation (Trigger entry transition)
+    setSwitchAnimation('idle')
+    setBattleMenuState('main')
+    // Wait for entry animation to complete
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // 5. End turn if requested
+    if (consumeTurn) {
+      await endTurn()
+    }
+  }
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Victory/Defeat Screen Overlay */}
-      {battleState.battleStatus && battleState.battleStatus !== 'in-progress' && (
+      {(battleState.battleStatus === 'victory' || battleState.battleStatus === 'defeat') && (
         <BattleResultScreen
           result={battleState.battleStatus}
           onRestart={() => {
@@ -747,6 +802,37 @@ export const BattleEngineExample: React.FC = () => {
             >
               End Turn
             </button>
+
+            {/* Auto Battle Button */}
+            <button
+              onClick={() => setIsAutopilotEnabled(!isAutopilotEnabled)}
+              disabled={isProcessingEffects || (isBattleOver() ? true : false)}
+              className={`
+                px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all
+                ${isAutopilotEnabled
+                  ? 'bg-green-600 hover:bg-green-500 text-white border border-green-500 shadow-lg shadow-green-900/30 animate-pulse'
+                  : 'bg-purple-600 hover:bg-purple-500 text-white border border-purple-500 hover:border-purple-400 shadow-lg shadow-purple-900/20'
+                }
+                disabled:opacity-50 disabled:cursor-not-allowed
+              `}
+              data-testid="autopilot-toggle"
+            >
+              🤖 {isAutopilotEnabled ? 'AUTO: ON' : 'AUTO'}
+            </button>
+
+            {/* Speed Selector (shown when autopilot is on) */}
+            {isAutopilotEnabled && (
+              <select
+                value={autopilotSpeed}
+                onChange={(e) => setAutopilotSpeed(Number(e.target.value))}
+                className="px-2 py-1 rounded-md text-xs bg-slate-800 text-white border border-green-500/50 cursor-pointer"
+              >
+                <option value={0}>⚡ Instant</option>
+                <option value={500}>🏃 Fast</option>
+                <option value={1000}>🚶 Normal</option>
+                <option value={2000}>🐌 Slow</option>
+              </select>
+            )}
           </div>
         </div>
       </div>
@@ -790,6 +876,15 @@ export const BattleEngineExample: React.FC = () => {
                     />
                   </div>
                   <div className="text-[8px] text-center text-slate-400 mt-0.5">{creature.health}/{creature.maxHealth}</div>
+                  {/* Summary row for passives/statuses */}
+                  <div className="flex flex-wrap justify-center gap-0.5 mt-1">
+                    {creature.passiveAbilities?.map((p) => (
+                      <span key={p.id} className="text-[10px]" title={p.name}>{p.icon}</span>
+                    ))}
+                    {creature.statuses?.map((s, idx) => (
+                      <span key={`${s.id}-${idx}`} className="text-[10px]" title={`${s.name} (${s.duration})`}>{s.icon}</span>
+                    ))}
+                  </div>
                 </div>
               );
             })}
@@ -844,6 +939,22 @@ export const BattleEngineExample: React.FC = () => {
                   <div className="text-sm text-slate-400">Enemy</div>
                 </div>
 
+                {/* Passive Abilities - Own Line */}
+                {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
+                  <div className="mb-2">
+                    {creature.passiveAbilities.map((ability) => (
+                      <div 
+                        key={ability.id}
+                        onClick={(e) => { e.stopPropagation(); handlePassiveClick(ability, e); }}
+                        className="text-xs bg-yellow-600/20 border border-yellow-500/40 rounded px-2 py-1 cursor-pointer hover:bg-yellow-600/30 transition-all inline-flex items-center gap-1 mr-1"
+                      >
+                        <span className="text-sm">{ability.icon}</span>
+                        <span className="text-yellow-200 font-semibold">{ability.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* HP Bar */}
                 <div className="mb-3">
                   <div className="flex justify-between items-center mb-1">
@@ -862,39 +973,24 @@ export const BattleEngineExample: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Passives & Status */}
-                <div className="flex gap-2">
-                  {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
-                    <div className="flex-1">
-                      {creature.passiveAbilities.map((ability) => (
-                        <div 
-                          key={ability.id}
-                          onClick={(e) => { e.stopPropagation(); handlePassiveClick(ability, e); }}
-                          className="text-xs bg-yellow-600/20 border border-yellow-500/40 rounded px-2 py-1 cursor-pointer hover:bg-yellow-600/30 transition-all"
-                        >
-                          <span className="text-sm">{ability.icon}</span> <span className="text-yellow-200 font-semibold">{ability.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {creature.statuses.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {creature.statuses.map((status, idx) => (
-                        <span
-                          key={`${status.id}-${idx}`}
-                          onClick={(e) => { e.stopPropagation(); handleStatusClick(status, e); }}
-                          className={`px-2 py-1 rounded text-xs font-bold cursor-pointer ${
-                            status.type === 'debuff' ? 'bg-red-500/30 border border-red-400/50 text-red-200' :
-                            status.type === 'buff' ? 'bg-green-500/30 border border-green-400/50 text-green-200' :
-                            'bg-slate-500/30 border border-slate-400/50 text-slate-200'
-                          }`}
-                        >
-                          {status.icon} ({status.duration})
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                {/* Status Effects */}
+                {creature.statuses.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {creature.statuses.map((status, idx) => (
+                      <span
+                        key={`${status.id}-${idx}`}
+                        onClick={(e) => { e.stopPropagation(); handleStatusClick(status, e); }}
+                        className={`px-2 py-1 rounded text-xs font-bold cursor-pointer ${
+                          status.type === 'debuff' ? 'bg-red-500/30 border border-red-400/50 text-red-200' :
+                          status.type === 'buff' ? 'bg-green-500/30 border border-green-400/50 text-green-200' :
+                          'bg-slate-500/30 border border-slate-400/50 text-slate-200'
+                        }`}
+                      >
+                        {status.icon} ({status.duration})
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })()}
@@ -924,13 +1020,17 @@ export const BattleEngineExample: React.FC = () => {
                     handleCreatureClick(creature.ID);
                   }
                 }}
-                className={`relative p-4 rounded-xl transition-all duration-300 mx-auto max-w-md border-4 ${
+                className={`relative p-4 rounded-xl transition-all duration-500 ease-out mx-auto max-w-md border-4 transform origin-bottom ${
                   creature.health <= 0
                     ? 'opacity-50 bg-slate-900/50 border-slate-700'
                     : isSelectingTarget
                     ? 'bg-gradient-to-br from-blue-900/70 via-blue-800/50 to-blue-900/70 border-blue-400 cursor-pointer hover:scale-[1.03] shadow-2xl shadow-blue-500/40'
                     : 'bg-gradient-to-br from-slate-900/90 via-purple-900/30 to-slate-900/90 border-blue-500/60 hover:border-blue-400 cursor-pointer shadow-xl'
-                }`}
+                }
+                ${switchAnimation === 'exiting' ? 'scale-75 opacity-0 translate-y-20' : ''}
+                ${switchAnimation === 'entering' ? 'scale-75 opacity-0 translate-y-20' : ''}
+                ${switchAnimation === 'idle' ? 'scale-100 opacity-100 translate-y-0' : ''}
+                `}
               >
                 {/* Header */}
                 <div className="flex items-center justify-between mb-3">
@@ -951,6 +1051,22 @@ export const BattleEngineExample: React.FC = () => {
                   <div className="text-sm text-slate-400">Yours</div>
                 </div>
 
+                {/* Passive Abilities - Own Line */}
+                {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
+                  <div className="mb-2">
+                    {creature.passiveAbilities.map((ability) => (
+                      <div 
+                        key={ability.id}
+                        onClick={(e) => { e.stopPropagation(); handlePassiveClick(ability, e); }}
+                        className="text-xs bg-yellow-600/20 border border-yellow-500/40 rounded px-2 py-1 cursor-pointer hover:bg-yellow-600/30 transition-all inline-flex items-center gap-1 mr-1"
+                      >
+                        <span className="text-sm">{ability.icon}</span>
+                        <span className="text-yellow-200 font-semibold">{ability.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* HP Bar */}
                 <div className="mb-3">
                   <div className="flex justify-between items-center mb-1">
@@ -969,39 +1085,24 @@ export const BattleEngineExample: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Passives & Status */}
-                <div className="flex gap-2">
-                  {creature.passiveAbilities && creature.passiveAbilities.length > 0 && (
-                    <div className="flex-1">
-                      {creature.passiveAbilities.map((ability) => (
-                        <div 
-                          key={ability.id}
-                          onClick={(e) => { e.stopPropagation(); handlePassiveClick(ability, e); }}
-                          className="text-xs bg-yellow-600/20 border border-yellow-500/40 rounded px-2 py-1 cursor-pointer hover:bg-yellow-600/30 transition-all"
-                        >
-                          <span className="text-sm">{ability.icon}</span> <span className="text-yellow-200 font-semibold">{ability.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {creature.statuses.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {creature.statuses.map((status, idx) => (
-                        <span
-                          key={`${status.id}-${idx}`}
-                          onClick={(e) => { e.stopPropagation(); handleStatusClick(status, e); }}
-                          className={`px-2 py-1 rounded text-xs font-bold cursor-pointer ${
-                            status.type === 'debuff' ? 'bg-red-500/30 border border-red-400/50 text-red-200' :
-                            status.type === 'buff' ? 'bg-green-500/30 border border-green-400/50 text-green-200' :
-                            'bg-slate-500/30 border border-slate-400/50 text-slate-200'
-                          }`}
-                        >
-                          {status.icon} ({status.duration})
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                {/* Status Effects */}
+                {creature.statuses.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {creature.statuses.map((status, idx) => (
+                      <span
+                        key={`${status.id}-${idx}`}
+                        onClick={(e) => { e.stopPropagation(); handleStatusClick(status, e); }}
+                        className={`px-2 py-1 rounded text-xs font-bold cursor-pointer ${
+                          status.type === 'debuff' ? 'bg-red-500/30 border border-red-400/50 text-red-200' :
+                          status.type === 'buff' ? 'bg-green-500/30 border border-green-400/50 text-green-200' :
+                          'bg-slate-500/30 border border-slate-400/50 text-slate-200'
+                        }`}
+                      >
+                        {status.icon} ({status.duration})
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })()}
@@ -1024,13 +1125,17 @@ export const BattleEngineExample: React.FC = () => {
                       handleCreatureClick(creature.ID);
                     }
                   }}
-                  className={`${isActive ? 'hidden' : ''} relative p-2 rounded-lg border-2 transition-all cursor-pointer ${
+                  className={`${isActive ? 'hidden' : ''} relative p-2 rounded-lg border-2 transition-all duration-500 cursor-pointer ${
                     creature.health <= 0
                       ? 'opacity-40 bg-slate-900/30 border-slate-700'
                       : isSelectingTarget
                       ? 'bg-blue-900/40 border-blue-400 hover:scale-105'
                       : 'bg-slate-900/60 border-blue-500/50 hover:border-blue-400'
-                  }`}
+                  }
+                  ${switchingBenchIndex === idx && switchAnimation === 'exiting'
+                    ? 'scale-125 -translate-y-20 border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)] z-20 bg-blue-900/80 opacity-0'
+                    : ''}
+                  `}
                   style={{ width: '80px' }}
                 >
                   <div className="text-2xl text-center mb-1">{creature.icon}</div>
@@ -1041,6 +1146,15 @@ export const BattleEngineExample: React.FC = () => {
                     />
                   </div>
                   <div className="text-[8px] text-center text-slate-400 mt-0.5">{creature.health}/{creature.maxHealth}</div>
+                  {/* Summary row for passives/statuses */}
+                  <div className="flex flex-wrap justify-center gap-0.5 mt-1">
+                    {creature.passiveAbilities?.map((p) => (
+                      <span key={p.id} className="text-[10px]" title={p.name}>{p.icon}</span>
+                    ))}
+                    {creature.statuses?.map((s, idx) => (
+                      <span key={`${s.id}-${idx}`} className="text-[10px]" title={`${s.name} (${s.duration})`}>{s.icon}</span>
+                    ))}
+                  </div>
                 </div>
               );
             })}
@@ -1232,10 +1346,91 @@ export const BattleEngineExample: React.FC = () => {
                   ✕ Back
                 </button>
               </div>
-              <div className="p-3">
-                <div className="text-sm text-purple-300 text-center py-4">
-                  Team switching coming soon!
-                </div>
+              <div className="p-3 space-y-2">
+                {battleState.playerCreatures.map((creature, index) => {
+                  const isActive = index === 0
+                  const isAlive = creature.health > 0
+                  const hpPercent = (creature.health / creature.maxHealth) * 100
+                  
+                  return (
+                    <div 
+                      key={creature.ID}
+                      className={`
+                        flex items-center p-3 rounded-lg border-2 transition-all duration-500
+                        ${isActive 
+                          ? 'bg-blue-900/40 border-blue-500/50' 
+                          : 'bg-slate-800/60 border-slate-700'}
+                        ${switchingBenchIndex === index && switchAnimation === 'exiting'
+                          ? 'scale-110 -translate-y-10 border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)] z-20 bg-blue-900/60 opacity-0'
+                          : ''}
+                      `}
+                    >
+                      <div className="text-3xl mr-4">{creature.icon}</div>
+                      
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className={`font-bold ${isActive ? 'text-blue-300' : 'text-slate-200'}`}>
+                            {creature.name}
+                          </span>
+                          {isActive && (
+                            <span className="text-[10px] uppercase font-bold bg-blue-500 text-white px-1.5 py-0.5 rounded">
+                              Active
+                            </span>
+                          )}
+                        </div>
+                        <div className={`
+                  relative z-10 transition-all duration-500 ease-out transform origin-bottom
+                  ${switchAnimation === 'exiting' ? 'scale-75 opacity-0 translate-y-20' : ''}
+                  ${switchAnimation === 'entering' ? 'scale-75 opacity-0 translate-y-20' : ''}
+                  ${switchAnimation === 'idle' ? 'scale-100 opacity-100 translate-y-0' : ''}
+                `}>
+                  <div className="flex items-center gap-3">
+                          <div className="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full ${isAlive ? 'bg-green-500' : 'bg-red-900'}`}
+                              style={{ width: `${hpPercent}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-slate-400">
+                            {creature.health}/{creature.maxHealth}
+                          </span>
+                        </div>
+                      </div>
+                      </div>
+
+
+
+                      {!isActive && (
+                        <div className="flex gap-2 ml-4">
+                          <button
+                            onClick={() => isAlive && handleSwitch(index, false)}
+                            disabled={!isAlive || switchAnimation !== 'idle'}
+                            className={`
+                              px-3 py-1.5 rounded text-xs font-bold transition-all
+                              ${isAlive && switchAnimation === 'idle'
+                                ? 'bg-blue-600 hover:bg-blue-500 text-white border border-blue-500'
+                                : 'bg-slate-700 text-slate-500 cursor-not-allowed'}
+                            `}
+                          >
+                            Free Switch
+                          </button>
+                          <button
+                            onClick={() => isAlive && handleSwitch(index, true)}
+                            disabled={!isAlive || switchAnimation !== 'idle'}
+                            className={`
+                              px-3 py-1.5 rounded text-xs font-bold transition-all
+                              ${isAlive && switchAnimation === 'idle'
+                                ? 'bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/20'
+                                : 'bg-slate-700 text-slate-500 cursor-not-allowed'}
+                            `}
+                          >
+                            Switch (End Turn)
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </div>
           )}
