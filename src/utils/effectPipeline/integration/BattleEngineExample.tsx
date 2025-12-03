@@ -25,6 +25,7 @@ import {
 import { BattleResultScreen } from '../../../components/battle/BattleResultScreen'
 import { TurnTransition } from '../../../components/battle/TurnTransition'
 import { BattleTimeline } from '../../../components/battle/BattleTimeline'
+import { RewardsScreen } from '../../../components/battle/RewardsScreen'
 
 // Example initial battle state
 const exampleBattleState: BattleState = {
@@ -55,6 +56,22 @@ const exampleBattleState: BattleState = {
       attack: 20,
       trueDamage: 5,
       defense: 10,
+      mods: [],
+      startingAttacks: [],
+      possibleAttacks: [],
+      statuses: [],
+      owner: "player"
+    },
+    {
+      ID: 7,
+      name: "Tortoise",
+      icon: "🐢",
+      template: "tortoise",
+      health: 120,
+      maxHealth: 120,
+      attack: 10,
+      trueDamage: 0,
+      defense: 30,
       mods: [],
       startingAttacks: [],
       possibleAttacks: [],
@@ -226,6 +243,15 @@ export const BattleEngineExample: React.FC = () => {
   // Switch animation state
   const [switchAnimation, setSwitchAnimation] = useState<'idle' | 'exiting' | 'entering'>('idle')
   const [switchingBenchIndex, setSwitchingBenchIndex] = useState<number | null>(null)
+  
+  // Inventory State
+  const [inventory, setInventory] = useState([
+    { id: 'instant-kill', name: 'Death Note', count: 10, icon: '☠️', description: 'Instantly kills the target' }
+  ])
+  const [selectedItem, setSelectedItem] = useState<string | null>(null)
+  
+  // Rewards State
+  const [showRewards, setShowRewards] = useState(false)
 
   // Derived state
   // isProcessingEffects and isPlayerTurn are already destructured from useBattleEngine or derived above
@@ -583,8 +609,51 @@ export const BattleEngineExample: React.FC = () => {
       setIsSelectingTarget(false)
       setPendingAction(null)
     }
-  }  // Handle clicking on a creature during target selection
+  }
+
+  // Handle clicking on a creature during target selection
   const handleCreatureClick = async (creatureId: number) => {
+    // Handle Instant Kill Item
+    if (selectedItem === 'instant-kill') {
+      console.log(`☠️ Using Death Note on creature ${creatureId}`)
+      
+      // Get the active player creature as the "attacker"
+      const activeCreature = battleState.playerCreatures[0]
+      if (!activeCreature) {
+        console.error('No active creature to use item from')
+        return
+      }
+      
+      // Create a custom "Instant Death" attack payload
+      const deathAttack = {
+        id: 'death-note',
+        name: 'Death Note',
+        damage: 9999,
+        type: 'true' as const,
+        targetType: 'single' as const,
+        accuracy: 100,
+        cooldown: 0,
+        cost: 0,
+        description: 'The end is nigh.',
+        visualEffect: 'darkness'
+      }
+      
+      // Execute the attack with active creature as attacker
+      await performAttack(activeCreature.ID, creatureId, deathAttack)
+      
+      // Decrement inventory
+      setInventory(prev => prev.map(item => 
+        item.id === 'instant-kill' ? { ...item, count: item.count - 1 } : item
+      ))
+      
+      // Reset state
+      setSelectedItem(null)
+      setIsSelectingTarget(false)
+      setBattleMenuState('main')
+      return
+    }
+    
+    // Handle regular attacks
     if (!isSelectingTarget || !pendingAction) return
 
     console.log(`🎯 Executing attack: ${pendingAction} on creature ${creatureId}`)
@@ -705,6 +774,17 @@ export const BattleEngineExample: React.FC = () => {
     setPendingAction(attackId)
   }
 
+  // Handler for Item Selection
+  const handleItemSelect = (itemId: string) => {
+    setSelectedItem(itemId)
+    if (itemId === 'instant-kill') {
+      setIsSelectingTarget(true)
+      setPendingAction(null) // Clear any pending attack
+      setBattleMenuState('main')
+    }
+  }
+
+
 
 
   const debugInfo = getDebugInfo()
@@ -754,9 +834,7 @@ export const BattleEngineExample: React.FC = () => {
             resetBattle()
           }}
           onNextLevel={battleState.battleStatus === 'victory' ? () => {
-            console.log('➡️ Next level! (Not implemented yet)')
-            // TODO: Implement level progression
-            alert('Next level feature coming soon!')
+            setShowRewards(true)
           } : undefined}
         />
       )}
@@ -1448,13 +1526,55 @@ export const BattleEngineExample: React.FC = () => {
                 </button>
               </div>
               <div className="p-3">
-                <div className="text-sm text-purple-300 text-center py-4">
-                  No items available
+                <div className="grid grid-cols-1 gap-2">
+                  {inventory.map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => item.count > 0 && handleItemSelect(item.id)}
+                      disabled={item.count === 0}
+                      className={`
+                        flex items-center justify-between p-3 rounded-lg border-2 transition-all text-left
+                        ${selectedItem === item.id 
+                          ? 'bg-purple-900/60 border-purple-400 shadow-lg shadow-purple-500/20' 
+                          : 'bg-slate-800/60 border-slate-700 hover:border-purple-500/50 hover:bg-slate-800/80'}
+                        ${item.count === 0 ? 'opacity-50 cursor-not-allowed' : ''}
+                      `}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{item.icon}</span>
+                        <div>
+                          <div className="font-bold text-purple-200">{item.name}</div>
+                          <div className="text-xs text-slate-400">{item.description}</div>
+                        </div>
+                      </div>
+                      <div className="text-sm font-bold text-purple-300 bg-purple-900/40 px-2 py-1 rounded">
+                        x{item.count}
+                      </div>
+                    </button>
+                  ))}
+                  {inventory.length === 0 && (
+                    <div className="text-sm text-purple-300 text-center py-4">
+                      No items available
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           )}
         </div>
+      )}
+
+      {/* Rewards Screen Overlay */}
+      {showRewards && (
+        <RewardsScreen
+          onSelect={(reward) => {
+            console.log('🎁 Reward selected:', reward)
+            setShowRewards(false)
+            alert(`You selected: ${reward.name}!`)
+            // Here you would typically add the reward to the player's state
+            resetBattle()
+          }}
+        />
       )}
 
       {/* Debug Panel Toggle & Timeline Button */}
