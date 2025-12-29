@@ -57,6 +57,7 @@ export type Effect = {
   targetId: number
   priority: number // 0-100, higher = processes first
   timestamp: number // For tie-breaking when priorities are equal
+  chainDepth?: number // Depth of the effect in the chain (1 = initial, 2 = triggered by 1, etc.)
   data: any // Serializable effect-specific payload
 }
 
@@ -106,6 +107,7 @@ export type BattleState = {
   mp: number
   turn: number
   currentTurnOwner: 'player' | 'computer' | null
+  currentCombo?: number // Current length of the effect chain
   battleStatus: 'in-progress' | 'victory' | 'defeat' | 'player-select-switch' | 'computer-switching' | null
 }
 

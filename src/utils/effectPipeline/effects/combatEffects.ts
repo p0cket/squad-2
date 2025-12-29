@@ -39,6 +39,16 @@ export type AoeAttackEffectData = {
   damage: number
 }
 
+export type ItemEffectData = {
+  itemId: string
+  itemName: string
+  targetId: number
+  effectType: 'damage' | 'heal' | 'status' | 'instant-kill'
+  value?: number
+  statusId?: string
+  duration?: number
+}
+
 // ============================================================================
 // EFFECT APPLICATORS (Pure functions)
 // ============================================================================
@@ -195,6 +205,11 @@ const applyAttackEffect = async (
         sourceCreatureId: effect.targetId
       }
     })
+    
+    animations.push(
+      { type: 'impact', targetId: attackerId, duration: 300, data: { delay: 200 } },
+      { type: 'damage-number', targetId: attackerId, duration: 1000, data: { value: -thornsDamage, label: 'thorns', delay: 200 } }
+    )
   }
 
   // Apply REFLECT damage to attacker
@@ -211,6 +226,11 @@ const applyAttackEffect = async (
         sourceCreatureId: effect.targetId
       }
     })
+
+    animations.push(
+      { type: 'impact', targetId: attackerId, duration: 300, data: { delay: 200 } },
+      { type: 'damage-number', targetId: attackerId, duration: 1000, data: { value: -reflectDamage, label: 'reflect', delay: 200 } }
+    )
   }
 
   // Apply LEECH healing to attacker
@@ -718,6 +738,97 @@ const applyAoeAttackEffect = async (
   }
 }
 
+/**
+ * Apply an Item Use effect
+ * Bypasses creature passives (Thorns, Reflect) and uses distinct animations
+ */
+const applyItemEffect = async (
+  effect: Effect,
+  context: BattleContext
+): Promise<EffectApplicationResult> => {
+  const { itemId, itemName, targetId, effectType, value, statusId, duration } = effect.data as ItemEffectData
+  const target = getCreatureFromContext(context, targetId)
+  const stateChanges: StateChange[] = []
+  const animations: Animation[] = []
+
+  console.log(`🎒 Item Used: ${itemName} on ${target.name}`)
+
+  // Log to battle timeline
+  battleEventLogger.logInfo(`Used ${itemName} on ${target.name}`)
+
+  if (effectType === 'instant-kill') {
+    console.log(`☠️ Instant Kill applied to ${target.name}`)
+    
+    // 1. Apply massive true damage to ensure kill
+    const killDamage = 9999
+    const newHealth = Math.max(0, target.health - killDamage)
+    
+    stateChanges.push({
+      type: 'HEALTH_CHANGE',
+      creatureId: targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: -killDamage,
+        newHealth,
+        source: `item-${itemId}`,
+        sourceCreatureId: -1 // -1 indicates System/Player source, not a creature
+      }
+    })
+
+    // 2. Add animations
+    animations.push(
+      { type: 'impact', targetId, duration: 500 },
+      { type: 'damage-number', targetId, duration: 1500, data: { value: -killDamage, label: 'INSTANT DEATH', isTotal: true } },
+      { type: 'death-animation', targetId, duration: 2000, data: { delay: 500 } }
+    )
+  } else if (effectType === 'damage') {
+    const damage = value || 0
+    const newHealth = Math.max(0, target.health - damage)
+    
+    stateChanges.push({
+      type: 'HEALTH_CHANGE',
+      creatureId: targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: -damage,
+        newHealth,
+        source: `item-${itemId}`,
+        sourceCreatureId: -1
+      }
+    })
+    
+    animations.push(
+      { type: 'impact', targetId, duration: 300 },
+      { type: 'damage-number', targetId, duration: 1200, data: { value: -damage } }
+    )
+  } else if (effectType === 'heal') {
+    const healing = value || 0
+    const actualHealing = Math.min(healing, target.maxHealth - target.health)
+    const newHealth = target.health + actualHealing
+    
+    stateChanges.push({
+      type: 'HEALTH_CHANGE',
+      creatureId: targetId,
+      timestamp: Date.now(),
+      data: {
+        delta: actualHealing,
+        newHealth,
+        source: `item-${itemId}`
+      }
+    })
+    
+    animations.push(
+      { type: 'healing', targetId, duration: 1000 },
+      { type: 'damage-number', targetId, duration: 1200, data: { value: actualHealing } }
+    )
+  }
+
+  return {
+    stateChanges,
+    animations
+  }
+}
+
 // ============================================================================
 // REGISTER APPLICATORS
 // ============================================================================
@@ -728,6 +839,7 @@ registerEffectApplicator('HEALING', applyHealingEffect)
 registerEffectApplicator('DEATH', applyDeathEffect)
 registerEffectApplicator('LIFE_DRAIN', applyLifeDrainEffect)
 registerEffectApplicator('AOE_ATTACK', applyAoeAttackEffect)
+registerEffectApplicator('ITEM_USE', applyItemEffect)
 
 // ============================================================================
 // EFFECT FACTORY FUNCTIONS

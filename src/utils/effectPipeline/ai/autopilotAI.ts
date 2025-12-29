@@ -50,24 +50,45 @@ export const selectAttack = (
   target: Creature,
   strategy: 'basic' | 'strongest' | 'smart' = 'basic'
 ): Attack => {
-  // For now, return a basic attack structure
-  // This can be enhanced to select from attacker.startingAttacks if available
-  
-  if (attacker.startingAttacks && attacker.startingAttacks.length > 0) {
-    return attacker.startingAttacks[0]
+  // If no attacks available, return fallback basic attack
+  if (!attacker.startingAttacks || attacker.startingAttacks.length === 0) {
+    return {
+      template: 'basic',
+      name: 'Basic Attack',
+      attackType: 'Physical',
+      effects: [],
+      chanceToLand: 0.95,
+      damage: attacker.attack || 10,
+      trueDamage: attacker.trueDamage || 0,
+      icon: 'sword_icon',
+      notes: 'Basic attack',
+      cooldown: 1
+    }
   }
-  
-  // Fallback: create a basic attack from creature stats
-  return {
-    template: 'basic',
-    name: 'Basic Attack',
-    attackType: 'Physical',
-    effects: [],
-    chanceToLand: 0.95,
-    damage: attacker.attack || 10,
-    trueDamage: attacker.trueDamage || 0,
-    icon: 'sword_icon',
-    notes: 'Basic attack',
-    cooldown: 1
+
+  const attacks = attacker.startingAttacks
+
+  switch (strategy) {
+    case 'strongest':
+      // Select attack with highest total damage potential
+      return attacks.reduce((strongest, current) => {
+        const currentDmg = (current.damage || 0) + (current.trueDamage || 0)
+        const strongestDmg = (strongest.damage || 0) + (strongest.trueDamage || 0)
+        return currentDmg > strongestDmg ? current : strongest
+      }, attacks[0])
+
+    case 'smart':
+      // Simple smart logic:
+      // 1. If target is low HP (< 30%), use sure-hit or high accuracy attack if available
+      // 2. If attacker is low HP (< 30%) and has life drain/heal, use it (simulated check)
+      // 3. Otherwise default to strongest
+      
+      // For now, we'll just alias to strongest as we don't have full effect analysis yet
+      return selectAttack(attacker, target, 'strongest')
+
+    case 'basic':
+    default:
+      // Just pick the first one
+      return attacks[0]
   }
 }

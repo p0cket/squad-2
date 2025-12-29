@@ -26,6 +26,8 @@ import { BattleResultScreen } from '../../../components/battle/BattleResultScree
 import { TurnTransition } from '../../../components/battle/TurnTransition'
 import { BattleTimeline } from '../../../components/battle/BattleTimeline'
 import { RewardsScreen } from '../../../components/battle/RewardsScreen'
+import { AttackMessage } from '../../../components/battle/AttackMessage'
+import { ComboCounter } from '../../../components/battle/ComboCounter'
 
 // Example initial battle state
 const exampleBattleState: BattleState = {
@@ -204,6 +206,7 @@ export const BattleEngineExample: React.FC = () => {
     applyRegeneration,
     applyShield,
     performAttack,
+    performItemAction,
     performHeal,
     getAliveCreatures,
     isBattleOver,
@@ -252,6 +255,9 @@ export const BattleEngineExample: React.FC = () => {
   
   // Rewards State
   const [showRewards, setShowRewards] = useState(false)
+
+  // Attack Message State
+  const [attackMessage, setAttackMessage] = useState<{ attackerName: string, attackName: string, isItem: boolean } | null>(null)
 
   // Derived state
   // isProcessingEffects and isPlayerTurn are already destructured from useBattleEngine or derived above
@@ -617,29 +623,23 @@ export const BattleEngineExample: React.FC = () => {
     if (selectedItem === 'instant-kill') {
       console.log(`☠️ Using Death Note on creature ${creatureId}`)
       
-      // Get the active player creature as the "attacker"
-      const activeCreature = battleState.playerCreatures[0]
-      if (!activeCreature) {
-        console.error('No active creature to use item from')
-        return
-      }
+      setAttackMessage({
+        attackerName: 'You',
+        attackName: 'Death Note',
+        isItem: true
+      })
+      // Clear message after delay
+      setTimeout(() => setAttackMessage(null), 2500)
       
-      // Create a custom "Instant Death" attack payload
-      const deathAttack = {
-        id: 'death-note',
-        name: 'Death Note',
-        damage: 9999,
-        type: 'true' as const,
-        targetType: 'single' as const,
-        accuracy: 100,
-        cooldown: 0,
-        cost: 0,
-        description: 'The end is nigh.',
-        visualEffect: 'darkness'
-      }
+      // Execute the item action directly
+      await performItemAction(
+        'death-note',
+        'Death Note',
+        creatureId,
+        'instant-kill'
+      )
       
-      // Execute the attack with active creature as attacker
-      await performAttack(activeCreature.ID, creatureId, deathAttack)
+      // Decrement inventory
       
       // Decrement inventory
       setInventory(prev => prev.map(item => 
@@ -657,6 +657,18 @@ export const BattleEngineExample: React.FC = () => {
     if (!isSelectingTarget || !pendingAction) return
 
     console.log(`🎯 Executing attack: ${pendingAction} on creature ${creatureId}`)
+
+    // Set attack message
+    const activeCreature = battleState.playerCreatures[0]
+    if (activeCreature) {
+      setAttackMessage({
+        attackerName: activeCreature.name,
+        attackName: pendingAction, // Ideally map this to a display name
+        isItem: false
+      })
+      // Clear message after delay
+      setTimeout(() => setAttackMessage(null), 2500)
+    }
 
     // Handle implemented attacks
     switch (pendingAction) {
@@ -839,7 +851,19 @@ export const BattleEngineExample: React.FC = () => {
         />
       )}
 
-      {/* Turn Transition Animation */}
+      {/* Attack Message Overlay */}
+      {attackMessage && (
+        <AttackMessage
+          attackerName={attackMessage.attackerName}
+          attackName={attackMessage.attackName}
+          isItem={attackMessage.isItem}
+        />
+      )}
+      
+      {/* Combo Counter Overlay */}
+      <ComboCounter currentCombo={battleState.currentCombo} />
+
+      {/* Turn Transition Overlay */}
       <TurnTransition 
         turnOwner={battleState.currentTurnOwner} 
         turnNumber={battleState.turn} 
@@ -1386,7 +1410,7 @@ export const BattleEngineExample: React.FC = () => {
                 </button>
 
                 {/* 4 Attack Grid */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-4 mb-8">
                   {currentAttacks.map((attack, idx) => (
                     <button
                       key={`${attack.id}-${idx}`}
@@ -1575,6 +1599,75 @@ export const BattleEngineExample: React.FC = () => {
             resetBattle()
           }}
         />
+      )}
+
+      {/* Forced Switch Overlay */}
+      {battleState.battleStatus === 'player-select-switch' && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-md animate-fadeIn">
+          <div className="bg-slate-900 border-4 border-red-500 rounded-2xl p-8 max-w-2xl w-full shadow-2xl shadow-red-900/50">
+            <div className="text-center mb-8">
+              <div className="text-6xl mb-4">⚠️</div>
+              <h2 className="text-3xl font-bold text-red-500 mb-2 uppercase tracking-wider">Creature Fainted!</h2>
+              <p className="text-slate-300 text-lg">
+                Your active creature has fallen. Choose a replacement to continue!
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 mb-8 max-h-[60vh] overflow-y-auto px-2">
+              {(!battleState.playerCreatures || battleState.playerCreatures.length <= 1) && (
+                <div className="text-center text-slate-400 py-8 border-2 border-dashed border-slate-700 rounded-xl">
+                  No other creatures available!
+                </div>
+              )}
+              {battleState.playerCreatures && battleState.playerCreatures.slice(1).map((creature, index) => {
+                // Adjust index to match actual array index (bench starts at 1)
+                const actualIndex = index + 1
+                const isAlive = creature.health > 0
+                
+                return (
+                  <button
+                    key={creature.ID}
+                    onClick={() => isAlive && handleSwitch(actualIndex, true)}
+                    disabled={!isAlive}
+                    className={`
+                      flex items-center justify-between p-4 rounded-xl border-2 transition-all
+                      ${isAlive 
+                        ? 'bg-slate-800 border-slate-600 hover:border-blue-500 hover:bg-slate-700 cursor-pointer group' 
+                        : 'bg-slate-900/50 border-slate-800 opacity-50 cursor-not-allowed'}
+                    `}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="text-4xl">{creature.icon}</div>
+                      <div className="text-left">
+                        <div className={`font-bold text-lg ${isAlive ? 'text-white group-hover:text-blue-300' : 'text-slate-500'}`}>
+                          {creature.name}
+                        </div>
+                        <div className="text-sm text-slate-400">
+                          {creature.template}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="text-right">
+                      <div className={`font-mono font-bold ${isAlive ? 'text-green-400' : 'text-red-900'}`}>
+                        {creature.health} / {creature.maxHealth} HP
+                      </div>
+                      {isAlive && (
+                        <div className="text-xs text-blue-400 mt-1 uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+                          Select to Switch
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+            
+            <div className="text-center text-slate-500 text-sm">
+              You must select a creature to proceed.
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Debug Panel Toggle & Timeline Button */}

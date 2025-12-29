@@ -30,10 +30,12 @@ import {
   buildHealEffect,
   buildDeathEffect,
   buildLifeDrainEffect,
-  buildAoeAttackEffect
+  buildAoeAttackEffect,
+  buildItemEffect
 } from '../factories'
 import { selectBestTarget, selectAttack } from '../ai/autopilotAI'
 import { battleEventLogger } from '../eventLogger'
+import { getStatusTickEffect } from '../effects/statusEffects'
 
 // Feature flag: Set to true to use Zustand adapter instead of native BattleContext
 const USE_ZUSTAND_ADAPTER = true // ✅ ZUSTAND ENABLED FOR TESTING
@@ -244,59 +246,11 @@ export const useBattleEngine = (initialState: BattleState) => {
       if (!creature || creature.health <= 0) continue
 
       for (const status of creature.statuses) {
-        const sid = status.id
-        console.log(`🔍 Processing status ${sid} on ${creature.name}:`, status)
-        // Create appropriate effect using the stored damage/heal values from status
-        if (sid === 'BURN') {
-          const damage = status.damagePerTurn ?? 5  // Use stored value or default
-          if (status.damagePerTurn === undefined) {
-            console.warn(`⚠️ BURN status on ${creature.name} missing damagePerTurn! Using fallback: 5`)
-          }
-          console.log(`🔥 Creating burn tick effect for ${creature.name} (${damage} dmg)`)
-          effectsToApply.push(buildBurnEffect(creature.ID, damage))
-        } else if (sid === 'POISON') {
-          const damage = status.damagePerTurn ?? 3  // Use stored value or default
-          if (status.damagePerTurn === undefined) {
-            console.warn(`⚠️ POISON status on ${creature.name} missing damagePerTurn! Using fallback: 3`)
-          }
-          console.log(`🧪 Creating poison tick effect for ${creature.name} (${damage} dmg) [status.damagePerTurn = ${status.damagePerTurn}]`)
-          effectsToApply.push(buildPoisonEffect(creature.ID, damage))
-        } else if (sid === 'BLEED') {
-          const damage = status.damagePerTurn ?? 7  // Use stored value or default
-          if (status.damagePerTurn === undefined) {
-            console.warn(`⚠️ BLEED status on ${creature.name} missing damagePerTurn! Using fallback: 7`)
-          }
-          console.log(`🩸 Creating bleed tick effect for ${creature.name} (${damage} dmg) [status.damagePerTurn = ${status.damagePerTurn}]`)
-          effectsToApply.push(buildBleedEffect(creature.ID, damage))
-        } else if (sid === 'REGENERATION') {
-          const healing = status.healPerTurn ?? 5  // Use stored value or default
-          if (status.healPerTurn === undefined) {
-            console.warn(`⚠️ REGENERATION status on ${creature.name} missing healPerTurn! Using fallback: 5`)
-          }
-          console.log(`💚 Creating regen tick effect for ${creature.name} (${healing} heal)`)
-          effectsToApply.push(buildRegenerationEffect(creature.ID, healing))
-        } else if (sid === 'SHIELD') {
-          // Shield doesn't tick - it passively absorbs damage
-          // Duration will be decremented below, no tick effect needed
-          console.log(`🛡️ Shield on ${creature.name}: ${status.shieldAmount ?? 0} remaining (no tick, passive absorption)`)
-        } else if (sid === 'FREEZE') {
-          // Freeze doesn't tick - it's a passive prevention effect
-          // No effect to apply, just let duration decrement
-          console.log(`❄️ ${creature.name} is frozen (passive effect, no tick)`)
-        } else if (sid === 'SLOW') {
-          // Slow doesn't tick - it's a passive prevention effect
-          // Action skipping is handled by turn system checking turnCounter
-          console.log(`🐌 ${creature.name} is slowed (passive effect, no tick)`)
-        } else if (sid === 'ATTACK_DEBUFF') {
-          // Attack debuff doesn't tick - it's a passive stat modification
-          // Stat reduction persists via the status data
-          console.log(`⚔️⬇️ ${creature.name} attack is weakened (passive effect, no tick)`)
-        } else if (sid === 'SILENCE') {
-          // Silence doesn't tick - it's a passive prevention effect
-          // Ability blocking is handled by attack selection system
-          console.log(`🤐 ${creature.name} is silenced (passive effect, no tick)`)
-        } else {
-          // Unknown status: skip or extend here
+        console.log(`🔍 Processing status ${status.id} on ${creature.name}:`, status)
+        
+        const tickEffect = getStatusTickEffect(status, creature)
+        if (tickEffect) {
+          effectsToApply.push(tickEffect)
         }
       }
     }
@@ -548,6 +502,32 @@ export const useBattleEngine = (initialState: BattleState) => {
     const effect = buildTrueDamageEffect(attackerId, targetId, damage)
     await applyEffect(effect)
   }, [applyEffect])
+
+  /**
+   * Helper function to perform an item action
+   */
+  const performItemAction = useCallback(async (
+    itemId: string, 
+    itemName: string, 
+    targetId: number, 
+    effectType: 'damage' | 'heal' | 'status' | 'instant-kill',
+    value?: number
+  ) => {
+    const effect = buildItemEffect(itemId, itemName, targetId, effectType, value)
+    await applyEffect(effect)
+    
+    // Check for death after item use
+    if (effectType === 'instant-kill' || effectType === 'damage') {
+      // Small delay to allow state to update
+      setTimeout(() => {
+        if (contextRef.current) {
+          const target = getCreatureById(targetId)
+          // If target is computer and dead, check for switch
+          // (Logic similar to performAttack but simplified)
+        }
+      }, 100)
+    }
+  }, [applyEffect, getCreatureById])
 
   /**
    * Helper function to perform healing
@@ -856,6 +836,7 @@ export const useBattleEngine = (initialState: BattleState) => {
     // Combat helpers
     performAttack,
     performTrueDamageAttack,
+    performItemAction,
     performHeal,
     performHealing: performHeal, // Alias for backward compatibility
     performDeath,

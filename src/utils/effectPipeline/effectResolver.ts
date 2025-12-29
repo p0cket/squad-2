@@ -22,13 +22,16 @@ export const resolveTriggeredEffects = (
 
     rules.forEach((rule, index) => {
       try {
-        if (rule.condition(change, context)) {
+          if (rule.condition(change, context)) {
           console.log(`    ✅ Trigger rule ${index + 1} condition MET`)
           const newEffect = rule.createEffect(change, context)
 
           if (newEffect) {
+            // Propagate chain depth
+            newEffect.chainDepth = (sourceEffect.chainDepth || 1) + 1
+            
             triggeredEffects.push(newEffect)
-            console.log(`    📤 Created effect: ${newEffect.type} (id: ${newEffect.id})`)
+            console.log(`    📤 Created effect: ${newEffect.type} (id: ${newEffect.id}, depth: ${newEffect.chainDepth})`)
           }
         } else {
           console.log(`    ❌ Trigger rule ${index + 1} condition NOT met`)

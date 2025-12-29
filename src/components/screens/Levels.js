@@ -1,38 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Box, Button, Typography, Grid } from '@mui/material'; // Import MUI components
+import { Modal, Button } from '@mui/material'; // Keeping Modal and Button for now
 import { useStateContext } from '../../GameContext';
 
-// Define styles for the modal in a dark theme
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '80%',
-  height: '80vh',
-  bgcolor: '#1e1e1e',  // Dark background
-  border: '2px solid #333',
-  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.9)',
-  color: '#f1f1f1',  // Light text color
-  p: 3,
-  overflow: 'hidden',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: '12px',
-};
-
-const contentStyle = {
-  flex: '1',
-  overflowY: 'auto',
-};
-
-const buttonStyle = {
-  color: '#f1f1f1',
-  borderColor: '#f1f1f1',
-  '&:hover': {
-    backgroundColor: '#333',
-  },
-};
+const modalClasses = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80vh] bg-[#1e1e1e] border-2 border-[#333] shadow-2xl p-6 overflow-hidden flex flex-col rounded-xl text-[#f1f1f1] outline-none";
 
 const Levels = () => {
   const { levels } = useStateContext(); // Access levels from global context
@@ -56,7 +26,12 @@ const Levels = () => {
 
   return (
     <div className="levels-container">
-      <Button variant="contained" onClick={handleOpen} sx={{ backgroundColor: '#333', color: '#f1f1f1' }}>
+      <Button 
+        variant="contained" 
+        onClick={handleOpen} 
+        className="bg-[#333] text-[#f1f1f1]"
+        sx={{ backgroundColor: '#333', color: '#f1f1f1' }}
+      >
         Open Levels Modal
       </Button>
       
@@ -66,92 +41,99 @@ const Levels = () => {
         aria-labelledby="levels-modal-title"
         aria-describedby="levels-modal-description"
       >
-        <Box sx={modalStyle}>
+        <div className={modalClasses}>
           {levels.length > 0 ? (
             <>
-              <Typography id="levels-modal-title" variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold', textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
+              <h2 id="levels-modal-title" className="text-3xl font-bold mb-4 drop-shadow-md">
                 Level {levels[currentLevelIndex].levelNumber}
-              </Typography>
+              </h2>
 
               {/* Compact content container */}
-              <Box sx={contentStyle}>
+              <div className="flex-1 overflow-y-auto">
                 {/* Opponent Creatures */}
-                <Grid container spacing={2} className="opponent-creatures mb-2">
-                  <Grid item xs={12}>
-                    <Typography variant="h6" sx={{ color: '#ffd700', fontWeight: 'bold', textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}>
+                <div className="opponent-creatures mb-2">
+                  <div className="w-full mb-2">
+                    <h3 className="text-xl font-bold text-[#ffd700] drop-shadow-sm">
                       Opponent Creatures: {levels[currentLevelIndex].opponentCreatures.length}
-                    </Typography>
-                  </Grid>
-                  {levels[currentLevelIndex].opponentCreatures.map((creature, idx) => (
-                    <Grid item xs={6} key={idx}>
-                      <Typography variant="body2" sx={{ mb: 1 }}>
-                        <strong>Name:</strong> {creature.name}
-                      </Typography>
-                      <Typography variant="body2" sx={{ mb: 1 }}>
-                        <strong>Health:</strong> {creature.health}
-                      </Typography>
-                      <Typography variant="body2" sx={{ mb: 1 }}>
-                        <strong>Attack:</strong> {creature.attack}
-                      </Typography>
-                      <Typography variant="body2" sx={{ mb: 1 }}>
-                        <strong>Defence:</strong> {creature.defense}
-                      </Typography>
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {levels[currentLevelIndex].opponentCreatures.map((creature, idx) => (
+                      <div key={idx} className="col-span-1">
+                        <p className="mb-1 text-sm">
+                          <strong>Name:</strong> {creature.name}
+                        </p>
+                        <p className="mb-1 text-sm">
+                          <strong>Health:</strong> {creature.health}
+                        </p>
+                        <p className="mb-1 text-sm">
+                          <strong>Attack:</strong> {creature.attack}
+                        </p>
+                        <p className="mb-1 text-sm">
+                          <strong>Defence:</strong> {creature.defense}
+                        </p>
 
-                      {/* Display creature's mods */}
-                      <Typography variant="body2" sx={{ mb: 1 }}>
-                        <strong>Mods:</strong>
-                      </Typography>
-                      <ul className="ml-4">
-                        {creature.mods.map((mod, modIdx) => (
-                          <li key={modIdx} style={{ marginBottom: '4px' }}>
-                            {mod.name} ({mod.type}: {mod.effect || mod.description}, Duration: {mod.duration || 'Permanent'})
-                          </li>
-                        ))}
-                      </ul>
-                    </Grid>
-                  ))}
-                </Grid>
+                        {/* Display creature's mods */}
+                        <p className="mb-1 text-sm">
+                          <strong>Mods:</strong>
+                        </p>
+                        <ul className="ml-4 list-disc text-sm">
+                          {creature.mods.map((mod, modIdx) => (
+                            <li key={modIdx} style={{ marginBottom: '4px' }}>
+                              {mod.name} ({mod.type}: {mod.effect || mod.description}, Duration: {mod.duration || 'Permanent'})
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
                 {/* Opponent Runes */}
-                <Grid container spacing={2} className="opponent-runes mb-2">
-                  <Grid item xs={12}>
-                    <Typography variant="h6" sx={{ color: '#ffd700', fontWeight: 'bold', textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}>
+                <div className="opponent-runes mb-2 mt-4">
+                  <div className="w-full mb-2">
+                    <h3 className="text-xl font-bold text-[#ffd700] drop-shadow-sm">
                       Opponent Runes:
-                    </Typography>
-                  </Grid>
-                  {levels[currentLevelIndex].opponentRunes.map((rune, runeIdx) => (
-                    <Grid item xs={6} key={runeIdx}>
-                      <Typography variant="body2">
-                        <strong>{rune.name}</strong> - {rune.effect}
-                      </Typography>
-                    </Grid>
-                  ))}
-                </Grid>
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {levels[currentLevelIndex].opponentRunes.map((rune, runeIdx) => (
+                      <div key={runeIdx} className="col-span-1">
+                        <p className="text-sm">
+                          <strong>{rune.name}</strong> - {rune.effect}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
                 {/* Level Effects */}
-                <Grid container spacing={2} className="level-effects mb-2">
-                  <Grid item xs={12}>
-                    <Typography variant="h6" sx={{ color: '#ffd700', fontWeight: 'bold', textShadow: '1px 1px 3px rgba(0,0,0,0.6)' }}>
+                <div className="level-effects mb-2 mt-4">
+                  <div className="w-full mb-2">
+                    <h3 className="text-xl font-bold text-[#ffd700] drop-shadow-sm">
                       Level Effects:
-                    </Typography>
-                  </Grid>
-                  {levels[currentLevelIndex].levelEffects.map((effect, effectIdx) => (
-                    <Grid item xs={6} key={effectIdx}>
-                      <Typography variant="body2">
-                        <strong>{effect.name}</strong> - {effect.effect}
-                      </Typography>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {levels[currentLevelIndex].levelEffects.map((effect, effectIdx) => (
+                      <div key={effectIdx} className="col-span-1">
+                        <p className="text-sm">
+                          <strong>{effect.name}</strong> - {effect.effect}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
               {/* Navigation Buttons */}
-              <Grid container justifyContent="space-between" mt={2}>
+              <div className="flex justify-between mt-4">
                 <Button
                   variant="outlined"
                   onClick={handlePreviousLevel}
                   disabled={currentLevelIndex === 0}
-                  sx={buttonStyle}
+                  className="text-[#f1f1f1] border-[#f1f1f1] hover:bg-[#333]"
+                  sx={{ color: '#f1f1f1', borderColor: '#f1f1f1', '&:hover': { backgroundColor: '#333' } }}
                 >
                   Previous
                 </Button>
@@ -160,16 +142,17 @@ const Levels = () => {
                   variant="outlined"
                   onClick={handleNextLevel}
                   disabled={currentLevelIndex === levels.length - 1}
-                  sx={buttonStyle}
+                  className="text-[#f1f1f1] border-[#f1f1f1] hover:bg-[#333]"
+                  sx={{ color: '#f1f1f1', borderColor: '#f1f1f1', '&:hover': { backgroundColor: '#333' } }}
                 >
                   Next
                 </Button>
-              </Grid>
+              </div>
             </>
           ) : (
-            <Typography variant="body1" sx={{ color: '#f1f1f1', textAlign: 'center' }}>No levels generated.</Typography>
+            <p className="text-center text-[#f1f1f1]">No levels generated.</p>
           )}
-        </Box>
+        </div>
       </Modal>
     </div>
   );

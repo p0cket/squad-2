@@ -1,5 +1,6 @@
 // Animation Queue Manager - Provides queue with concurrency control
 import { Animation } from './types'
+import { createAnimationInstance, AnimationInstance } from './animationEngine'
 
 export interface AnimationQueueConfig {
   maxConcurrent: number // Max animations playing simultaneously
@@ -155,14 +156,39 @@ class AnimationQueueManager {
 
     return new Promise((resolve) => {
       try {
-        // Placeholder - replace with actual animation execution
-        // This will integrate with existing animationEngine.ts
-        const duration = animation.duration || 500
+        const animationInstance = createAnimationInstance(animation)
 
-        setTimeout(() => {
+        if (!animationInstance) {
+          console.warn('⚠️ No animation instance created for:', animation.type)
+          resolve()
+          return
+        }
+
+        // Set up completion callback
+        animationInstance.onComplete = () => {
           console.log(`✅ ${animation.type} animation complete`)
           resolve()
-        }, duration)
+        }
+
+        // Set up error callback
+        animationInstance.onError = (error: any) => {
+          console.error(`💥 Animation ${animation.type} error:`, error)
+          resolve() // Resolve anyway to keep queue moving
+        }
+
+        // Start the animation
+        animationInstance.play()
+
+        // Fallback timeout to prevent hanging
+        const duration = animation.duration || 500
+        const delay = animation.data?.delay || 0
+        const totalTime = duration + delay + 1000 // Add delay + 1 second buffer
+        
+        setTimeout(() => {
+          // Only log if we haven't resolved yet (though promise handles idempotency)
+          // console.warn(`⏰ Animation ${animation.type} timed out, resolving anyway`)
+          resolve()
+        }, totalTime)
 
       } catch (error) {
         console.error(`💥 Animation failed:`, error)

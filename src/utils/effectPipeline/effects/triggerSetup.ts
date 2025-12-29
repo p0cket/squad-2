@@ -140,15 +140,26 @@ const setupStatusSpreadTriggers = (): void => {
     priority: 20
   })
 
-  // DISABLED: Poison spread trigger - causes infinite loops
-  // TODO: Add cooldown/limit to prevent chain spreading
-  /*
+  // Poison spread trigger
+  // Spreads to a random enemy with a limit to prevent infinite loops
   registerEffectTrigger('STATUS_APPLIED', {
     condition: (change, context) => {
-      return change.data.statusId === 'POISON' && Math.random() < 0.15 // 15% chance
+      // Only trigger for POISON status
+      if (change.data.statusId !== 'POISON') return false
+      
+      // Check spread count limit (default to 0 if not present)
+      const currentSpreadCount = change.data.spreadCount ?? 0
+      if (currentSpreadCount >= 30) {
+        console.log(`🛑 Poison spread limit reached (${currentSpreadCount}/30) - Chain Stopped`)
+        return false
+      }
+      
+      // 15% chance to spread
+      return Math.random() < 0.15
     },
     createEffect: (change, context) => {
       const creature = getCreatureFromContext(context, change.creatureId)
+      const currentSpreadCount = change.data.spreadCount ?? 0
 
       if (!creature.owner || (creature.owner !== 'player' && creature.owner !== 'computer')) {
         return buildPoisonEffect(change.creatureId, 0) // No effect if invalid owner
@@ -157,17 +168,21 @@ const setupStatusSpreadTriggers = (): void => {
       const owner = creature.owner === 'player' ? 'computer' : 'player' // Spread to enemies
       const enemies = getAliveCreaturesByOwner(context, owner)
 
-      if (enemies.length > 0) {
-        const randomEnemy = enemies[Math.floor(Math.random() * enemies.length)]
-        console.log(`🧪 Poison spreads from ${creature.name} to enemy ${randomEnemy.name}`)
-        return buildPoisonEffect(randomEnemy.ID, 5)
+      // Filter out enemies that already have poison
+      const potentialTargets = enemies.filter(e => !e.statuses.some(s => s.id === 'POISON'))
+
+      if (potentialTargets.length > 0) {
+        const randomEnemy = potentialTargets[Math.floor(Math.random() * potentialTargets.length)]
+        console.log(`🧪 Poison spreads from ${creature.name} to enemy ${randomEnemy.name} (Spread #${currentSpreadCount + 1})`)
+        
+        // Pass incremented spreadCount to the new effect
+        return buildPoisonEffect(randomEnemy.ID, 5, currentSpreadCount + 1)
       }
 
       return buildPoisonEffect(change.creatureId, 0) // No effect if no valid targets
     },
     priority: 20
   })
-  */
 }
 
 /**

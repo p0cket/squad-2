@@ -110,7 +110,7 @@ const executeAnimation = (animation: Animation): Promise<void> => {
  * Creates an animation instance based on animation type
  * This integrates with your existing animation system
  */
-const createAnimationInstance = (animation: Animation): AnimationInstance | null => {
+export const createAnimationInstance = (animation: Animation): AnimationInstance | null => {
   switch (animation.type) {
     case 'shake':
       return createShakeAnimation(animation)
@@ -143,7 +143,7 @@ const createAnimationInstance = (animation: Animation): AnimationInstance | null
 }
 
 // Animation instance interface
-interface AnimationInstance {
+export interface AnimationInstance {
   play: () => void
   onComplete?: () => void
   onError?: (error: any) => void

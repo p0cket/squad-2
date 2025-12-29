@@ -9,8 +9,6 @@ import { useAuth } from "../contexts/authContext";
 import {
   Button,
   Modal,
-  Box,
-  Typography,
   TextField,
   CircularProgress,
   Alert,
@@ -19,17 +17,7 @@ import FireInput from "../firebase/FireInput";
 import Chat from "../firebase/Chat";
 import ChatWithFriend from "../firebase/ChatWithFriend";
 
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 2,
-};
+const modalClasses = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white shadow-2xl p-8 rounded-lg outline-none";
 
 function LoginForm({ onClose }) {
   const [email, setEmail] = useState("");
@@ -71,9 +59,9 @@ function LoginForm({ onClose }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Typography variant="h5" component="h2" mb={2}>
+      <h2 className="text-2xl font-normal mb-4">
         Login
-      </Typography>
+      </h2>
       {error && <Alert severity="error">{error}</Alert>}
       <TextField
         label="Email"
@@ -99,7 +87,8 @@ function LoginForm({ onClose }) {
         variant="contained"
         color="primary"
         disabled={isSigningIn}
-        sx={{ mt: 2 }}
+        className="mt-4"
+        sx={{ mt: 2 }} 
       >
         {isSigningIn ? <CircularProgress size={24} /> : "Login"}
       </Button>
@@ -108,6 +97,7 @@ function LoginForm({ onClose }) {
         fullWidth
         variant="contained"
         color="error"
+        className="mt-4"
         sx={{ mt: 2 }}
         disabled={isSigningIn}
       >
@@ -141,9 +131,9 @@ function SignUpForm({ onClose }) {
 
   return (
     <form onSubmit={handleSignUp}>
-      <Typography variant="h5" component="h2" mb={2}>
+      <h2 className="text-2xl font-normal mb-4">
         Sign Up
-      </Typography>
+      </h2>
       {error && <Alert severity="error">{error}</Alert>}
       <TextField
         label="Email"
@@ -169,6 +159,7 @@ function SignUpForm({ onClose }) {
         variant="contained"
         color="success"
         disabled={isSigningUp}
+        className="mt-4"
         sx={{ mt: 2 }}
       >
         {isSigningUp ? <CircularProgress size={24} /> : "Sign Up"}
@@ -191,6 +182,7 @@ function Login() {
             variant="contained"
             color="error"
             size="small"
+            className="min-w-0 px-2 py-1"
             sx={{ minWidth: "auto", padding: "4px 8px" }}
           >
             Hi{" "}
@@ -211,6 +203,7 @@ function Login() {
             variant="contained"
             color="primary"
             size="small"
+            className="mb-4 min-w-0 px-2 py-1"
             sx={{ mb: 2, minWidth: "auto", padding: "4px 8px" }}
           >
             Login
@@ -220,6 +213,7 @@ function Login() {
             variant="contained"
             color="success"
             size="small"
+            className="min-w-0 px-2 py-1"
             sx={{ minWidth: "auto", padding: "4px 8px" }}
           >
             Sign Up
@@ -233,9 +227,9 @@ function Login() {
         onClose={() => setIsLoginModalOpen(false)}
         aria-labelledby="login-modal-title"
       >
-        <Box sx={modalStyle}>
+        <div className={modalClasses}>
           <LoginForm onClose={() => setIsLoginModalOpen(false)} />
-        </Box>
+        </div>
       </Modal>
 
       {/* Sign Up Modal */}
@@ -244,9 +238,9 @@ function Login() {
         onClose={() => setIsSignUpModalOpen(false)}
         aria-labelledby="signup-modal-title"
       >
-        <Box sx={modalStyle}>
+        <div className={modalClasses}>
           <SignUpForm onClose={() => setIsSignUpModalOpen(false)} />
-        </Box>
+        </div>
       </Modal>
     </>
   );

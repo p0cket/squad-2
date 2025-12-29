@@ -76,7 +76,7 @@ describe('useBattleEngine Autopilot', () => {
 
     // Advance timers to trigger autopilot
     await act(async () => {
-      jest.advanceTimersByTime(1000) // Wait for autopilot delay
+      jest.advanceTimersByTime(2000) // Wait for autopilot delay (1500ms)
     })
 
     // Check if processEffectChain was called (indicating an attack)
@@ -107,7 +107,7 @@ describe('useBattleEngine Autopilot', () => {
 
     // Wait for autopilot to trigger again
     await act(async () => {
-      jest.advanceTimersByTime(1000)
+      jest.advanceTimersByTime(2000)
     })
 
     // Should have attacked exactly once this turn (plus one from computer turn = 2)

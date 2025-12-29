@@ -156,14 +156,15 @@ export const buildBurnEffect = (
  */
 export const buildPoisonEffect = (
   targetId: number,
-  damage: number = 3
+  damage: number = 3,
+  spreadCount: number = 0
 ): Effect => ({
   id: generateEffectId('poison'),
   type: 'POISON',
   targetId,
   priority: 40,
   timestamp: Date.now(),
-  data: { damage }
+  data: { damage, spreadCount }
 })
 
 /**
@@ -266,6 +267,34 @@ export const buildSilenceEffect = (
   priority: 50,
   timestamp: Date.now(),
   data: {}
+})
+
+/**
+ * Build an item use effect
+ */
+export const buildItemEffect = (
+  itemId: string,
+  itemName: string,
+  targetId: number,
+  effectType: 'damage' | 'heal' | 'status' | 'instant-kill',
+  value?: number,
+  statusId?: string,
+  duration?: number
+): Effect => ({
+  id: generateEffectId('item'),
+  type: 'ITEM_USE',
+  targetId,
+  priority: 60, // Higher priority than normal attacks
+  timestamp: Date.now(),
+  data: {
+    itemId,
+    itemName,
+    targetId,
+    effectType,
+    value,
+    statusId,
+    duration
+  }
 })
 
 // ============================================================================

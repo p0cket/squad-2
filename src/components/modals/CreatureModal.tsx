@@ -1,21 +1,9 @@
 // replaceCreatureModal.js
 import React from "react"
-import { Modal, Box, Typography, Card, CardContent } from "@mui/material"
+import { Modal } from "@mui/material"
 import { Creature } from "../../consts/types/types"
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  maxWidth: 500,
-  width: "90%",
-  bgcolor: "#1a1a1a", // Dark background
-  // color: '#e0e0e0',   // Light text
-  boxShadow: 24,
-  p: 4,
-  borderRadius: "10px",
-}
+const modalClasses = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[500px] w-[90%] bg-[#1a1a1a] shadow-2xl p-8 rounded-lg outline-none"
 
 type ReplaceCreatureModalProps = {
   open: boolean;
@@ -39,15 +27,15 @@ const ReplaceCreatureModal: React.FC<ReplaceCreatureModalProps> = ({ open, handl
       aria-labelledby="creature-modal-title"
       aria-describedby="creature-modal-description"
     >
-      <Box sx={style}>
-        <Card sx={{ bgcolor: "transparent", boxShadow: "none" }}>
-          <CardContent>
-            <Typography id="creature-modal-title" variant="h4" component="h2">
+      <div className={modalClasses}>
+        <div className="bg-transparent shadow-none">
+          <div>
+            <h2 id="creature-modal-title" className="text-3xl text-white font-normal">
               {creature.name}
-            </Typography>
+            </h2>
 
             {/* Loop through the creature's properties */}
-            <Typography id="creature-modal-description" sx={{ mt: 2 }}>
+            <div id="creature-modal-description" className="mt-4">
               {/* Display Health separately to include maxHealth */}
               <div className="text-white">
                 <strong>Health:</strong> {creature.health} /{" "}
@@ -84,10 +72,10 @@ const ReplaceCreatureModal: React.FC<ReplaceCreatureModalProps> = ({ open, handl
                   </div>
                 )
               })}
-            </Typography>
-          </CardContent>
-        </Card>
-      </Box>
+            </div>
+          </div>
+        </div>
+      </div>
     </Modal>
   )
 }

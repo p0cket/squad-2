@@ -1,6 +1,13 @@
 // Status Effect Definitions - Serializable effects with decoupled applicators
 // 📋 See STATUS_EFFECT_CHECKLIST.md for implementation guidelines and verification steps
 import { Effect, BattleContext, EffectApplicationResult, HealthChange, StateChange, Animation } from '../types'
+import { StatusEffect, Creature } from '../../../consts/types/types'
+import { 
+  buildBurnEffect, 
+  buildPoisonEffect, 
+  buildBleedEffect, 
+  buildRegenerationEffect 
+} from '../factories'
 import { registerEffectApplicator } from '../effectApplicatorRegistry'
 import { getCreatureFromContext } from '../effectResolver'
 import './utilityEffects' // Import to register NO_OP and other utility effects
@@ -15,6 +22,7 @@ export type BurnEffectData = {
 
 export type PoisonEffectData = {
   damage: number
+  spreadCount?: number
 }
 
 export type RegenerationEffectData = {
@@ -78,6 +86,61 @@ export type ReflectEffectData = {
 }
 
 // ============================================================================
+// STATUS TICK LOGIC
+// ============================================================================
+
+/**
+ * Determines the effect to apply for a status tick at the end of a turn
+ */
+export const getStatusTickEffect = (status: StatusEffect, creature: Creature): Effect | null => {
+  const sid = status.id
+  
+  if (sid === 'BURN') {
+    const damage = status.damagePerTurn ?? 5
+    if (status.damagePerTurn === undefined) {
+      console.warn(`⚠️ BURN status on ${creature.name} missing damagePerTurn! Using fallback: 5`)
+    }
+    console.log(`🔥 Creating burn tick effect for ${creature.name} (${damage} dmg)`)
+    return buildBurnEffect(creature.ID, damage)
+  } 
+  
+  if (sid === 'POISON') {
+    const damage = status.damagePerTurn ?? 3
+    if (status.damagePerTurn === undefined) {
+      console.warn(`⚠️ POISON status on ${creature.name} missing damagePerTurn! Using fallback: 3`)
+    }
+    console.log(`🧪 Creating poison tick effect for ${creature.name} (${damage} dmg)`)
+    return buildPoisonEffect(creature.ID, damage)
+  } 
+  
+  if (sid === 'BLEED') {
+    const damage = status.damagePerTurn ?? 7
+    if (status.damagePerTurn === undefined) {
+      console.warn(`⚠️ BLEED status on ${creature.name} missing damagePerTurn! Using fallback: 7`)
+    }
+    console.log(`🩸 Creating bleed tick effect for ${creature.name} (${damage} dmg)`)
+    return buildBleedEffect(creature.ID, damage)
+  } 
+  
+  if (sid === 'REGENERATION') {
+    const healing = status.healPerTurn ?? 5
+    if (status.healPerTurn === undefined) {
+      console.warn(`⚠️ REGENERATION status on ${creature.name} missing healPerTurn! Using fallback: 5`)
+    }
+    console.log(`💚 Creating regen tick effect for ${creature.name} (${healing} heal)`)
+    return buildRegenerationEffect(creature.ID, healing)
+  }
+
+  // Passive effects that don't tick
+  if (['SHIELD', 'FREEZE', 'SLOW', 'ATTACK_DEBUFF', 'SILENCE'].includes(sid)) {
+    console.log(`ℹ️ ${sid} on ${creature.name} is a passive effect (no tick)`)
+    return null
+  }
+
+  return null
+}
+
+// ============================================================================
 // EFFECT APPLICATORS (Pure functions)
 // ============================================================================
 
@@ -118,7 +181,7 @@ const applyBurnEffect = async (
 
     const animations: Animation[] = [
       { type: 'burn', targetId: effect.targetId, duration: 500 },
-      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage, label: 'burn' } }
     ]
 
     return {
@@ -187,7 +250,7 @@ const applyBleedEffect = async (
 
     const animations: Animation[] = [
       { type: 'shake', targetId: effect.targetId, duration: 300 },
-      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage, label: 'bleed' } }
     ]
 
     return {
@@ -259,7 +322,7 @@ const applyPoisonEffect = async (
 
     const animations: Animation[] = [
       { type: 'shake', targetId: effect.targetId, duration: 300 },
-      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage } }
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: -damage, label: 'poison' } }
     ]
 
     return {
@@ -330,7 +393,7 @@ const applyRegenerationEffect = async (
 
     const animations: Animation[] = [
       { type: 'healing', targetId: effect.targetId, duration: 800 },
-      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: healing } }
+      { type: 'damage-number', targetId: effect.targetId, duration: 1000, data: { value: healing, label: 'regen' } }
     ]
 
     return {

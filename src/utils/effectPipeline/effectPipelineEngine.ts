@@ -36,6 +36,9 @@ export const processEffectChain = async (
   }
 
   pipelineState.isProcessing = true
+  
+  // Reset combo count at start of chain
+  context.state.currentCombo = 0
 
   try {
     await executeEffectPipeline(initialEffect, context)
@@ -85,6 +88,12 @@ const executeEffectPipeline = async (
     try {
       // 1. Apply the effect and get state changes + animations
       const { stateChanges, animations } = await applyEffect(currentEffect, context)
+
+      // Update combo count based on chain depth
+      if (currentEffect.chainDepth && currentEffect.chainDepth > (context.state.currentCombo || 0)) {
+        context.state.currentCombo = currentEffect.chainDepth
+        console.log(`🔥 Combo increased to x${context.state.currentCombo}!`)
+      }
 
       console.log(`📦 Effect ${currentEffect.type} returned:`, {
         stateChangesCount: stateChanges.length,
