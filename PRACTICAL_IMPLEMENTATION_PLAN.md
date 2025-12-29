@@ -129,69 +129,153 @@ Add just 2-3 more effects for variety:
 ### **PHASE C: Roguelike Progression Framework** ⏰ 2-3 hours
 **Goal:** Create the run-based structure with level progression
 
-#### D1: Level Progression System (1 hour)
-- [ ] **Level Data Structure**
-  - Level number (1, 2, 3...)
-  - Enemy team composition (harder enemies in later levels)
-  - Difficulty scaling (enemies get +10% HP/damage per level)
+#### C1: Level Progression System (1 hour)
+**Architecture Note:** Design with future map structure in mind!
+
+- [ ] **Node-Based Level Data Structure** (extensible!)
+  ```typescript
+  interface LevelNode {
+    id: string;              // "1-1", "2-3", "boss-1"
+    type: 'combat' | 'elite' | 'boss' | 'event' | 'shop';
+    position: { act: number, depth: number };
+    nextNodes: string[];     // IDs of next possible nodes
+    enemyTeam?: Creature[];
+    rewards?: Reward[];
+    isCompleted?: boolean;
+  }
   
-- [ ] **Win → Next Level Flow**
-  - Victory screen shows "Level X Complete!"
-  - "Continue" button loads next level
-  - Track current level in game state
-  - Generate new enemy team for next level
+  interface GameRun {
+    currentNodeId: string;
+    completedNodeIds: string[];
+    availableNodeIds: string[];  // Nodes player can reach
+    playerTeam: Creature[];
+    runActive: boolean;
+  }
+  ```
   
-- [ ] **Basic Level Selection Screen**
-  - Show available levels (1-9 initially)
-  - Show which levels you've beaten
-  - Click to start a level
+- [ ] **Linear Path Implementation (v1)**
+  - Create simple linear chain: "1-1" → "1-2" → "1-3" → "2-1"...
+  - Each node has exactly ONE nextNode (for now)
+  - Structure is ready for branching (just add more nextNodes later!)
+  
+- [ ] **Win → Next Node Flow**
+  - Victory screen shows "Level Complete!"
+  - Show available next nodes (just 1 for now)
+  - Player clicks to continue
+  - Load next node's encounter
+  
+- [ ] **Basic Progression Screen**
+  - Show current path (linear for v1)
+  - Highlight current node
+  - Show completed nodes (grayed out)
+  - Ready to extend to map view
 
 **Files to create/modify:**
-- `src/utils/levelSystem/levelData.ts` - Level definitions
+- `src/utils/levelSystem/types.ts` - Node definitions (extensible!)
+- `src/utils/levelSystem/levelNodes.ts` - Node data & connections
+- `src/utils/levelSystem/nodeGenerator.ts` - Generate encounters
+- `src/utils/levelSystem/pathResolver.ts` - Determine available nodes
+- `src/components/screens/ProgressionMap.tsx` - Visual progression (starts linear)
 - `src/utils/levelSystem/levelGenerator.ts` - Generate enemy teams
 - `src/components/screens/LevelSelect.tsx` - Level selection UI
 
 #### C2: Three Acts Structure (45 min)
-- [ ] **Act 1: Levels 1-3** (Tutorial difficulty)
-  - Basic enemies
-  - Single element types
-  - Lower HP/damage
-  
-- [ ] **Act 2: Levels 4-6** (Medium difficulty)
-  - Mixed enemy teams
-  - More status effects
-  - Higher HP/damage
-  
-- [ ] **Act 3: Levels 7-9** (Hard difficulty)
-  - Elite enemies with passives
-  - Complex team compositions
-  - Highest HP/damage
+**Architecture Note:** Acts define node pools and difficulty tiers
 
-- [ ] **Act Transition Screens**
-  - "Act 2: The Depths" with dramatic text
-  - Visual theme changes per act
+- [ ] **Act-Based Node Generation**
+  ```typescript
+  interface ActConfig {
+    actNumber: 1 | 2 | 3;
+    depth: number;           // How many nodes deep (3-4 per act)
+    theme: 'forest' | 'caves' | 'volcano';
+    difficultyMultiplier: number;
+    nodeTypes: NodeType[];   // What nodes can appear
+  }
+  ```
+  
+- [ ] **Act 1: Depths 1-3** (Tutorial difficulty)
+  - Nodes: [combat, combat, elite]
+  - Basic enemies, single elements
+  - Difficulty: 1.0x base stats
+  
+- [ ] **Act 2: Depths 4-7** (Medium difficulty)
+  - Nodes: [combat, elite, combat, elite]
+  - Mixed enemy teams, more status effects
+  - Difficulty: 1.3x base stats
+  
+- [ ] **Act 3: Depths 8-10** (Hard difficulty)
+  - Nodes: [elite, combat, elite, boss]
+  - Elite enemies with passives
+  - Difficulty: 1.6x base stats
+
+- [ ] **Act Transition Flow**
+  - Complete last node of act → Transition screen
+  - "Act 2: The Depths" with flavor text
+  - Visual theme changes (future: map background changes)
+  - Load first node of next act
+
+**Extension Points:**
+- Future: Add 'event' and 'shop' node types per act
+- Future: Branching paths within each act
+- Future: Optional side paths with rewards
 
 #### C3: Boss Battle (45 min)
-- [ ] **Boss Creature Definition**
-  - Level 10: Final Boss
-  - Unique boss with 2-3x HP
-  - Special attacks and passives
-  - Multi-phase fight (gets stronger at 50% HP)
-  
-- [ ] **Boss Battle UI**
-  - Boss health bar at top
-  - Boss name and title
-  - Victory triggers "You Win!" end screen
+**Architecture Note:** Bosses are special node types
 
-#### C4: Run State Management (30 min)
-- [ ] **Track Run Progress**
-  - Current level
-  - Player's creatures (persist between battles)
-  - Creatures keep HP between battles (no auto-heal)
-  - Run ends on defeat
+- [ ] **Boss Node Definition**
+  ```typescript
+  interface BossNode extends LevelNode {
+    type: 'boss';
+    bossData: {
+      name: string;
+      title: string;
+      phases: BossPhase[];
+      uniquePassives: string[];
+    };
+**Architecture Note:** Run state is node-agnostic (supports linear OR map!)
+
+- [ ] **Track Run Progress (Node-Based)**
+  ```typescript
+  interface GameRun {
+    runId: string;                    // Unique run identifier
+    currentNodeId: string;            // Where player is now
+    completedNodeIds: string[];       // History of nodes cleared
+    availableNodeIds: string[];       // Next nodes player can choose
+    playerTeam: Creature[];           // Team persists between nodes
+    runActive: boolean;
+    startedAt: Date;
+  }
+  ```
+  
+- [ ] **Node Completion Flow**
+  - Win battle → Mark node as completed
+  - Add node to completedNodeIds
+  - Calculate availableNodeIds (nextNodes of current)
+  - For linear: only 1 available node
+  - For map (future): 2-3 available nodes
+  
+- [ ] **HP Persistence**
+  - Creatures keep HP between nodes (no auto-heal)
+  - Dead creatures stay dead for the run
+  - Adds strategic resource management
   
 - [ ] **Defeat → Run Over**
-  - Show "Run Failed - Reached Level X"
+  - Show "Run Failed - Reached [Node Name]"
+  - Display run stats (nodes cleared, turns taken)
+  - "New Run" starts at first node
+  - Player creatures reset to full HP
+
+**Extension Points:**
+- Future: Save/load runs mid-progress
+- Future: Run history and statistics
+- Future: Branching path choices saved in run state
+- Future: "Abandon run" option
+
+**Why This Architecture?**
+- Node IDs instead of level numbers = supports any graph structure
+- availableNodeIds array = works for 1 choice (linear) or many (map)
+- Completed history = can visualize any path taken
+- Easy to extend without refactoring core systems Show "Run Failed - Reached Level X"
   - "Try Again" starts fresh run at Level 1
   - Player creatures reset to full HP
 
@@ -385,10 +469,147 @@ interface LevelData {
 - **Fair difficulty** - Challenging but winnable
 
 ### Build to Expand
+- **Node-based architecture** - Linear now, map structure later (zero refactoring)
 - **Modular design** - Effect pipeline supports future features
-- **Data-driven** - Easy to add new attacks/creatures/effects
+- **Data-driven** - Easy to add new attacks/creatures/effects/nodes
+- **Separation of concerns** - Battle logic ≠ progression logic
 - **Well-tested** - Foundation is solid for expansion
 - **Documented** - Future-you will thank present-you
+
+---
+
+## 🗺️ Extensibility: Linear → Map Structure
+
+### The Architecture Advantage
+
+**Current (Phase C v1):** Linear node chain
+```
+[1-1] → [1-2] → [1-3] → [2-1] → [2-2] → ... → [boss]
+```
+
+**Future v2:** Branching paths per act
+```
+        [1-2A: Combat]
+       /              \
+[1-1] ←  [1-2B: Elite] → [1-3]
+       \              /
+        [1-2C: Combat]
+```
+
+**Future v3:** Full Slay the Spire style map
+```
+        [Combat]    [Shop]
+       /        \   /     \
+[Start] → [Event] → [Elite] → [Boss]
+       \        /   \      /
+        [Combat]    [Combat]
+```
+
+### Zero Refactoring Required!
+
+**What Changes:**
+1. **Node connections** - Add more to `nextNodes` array
+2. **UI rendering** - Upgrade `ProgressionMap.tsx` to show branches
+3. **Path resolver** - Return multiple available nodes instead of 1
+
+**What Stays The Same:**
+- Battle system (unchanged)
+- Node data structure (already supports it!)
+- Run state management (already node-based)
+- Win/loss logic (unchanged)
+- All Phase A & B code (untouched)
+
+### Implementation Path
+
+```typescript
+// PHASE C (Now) - Linear
+const node1_1 = {
+  id: "1-1",
+  nextNodes: ["1-2"]  // Only 1 choice
+};
+
+// FUTURE - Branching
+const node1_1 = {
+  id: "1-1", 
+  nextNodes: ["1-2A", "1-2B", "1-2C"]  // 3 choices!
+};
+
+// The rest of the code JUST WORKS! ✨
+```
+
+### File Organization for Extensibility
+
+```
+src/utils/levelSystem/
+├── types.ts              # ✅ Node interfaces (supports any graph)
+├── levelNodes.ts         # 🔧 Just add more nextNodes
+├── pathResolver.ts       # 🔧 Already returns array of available nodes
+├── nodeGenerator.ts      # ✅ Node-agnostic generation
+└── runManager.ts         # ✅ Tracks any path structure
+
+src/components/screens/
+├── ProgressionMap.tsx    # 🔧 v1: Linear list, v2: 2D map
+└── NodeSelection.tsx     # 🔧 v1: Continue button, v2: Choose buttons
+```
+
+### Extension Timeline
+
+**Phase C (Now):** Build linear, design for branching
+- 2-3 hours
+- Fully playable roguelike
+- Architecture ready for expansion
+
+**Future Sprint 1:** Add branching (2-3 nodes per layer)
+- 2-4 hours
+- Just modify node connections + UI
+- No battle system changes
+
+**Future Sprint 2:** Add node variety (events, shops)
+- 3-5 hours
+- New node types
+- Reward systems
+
+**Future Sprint 3:** Full map visualization
+- 3-6 hours
+- Interactive map UI
+- Path preview
+
+### Build to Expand
+- **Node-based architecture** - Linear now, map structure later (zero refactoring)
+- **Modular design** - Effect pipeline supports future features
+- **Data-driven** - Easy to add new attacks/creatures/effects/nodes
+- **Separation of concerns** - Battle logic ≠ progression logic
+- **Well-tested** - Foundation is solid for expansion
+- **Documented** - Future-you will thank present-you
+
+### Extensibility Roadmap
+**Phase C (Now):** Linear node chain
+```
+[1-1] → [1-2] → [1-3] → [2-1] → ... → [boss]
+```
+
+**Future v2:** Branching paths per act
+```
+        [1-2A]
+       /      \
+[1-1] ←  [1-2B] → [1-3]
+       \      /
+        [1-2C]
+```
+
+**Future v3:** Full map with shops/events
+```
+        [combat]     [shop]
+       /        \   /      \
+[start] → [event] → [elite] → [boss]
+       \        /   \      /
+        [combat]     [combat]
+```
+
+**The Architecture Supports All Three!** Just change:
+- Node connections (nextNodes array)
+- UI rendering (ProgressionMap component)
+- Path resolver logic (pathResolver.ts)
 
 ---
 
