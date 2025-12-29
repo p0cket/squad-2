@@ -25,8 +25,8 @@
 
 ## 🚀 Implementation Phases
 
-### **PHASE A: Fix the Core Loop** ⏰ 2-3 hours
-**Goal:** Make the existing game actually playable end-to-end
+### **PHASE A: Single Battle Core Loop** ⏰ 2-3 hours
+**Goal:** Make ONE battle work perfectly from start to finish
 
 #### A1: Victory/Defeat System (30 min)
 - [ ] Detect when all player creatures are dead → show defeat screen
@@ -71,8 +71,8 @@
 
 ---
 
-### **PHASE B: Add Variety & Strategy** ⏰ 2-3 hours
-**Goal:** Make battles interesting with different attacks and choices
+### **PHASE B: Combat Variety & Strategy** ⏰ 2-3 hours
+**Goal:** Make battles interesting with different attacks and tactical choices
 
 #### B1: Attack Types (1 hour)
 Create 3-4 different attack types per creature:
@@ -126,7 +126,96 @@ Add just 2-3 more effects for variety:
 
 ---
 
-### **PHASE C: Polish & Feel** ⏰ 1-2 hours
+### **PHASE C: Roguelike Progression Framework** ⏰ 2-3 hours
+**Goal:** Create the run-based structure with level progression
+
+#### D1: Level Progression System (1 hour)
+- [ ] **Level Data Structure**
+  - Level number (1, 2, 3...)
+  - Enemy team composition (harder enemies in later levels)
+  - Difficulty scaling (enemies get +10% HP/damage per level)
+  
+- [ ] **Win → Next Level Flow**
+  - Victory screen shows "Level X Complete!"
+  - "Continue" button loads next level
+  - Track current level in game state
+  - Generate new enemy team for next level
+  
+- [ ] **Basic Level Selection Screen**
+  - Show available levels (1-9 initially)
+  - Show which levels you've beaten
+  - Click to start a level
+
+**Files to create/modify:**
+- `src/utils/levelSystem/levelData.ts` - Level definitions
+- `src/utils/levelSystem/levelGenerator.ts` - Generate enemy teams
+- `src/components/screens/LevelSelect.tsx` - Level selection UI
+
+#### C2: Three Acts Structure (45 min)
+- [ ] **Act 1: Levels 1-3** (Tutorial difficulty)
+  - Basic enemies
+  - Single element types
+  - Lower HP/damage
+  
+- [ ] **Act 2: Levels 4-6** (Medium difficulty)
+  - Mixed enemy teams
+  - More status effects
+  - Higher HP/damage
+  
+- [ ] **Act 3: Levels 7-9** (Hard difficulty)
+  - Elite enemies with passives
+  - Complex team compositions
+  - Highest HP/damage
+
+- [ ] **Act Transition Screens**
+  - "Act 2: The Depths" with dramatic text
+  - Visual theme changes per act
+
+#### C3: Boss Battle (45 min)
+- [ ] **Boss Creature Definition**
+  - Level 10: Final Boss
+  - Unique boss with 2-3x HP
+  - Special attacks and passives
+  - Multi-phase fight (gets stronger at 50% HP)
+  
+- [ ] **Boss Battle UI**
+  - Boss health bar at top
+  - Boss name and title
+  - Victory triggers "You Win!" end screen
+
+#### C4: Run State Management (30 min)
+- [ ] **Track Run Progress**
+  - Current level
+  - Player's creatures (persist between battles)
+  - Creatures keep HP between battles (no auto-heal)
+  - Run ends on defeat
+  
+- [ ] **Defeat → Run Over**
+  - Show "Run Failed - Reached Level X"
+  - "Try Again" starts fresh run at Level 1
+  - Player creatures reset to full HP
+
+**Implementation Notes:**
+```typescript
+// Level system structure
+interface GameRun {
+  currentLevel: number;
+  playerTeam: Creature[];
+  levelsCompleted: number[];
+  runActive: boolean;
+}
+
+interface LevelData {
+  levelNumber: number;
+  act: 1 | 2 | 3;
+  enemyTeam: Creature[];
+  isBoss: boolean;
+}
+```
+
+---
+
+### **PHASE D: Polish & Feel** ⏰ 1-2 hours
 **Goal:** Make it feel GOOD to play
 
 #### C1: Visual Juice (45 min)
@@ -139,7 +228,7 @@ Add just 2-3 more effects for variety:
 
 **Use CSS animations - keep it simple!**
 
-#### C2: Sound Effects (30 min)
+#### D2: Sound Effects (30 min)
 *Optional - can skip if short on time*
 
 - [ ] Hit sound (punch/slash)
@@ -149,7 +238,7 @@ Add just 2-3 more effects for variety:
 
 **Use free assets from freesound.org**
 
-#### C3: UI/UX Polish (30 min)
+#### D3: UI/UX Polish (30 min)
 - [ ] Health bars show current/max (45/100)
 - [ ] Status tooltips on hover
 - [ ] Attack descriptions on hover
@@ -158,34 +247,85 @@ Add just 2-3 more effects for variety:
 
 ---
 
-## 🔧 Technical Implementation Strategy
+### **PHASE E: Meta Progression (Later - Post-MVP)** ⏰ 3-4 hours
+**Goal:** Add persistent upgrades and microprogression
 
-### Quick Wins First
-1. **Start with what works** - Build on existing effect pipeline
+*This comes AFTER the core roguelike loop is working!*
+
+#### E1: Between-Battle Upgrades (During Run)
+- [ ] **Rewards After Each Victory**
+  - Choose 1 of 3 random upgrades
+  - Examples: "+10 Max HP", "Fire attacks +20% damage", "Start with Regen"
+  - Upgrades last for the current run only
+  
+- [ ] **Healing Options**
+  - "Rest" - Heal 50% HP to all creatures
+  - "Rare Heal" - Full heal but skip upgrade
+
+#### E2: Persistent Progression (Between Runs)
+- [ ] **Unlock System**
+  - Earn "Essence" from completed runs
+  - Unlock new creatures
+  - Unlock new attacks
+  
+- [ ] **Meta Upgrades**
+  - Spend Essence on permanent upgrades
+  - "+5% starting HP for all runs"
+  - "Start with +10 Essence"
+  - Incremental power that makes runs easier over time
+
+#### E3: Daily Challenges & Modifiers
+- [ ] Seed-based runs
+- [ ] Challenge modifiers (+enemy HP, -healing, etc.)
+- [ ] LeadViable Product (MVP) - Playable Roguelike:**
+- ✅ Single battle works perfectly (Phase A)
+- ✅ Multiple attack types create strategic depth (Phase B)
+- ✅ 10 levels across 3 acts (Phase C)
+- ✅ Final boss battle (Phase C)
+- ✅ Run-based structure (win → progress, lose → restart) (Phase C)
+- ✅ Basic polish and feel (Phase D)
+
+**Post-MVP Goals:**
+- ⭐ Between-battle upgrades (Phase E)
+- ⭐ Persistent meta progression (Phase E)
+- ⭐ Multiple playable characters/teams
+- ⭐ Daily challenges
+- ⭐ Leaderboards
+
+**Timeline:**
+- **Phase A + B:** 4-6 hours → Playable single battle
+- **Phase C:** 2-3 hours → Full roguelike structure
+- **Phase D:** 1-2 hours → Polish
+- **Total to MVP:** ~8-11 hours of focused workuild on existing effect pipeline
 2. **No refactoring yet** - Just make it work, optimize later
 3. **Test as you go** - Play the game after each feature
 4. **Commit frequently** - Small, focused commits
 
 ### Code Organization
-```
-src/utils/effectPipeline/
-├── effects/
-│   ├── combatEffects.ts      # ✅ Already good
-│   ├── statusEffects.ts      # 🔧 Add ticking logic
-│   └── attackFactories.ts    # 🆕 Add new attacks
-├── ai/
-│   └── autopilotAI.ts        # 🔧 Improve decision making
-└── hooks/
-    └── useBattleEngine.ts    # 🔧 Add win/loss detection
-```
+```First Sprint):
+- [ ] Complete Phase A (Single Battle Core)
+- [ ] Complete Phase B (Combat Variety)
+- [ ] Have a fully working tactical battle
 
-### Testing Strategy
-- **Manual testing first** - Play the game!
+### Session 2 Goals (Roguelike Structure):
+- [ ] Complete Phase C (Level Progression)
+- [ ] 10 levels, 3 acts, boss fight
+- [ ] Full run structure working
+
+### Session 3 Goals (Polish & Release):
+- [ ] Complete Phase D (Polish)
+- [ ] Juice and feel
+- [ ] Ready to share as "version 1.0"!
+
+### Future Sessions (Post-Launch):
+- [ ] Phase E (Meta Progression)
+- [ ] Player feedback integration
+- [ ] Content expansion Play the game!
 - **Unit tests for new features** - Use existing test patterns
-- **E2E tests later** - After core loop is solid
-
----
-
+- **Linear progression first** - Levels 1-10, no branching paths
+- **No complex systems yet** - Save items, equipment for Phase E
+- **No unnecessary choices** - Each creature has 3-4 attacks max
+- **Run-based, not grinding** - Complete runs or start over
 ## 📊 Success Metrics
 
 **Minimum Playable Game achieved when:**
